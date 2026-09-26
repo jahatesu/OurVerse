@@ -60,12 +60,12 @@ function CosmicSky() {
       ))}
       {[0, 1, 2].map((layer) => (
         <div className={`cosmic-stars cosmic-depth-${layer}`} key={layer}>
-          {Array.from({ length: [90, 44, 20][layer] }, (_, i) => <i key={i} style={{ left: `${skyNoise(i + layer * 101) * 100}%`, top: `${skyNoise(i * 3 + layer * 317 + 29) * 100}%`, "--star-size": `${.5 + skyNoise(i + 711) * (layer === 0 ? .8 : 1.8)}px`, "--star-light": .2 + skyNoise(i + 910) * .65, "--twinkle": `${3.7 + skyNoise(i + 192) * 9.3}s`, animationDelay: `${-skyNoise(i + 532) * 20}s` } as CSSProperties} />)}
+          {Array.from({ length: [170, 72, 32][layer] }, (_, i) => <i key={i} style={{ left: `${skyNoise(i + layer * 101) * 100}%`, top: `${skyNoise(i * 3 + layer * 317 + 29) * 100}%`, "--star-size": `${.5 + skyNoise(i + 711) * (layer === 0 ? .8 : 1.8)}px`, "--star-light": .2 + skyNoise(i + 910) * .65, "--twinkle": `${3.7 + skyNoise(i + 192) * 9.3}s`, animationDelay: `${-skyNoise(i + 532) * 20}s` } as CSSProperties} />)}
         </div>
       ))}
-      <div className="hero-starfield">{Array.from({ length: 9 }, (_, i) => <span key={i} className="hero-star" style={{ left: `${8 + skyNoise(i + 410) * 84}%`, top: `${12 + skyNoise(i + 921) * 67}%`, "--hero-size": `${3 + skyNoise(i + 851) * 3}px`, "--twinkle": `${6 + skyNoise(i + 729) * 9}s`, animationDelay: `${-skyNoise(i + 44) * 17}s` } as CSSProperties}><i /></span>)}</div>
+      <div className="hero-starfield">{Array.from({ length: 14 }, (_, i) => <span key={i} className="hero-star" style={{ left: `${8 + skyNoise(i + 410) * 84}%`, top: `${12 + skyNoise(i + 921) * 67}%`, "--hero-size": `${3 + skyNoise(i + 851) * 3}px`, "--twinkle": `${6 + skyNoise(i + 729) * 9}s`, animationDelay: `${-skyNoise(i + 44) * 17}s` } as CSSProperties}><i /></span>)}</div>
       <div className="cosmic-dust">{Array.from({ length: 20 }, (_, i) => <i key={i} style={{ left: `${skyNoise(i + 313) * 100}%`, top: `${skyNoise(i + 151) * 100}%`, "--dust-time": `${19 + skyNoise(i + 221) * 27}s`, "--dust-x": `${-40 + skyNoise(i + 101) * 85}px`, animationDelay: `${-skyNoise(i + 87) * 40}s` } as CSSProperties} />)}</div>
-      <span className="cosmic-meteor meteor-one" /><span className="cosmic-meteor meteor-two" /><span className="cosmic-comet" />
+      <span className="cosmic-meteor meteor-one" /><span className="cosmic-meteor meteor-two" /><span className="cosmic-meteor meteor-three" /><span className="cosmic-meteor meteor-four" /><span className="cosmic-meteor meteor-five" /><span className="cosmic-comet" />
       <div className="cosmic-grain" /><div className="cosmic-vignette" />
     </div>
   );

@@ -260,6 +260,7 @@ export function OurVerseCharacter({
               <ellipse cx="70" cy="89" rx="4" ry="5" fill={palette.mouth} />
             ) : (
               <path
+                className="character-mouth"
                 d={upset ? "M64 92Q70 86 77 92" : "M63 88Q70 96 78 88"}
                 fill="none"
                 stroke={palette.mouth}

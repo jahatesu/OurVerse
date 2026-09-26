@@ -52,6 +52,10 @@
 .infinity-footer .dust-b { left: 71%; top: 72%; animation-duration: 31s; animation-delay: -19s; }
 .infinity-footer .infinity-shooting-star { position: absolute; top: 22%; left: 79%; width: 70px; height: 1px; background: linear-gradient(90deg, #dfd4e4b3, #ccb6d133 25%, transparent); opacity: 0; animation: infinity-shooting-star 47s linear -5s infinite; }
 .infinity-footer .infinity-shooting-star::before { content: ""; position: absolute; left: 0; top: -.5px; width: 2px; height: 2px; border-radius: 50%; background: #eedfdb; box-shadow: 0 0 5px #d4bfd170; }
+.infinity-footer .infinity-distant-star { background: #bebcd7; }
+.infinity-footer .infinity-distant-star:nth-of-type(6n) { background: #e4ccb6; box-shadow: 0 0 5px #d7bdd244; }
+.infinity-footer .infinity-shooting-star-two { left: 49%; top: 41%; width: 85px; animation-duration: 31s; animation-delay: -4s; }
+.infinity-footer .infinity-shooting-star-three { left: 94%; top: 61%; width: 60px; animation-duration: 59s; animation-delay: 3s; }
 .infinity-footer .infinity-letter { position: relative; max-width: 620px; margin: 0 auto; }
 .infinity-footer .infinity-message {
   margin: 0;

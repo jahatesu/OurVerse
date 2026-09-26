@@ -12,7 +12,8 @@ import { MusicProvider, MusicRoom, FloatingPlayer } from "./music";
 import { Galaxy, DestinationArt, destinations, Constellation } from "./galaxy";
 import { MemoryRoom, Story, Letters, Love } from "./collections";
 import { CompanionRoom } from "./companion";
-import { OurVerseCharacter, Couple } from "./characters";
+import { Couple } from "./characters";
+import { CornerCompanion } from "./corner-companion";
 import { World } from "./world";
 import { Vault, Ending } from "./secrets";
 import { Modal } from "./ui";
@@ -404,8 +405,22 @@ function Shell() {
               {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <i key={i} className={`infinity-star infinity-star-${i}`} />
               ))}
+              {Array.from({ length: 28 }, (_, i) => (
+                <i key={`distant-${i}`} className="infinity-star infinity-distant-star" style={{
+                  left: `${4 + ((i * 37.71 + i * i * 3.13) % 92)}%`,
+                  top: `${12 + ((i * 23.19 + i * i * 1.71) % 80)}%`,
+                  width: i % 6 === 0 ? 2 : 1,
+                  height: i % 6 === 0 ? 2 : 1,
+                  animationDuration: `${7.3 + (i % 9) * 1.7}s`,
+                  animationDelay: `${-i * 1.43}s`,
+                }} />
+              ))}
               <span className="infinity-dust dust-a" /><span className="infinity-dust dust-b" />
+              <span className="infinity-dust dust-a" /><span className="infinity-dust dust-b" />
+
               <span className="infinity-shooting-star" />
+              <span className="infinity-shooting-star infinity-shooting-star-two" />
+              <span className="infinity-shooting-star infinity-shooting-star-three" />
             </div>
             <div className="infinity-letter">
               <p className="infinity-message">our own little infinity.</p>
@@ -429,14 +444,7 @@ function Shell() {
             )}
           </footer>
           {section !== "companion" && (
-            <button
-              className="companion-peek"
-              onClick={() => travel("companion")}
-              aria-label="Visit Mini Janna and Mini Josh"
-            >
-              <OurVerseCharacter character="janna" pose="wave" />
-              <span>pssst Josh…</span>
-            </button>
+            <CornerCompanion destination={section} onVisit={() => travel("companion")} />
           )}
           {progress.discoveries.length >= settings.constellationTarget && (
             <button

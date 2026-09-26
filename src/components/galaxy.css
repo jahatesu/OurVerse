@@ -206,6 +206,9 @@
 .solar-galaxy .cosmic-meteor::before { content: ""; position: absolute; width: 3px; height: 3px; left: 0; top: -1px; border-radius: 50%; background: #fff4e0; box-shadow: 0 0 8px #eedfd8; }
 .solar-galaxy .meteor-one { left: 79%; top: 24%; animation-delay: -3s; }
 .solar-galaxy .meteor-two { left: 50%; top: 62%; width: 95px; animation-duration: 53s; animation-delay: -24s; }
+.solar-galaxy .meteor-three { left: 92%; top: 39%; width: 115px; animation-duration: 31s; animation-delay: -1s; }
+.solar-galaxy .meteor-four { left: 62%; top: 15%; width: 85px; animation-duration: 43s; animation-delay: 3s; }
+.solar-galaxy .meteor-five { left: 84%; top: 76%; width: 125px; animation-duration: 59s; animation-delay: 8s; }
 .solar-galaxy .cosmic-comet { position: absolute; left: 92%; top: 13%; width: 100px; height: 5px; border-radius: 50%; background: linear-gradient(90deg, #f1d9b877, #a5b4d633 17%, transparent); filter: blur(.7px); opacity: 0; animation: rare-comet 89s linear -4s infinite; }
 .solar-galaxy .cosmic-comet::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 4px; border-radius: 50%; background: #f6e5cb; box-shadow: 0 0 9px #edcdbabb; }
 

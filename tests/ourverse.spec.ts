@@ -3,15 +3,18 @@ import { expect, test, type Page } from "@playwright/test";
 async function enter(page: Page) {
   await page.goto("/");
   await page.getByRole("button", { name: "Enter OurVerse" }).click();
-  await expect(page.getByRole("heading", { name: "Hi Josh" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Somewhere, just us." }),
+  ).toBeVisible();
 }
 async function navigate(page: Page, name: string) {
   const toggle = page.getByRole("button", { name: "Open navigation" });
-  if (await toggle.isVisible()) await toggle.click();
+  await toggle.click();
   await page
-    .locator(".sidebar")
+    .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name, exact: true })
     .click();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
 }
 
 test("intro, navigation, photos, letters, local persistence, and responsive layout", async ({
@@ -29,7 +32,11 @@ test("intro, navigation, photos, letters, local persistence, and responsive layo
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
-  await page.getByRole("button", { name: "Hug", exact: true }).click();
+  await navigate(page, "Mini Janna");
+  await page
+    .locator(".companion-actions")
+    .getByRole("button", { name: "Hug", exact: true })
+    .click();
   await navigate(page, "Memories");
   await page.getByRole("button", { name: "Calls", exact: true }).click();
   await expect(page.locator(".memory-grid .polaroid")).toHaveCount(1);
@@ -169,6 +176,15 @@ test("vault password, no autoplay, and final ending", async ({ page }) => {
     "Our World",
   ])
     await navigate(page, name);
+  await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem("ourverse-v1")!);
+    saved.discoveries = Array.from(
+      { length: 14 },
+      (_, i) => `tested-discovery-${i}`,
+    );
+    localStorage.setItem("ourverse-v1", JSON.stringify(saved));
+  });
+  await page.reload();
   await expect(
     page.getByRole("button", { name: "One more little secret" }),
   ).toBeVisible();
@@ -176,8 +192,8 @@ test("vault password, no autoplay, and final ending", async ({ page }) => {
     await page.locator("audio").evaluate((el: HTMLAudioElement) => el.paused),
   ).toBe(true);
   await page.getByRole("button", { name: "One more little secret" }).click();
-  await page.getByRole("button", { name: "Keep going" }).click();
-  await page.getByRole("button", { name: "Keep going" }).click();
+  for (let i = 0; i < 7; i++)
+    await page.getByRole("button", { name: "Keep going" }).click();
   await expect(page.locator(".ending")).toContainText(
     "because I made it for you",
   );

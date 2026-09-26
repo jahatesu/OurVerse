@@ -16,7 +16,55 @@ import { heartMessages } from "@/data/messages";
 import { pick } from "@/lib/utils";
 import { useUniverse } from "./provider";
 import { SectionHeading } from "./ui";
+import {
+  PhotoPuzzle,
+  Crossword,
+  CrackCode,
+  KissAttack,
+  WhoSaidIt,
+} from "./new-games";
+import { Couple, OurVerseCharacter } from "./characters";
 const games = [
+  {
+    id: "puzzle",
+    title: "Piece of Us",
+    description: "Every little piece finds its way home.",
+    icon: Heart,
+    tag: "PHOTO PUZZLE",
+    color: "peach",
+  },
+  {
+    id: "crossword",
+    title: "OurVerse Crossword",
+    description: "A few words that belong to us.",
+    icon: Brain,
+    tag: "OURVERSE HISTORIAN",
+    color: "lavender",
+  },
+  {
+    id: "code",
+    title: "Crack the Code",
+    description: "Six clues. One very familiar secret.",
+    icon: Sparkles,
+    tag: "OPERATION: J ♡ J",
+    color: "blue",
+  },
+  {
+    id: "kisses",
+    title: "Kiss Attack",
+    description: "Catch them before they get away.",
+    icon: Heart,
+    tag: "INCOMING AFFECTION",
+    color: "pink",
+  },
+  {
+    id: "quotes",
+    title: "Who Said It?",
+    description: "That sounds suspiciously like us.",
+    icon: Brain,
+    tag: "JANNA OR JOSH?",
+    color: "peach",
+  },
   {
     id: "quiz",
     title: "How well do you know Janna?",
@@ -56,7 +104,7 @@ export default function GameRoom() {
     <>
       <SectionHeading
         eyebrow="PLAYER TWO HAS ENTERED"
-        title="A little playful competition."
+        title="Love Arcade"
         description="High scores, tiny victories, and a very biased cheerleader. Ready, Josh?"
       />
       {game ? (
@@ -68,7 +116,17 @@ export default function GameRoom() {
             <ArrowLeft size={16} /> Back to the game room
           </button>
           <section className="game-panel">
-            {game === "quiz" ? (
+            {game === "puzzle" ? (
+              <PhotoPuzzle />
+            ) : game === "crossword" ? (
+              <Crossword />
+            ) : game === "code" ? (
+              <CrackCode />
+            ) : game === "kisses" ? (
+              <KissAttack />
+            ) : game === "quotes" ? (
+              <WhoSaidIt />
+            ) : game === "quiz" ? (
               <Quiz />
             ) : game === "match" ? (
               <MemoryMatch />
@@ -80,35 +138,41 @@ export default function GameRoom() {
           </section>
         </>
       ) : (
-        <div className="game-hub">
-          {games.map(
-            ({ id, title, description, icon: Icon, tag, color }, i) => (
-              <button
-                key={id}
-                className={`game-hub-card ${color}`}
-                onClick={() => setGame(id)}
-              >
-                <div className="game-illustration">
-                  <Icon size={65} strokeWidth={1} />
-                  <span>✧</span>
-                  <small>0{i + 1}</small>
-                </div>
-                <span className="eyebrow">{tag}</span>
-                <h2>{title}</h2>
-                <p>{description}</p>
-                <span className="text-button">
-                  Let’s play <span>→</span>
-                </span>
-              </button>
-            ),
-          )}
-        </div>
+        <>
+          <div className="arcade-sign">
+            OPEN LATE · KISSES ACCEPTED AS CURRENCY
+          </div>
+          <Couple scene="gaming" />
+          <div className="game-hub">
+            {games.map(
+              ({ id, title, description, icon: Icon, tag, color }, i) => (
+                <button
+                  key={id}
+                  className={`game-hub-card ${color}`}
+                  onClick={() => setGame(id)}
+                >
+                  <div className="game-illustration">
+                    <Icon size={65} strokeWidth={1} />
+                    <span>✧</span>
+                    <small>0{i + 1}</small>
+                  </div>
+                  <span className="eyebrow">{tag}</span>
+                  <h2>{title}</h2>
+                  <p>{description}</p>
+                  <span className="text-button">
+                    Let’s play <span>→</span>
+                  </span>
+                </button>
+              ),
+            )}
+          </div>
+        </>
       )}
     </>
   );
 }
 function Quiz() {
-  const { unlock } = useUniverse();
+  const { unlock, discover } = useUniverse();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -122,6 +186,7 @@ function Quiz() {
   function next() {
     if (index + 1 === quiz.length) {
       setDone(true);
+      discover("game-quiz");
       if (score === quiz.length) unlock("quiz");
     } else {
       setIndex((i) => i + 1);
@@ -133,6 +198,14 @@ function Quiz() {
       <span className="eyebrow">THE VERY OFFICIAL BOYFRIEND EXAM</span>
       {done ? (
         <div className="game-result">
+          <Couple
+            scene="celebrate"
+            caption={
+              score === quiz.length
+                ? "okay show-off ♡"
+                : "Still my favorite player two."
+            }
+          />
           <Trophy size={56} />
           <h2>
             {score >= quiz.length - 1
@@ -192,6 +265,17 @@ function Quiz() {
           </div>
           {selected !== null && (
             <div className="quiz-feedback" aria-live="polite">
+              <div className="quiz-character">
+                <OurVerseCharacter
+                  character="janna"
+                  expression={
+                    selected === question.answer ? "happy" : "annoyed"
+                  }
+                />
+                <span>
+                  {selected === question.answer ? "YOU DID ITTT ♡" : "…Josh."}
+                </span>
+              </div>
               <p>
                 {selected === question.answer
                   ? "Exactly right! ♡ "
@@ -219,7 +303,7 @@ function shuffledDeck() {
   return cards;
 }
 function MemoryMatch() {
-  const { unlock } = useUniverse();
+  const { unlock, discover } = useUniverse();
   const [cards, setCards] = useState(shuffledDeck);
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<string[]>([]);
@@ -242,8 +326,11 @@ function MemoryMatch() {
     return () => clearTimeout(timer);
   }, [flipped, cards]);
   useEffect(() => {
-    if (won) unlock("memory");
-  }, [won, unlock]);
+    if (won) {
+      unlock("memory");
+      discover("game-memory");
+    }
+  }, [won, unlock, discover]);
   function restart() {
     setCards(shuffledDeck());
     setFlipped([]);
@@ -307,7 +394,7 @@ function MemoryMatch() {
 }
 type FallingHeart = { id: number; x: number; y: number };
 function CatchHearts() {
-  const { unlock } = useUniverse();
+  const { unlock, discover } = useUniverse();
   const [running, setRunning] = useState(false);
   const [started, setStarted] = useState(false);
   const [score, setScore] = useState(0);
@@ -363,7 +450,10 @@ function CatchHearts() {
               ? "✧ 20 hearts! Certified Heart Catcher! ✧"
               : pick(heartMessages),
           );
-          if (state.score === 20) unlock("hearts");
+          if (state.score === 20) {
+            unlock("hearts");
+            discover("game-hearts");
+          }
           return false;
         }
         if (heart.y > 100) {
@@ -382,7 +472,7 @@ function CatchHearts() {
     }
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [running, move, unlock]);
+  }, [running, move, unlock, discover]);
   useEffect(() => {
     if (!running) return;
     const stop = () => {
@@ -511,6 +601,7 @@ function CatchHearts() {
   );
 }
 function Roulette() {
+  const {discover} = useUniverse();
   const reduced = useReducedMotion();
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -557,6 +648,7 @@ function Roulette() {
             if (spinning) {
               setSelected(target.current);
               setSpinning(false);
+              discover("game-roulette");
             }
           }}
         >

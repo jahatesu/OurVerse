@@ -1,5 +1,24 @@
 import type { Achievement } from "./types";
 export const achievements: Achievement[] = [
+  ...[
+    ["professional-annoyer", "Professional Annoyer"],
+    ["do-not-press", "Can’t Follow Instructions"],
+    ["kisses", "Kiss Collector"],
+    ["puzzle", "Piece of Us"],
+    ["crossword", "OurVerse Historian"],
+    ["code", "Code Breaker"],
+    ["explorer", "Explorer"],
+    ["vault", "Vault Cracker"],
+    ["arcade", "Arcade Lover"],
+    ["night", "Night Owl"],
+    ["plant", "Plant Parent"],
+  ].map(([id, title]): Achievement => ({
+    id,
+    title,
+    description: "A little discovery in our universe.",
+    rarity: "Moonlight",
+    icon: "✦",
+  })),
   {
     id: "welcome",
     title: "Janna’s Favorite Human",

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { achievements } from "@/data/achievements";
+import { codePuzzles } from "@/data/expansion";
 type Progress = {
   entered: boolean;
   unlocked: string[];
@@ -17,6 +18,14 @@ type Progress = {
   companion: { happiness: number; love: number; miss: number };
   chats: number;
   vault: boolean;
+  discoveries: string[];
+  redeemed: Record<string, number>;
+  wishes: string[];
+  dreams: Record<string, string>;
+  fragments: number;
+  pokes: number;
+  plantActions: string[];
+  endingSeen: boolean;
 };
 const initial: Progress = {
   entered: false,
@@ -26,6 +35,14 @@ const initial: Progress = {
   companion: { happiness: 70, love: 90, miss: 100 },
   chats: 0,
   vault: false,
+  discoveries: [],
+  redeemed: {},
+  wishes: [],
+  dreams: {},
+  fragments: 0,
+  pokes: 0,
+  plantActions: [],
+  endingSeen: false,
 };
 type UniverseContext = {
   progress: Progress;
@@ -34,12 +51,17 @@ type UniverseContext = {
   ready: boolean;
   toast: string;
   notify: (message: string) => void;
+  discover: (id: string) => void;
+  reset: (area: string) => void;
+  simulation: string;
+  simulate: (value: string) => void;
 };
 const Context = createContext<UniverseContext | null>(null);
 export function UniverseProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState(initial);
   const [ready, setReady] = useState(false);
   const [toast, setToast] = useState("");
+  const [simulation, simulate] = useState("");
   const previous = useRef<string[] | null>(null);
   useEffect(() => {
     let active = true;
@@ -53,6 +75,45 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
             ...saved,
             entered: saved.entered === true,
             vault: saved.vault === true,
+            discoveries: Array.isArray(saved.discoveries)
+              ? saved.discoveries.filter((v: unknown) => typeof v === "string")
+              : [],
+            plantActions: Array.isArray(saved.plantActions)
+              ? saved.plantActions.filter((v: unknown) => typeof v === "string")
+              : [],
+            wishes: Array.isArray(saved.wishes)
+              ? saved.wishes
+                  .filter((v: unknown) => typeof v === "string")
+                  .slice(0, 100)
+              : [],
+            redeemed:
+              saved.redeemed &&
+              typeof saved.redeemed === "object" &&
+              !Array.isArray(saved.redeemed)
+                ? Object.fromEntries(
+                    Object.entries(saved.redeemed).filter(
+                      ([, v]) =>
+                        typeof v === "number" && Number.isFinite(v) && v >= 0,
+                    ),
+                  )
+                : {},
+            dreams:
+              saved.dreams &&
+              typeof saved.dreams === "object" &&
+              !Array.isArray(saved.dreams)
+                ? Object.fromEntries(
+                    Object.entries(saved.dreams).filter(
+                      ([, v]) =>
+                        typeof v === "string" && Number.isFinite(Date.parse(v)),
+                    ),
+                  )
+                : {},
+            fragments: Math.min(
+              codePuzzles.length,
+              Math.max(0, Math.floor(Number(saved.fragments) || 0)),
+            ),
+            pokes: Math.max(0, Math.floor(Number(saved.pokes) || 0)),
+            endingSeen: saved.endingSeen === true,
             unlocked: Array.isArray(saved.unlocked)
               ? saved.unlocked.filter(
                   (id: unknown) =>
@@ -114,6 +175,60 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
       p.unlocked.includes(id) ? p : { ...p, unlocked: [...p.unlocked, id] },
     );
   }, []);
+  const discover = useCallback((id: string) => {
+    setProgress((p) =>
+      p.discoveries.includes(id)
+        ? p
+        : {
+            ...p,
+            discoveries: [...p.discoveries, id],
+            plantActions: [...new Set([...p.plantActions, id])],
+          },
+    );
+  }, []);
+  const reset = useCallback((area: string) => {
+    if (process.env.NODE_ENV !== "development") return;
+    if(area === "unlock") simulate("unlocked");
+    if(area === "all" || area === "capsule" || area === "letters") simulate("");
+    setProgress((p) =>
+      area === "all"
+        ? initial
+        : area === "unlock"
+          ? {
+              ...p,
+              entered: true,
+              vault: true,
+              fragments: codePuzzles.length,
+              reasons: 100,
+              discoveries: Array.from({ length: 18 }, (_, i) => `dev-${i}`),
+              plantActions: Array.from({ length: 20 }, (_, i) => `dev-${i}`),
+              unlocked: achievements.map((a) => a.id),
+            }
+          : area === "achievements"
+            ? { ...p, unlocked: [] }
+            : area === "coupons"
+              ? { ...p, redeemed: {} }
+              : area === "constellation"
+                ? { ...p, discoveries: [], explored: [] }
+                : area === "plant"
+                  ? { ...p, plantActions: [] }
+                  : area === "vault"
+                    ? { ...p, vault: false, fragments: 0 }
+                    : area === "games" ? {...p, fragments:0, discoveries:p.discoveries.filter(id=>!id.startsWith("game-")),unlocked:p.unlocked.filter(id=>!["quiz","memory","hearts","puzzle","crossword","code","kisses","arcade"].includes(id))}
+                    : area === "letters" ? {...p,discoveries:p.discoveries.filter(id=>id!=="letter")}
+                    : area === "ending"
+                      ? { ...p, endingSeen: false }
+                      : {
+                          ...p,
+                          discoveries: p.discoveries.filter(
+                            (id) => !id.includes(area),
+                          ),
+                          unlocked: p.unlocked.filter(
+                            (id) => !id.includes(area),
+                          ),
+                        },
+    );
+  }, []);
   useEffect(() => {
     if (!ready) return;
     const added = progress.unlocked.filter(
@@ -132,7 +247,18 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
   }, [progress.unlocked, ready]);
   return (
     <Context.Provider
-      value={{ progress, update, unlock, ready, toast, notify: setToast }}
+      value={{
+        progress,
+        update,
+        unlock,
+        ready,
+        toast,
+        notify: setToast,
+        discover,
+        reset,
+        simulation,
+        simulate,
+      }}
     >
       {children}
     </Context.Provider>

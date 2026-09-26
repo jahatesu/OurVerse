@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
 import { Heart, Cookie, Smile, Sparkles, Send } from "lucide-react";
 import { companionResponses, chatRules, chatFallbacks } from "@/data/messages";
 import { pick } from "@/lib/utils";
 import { useUniverse } from "./provider";
 import { SectionHeading } from "./ui";
+import { Couple, type CoupleScene } from "./characters";
 export function Companion({ compact = false }: { compact?: boolean }) {
-  const { progress, update, unlock } = useUniverse();
+  const { progress, update, unlock, discover } = useUniverse();
   const [reaction, setReaction] = useState("");
   const [bubble, setBubble] = useState("Waiting for my favorite human…");
   const [animation, setAnimation] = useState(0);
@@ -15,6 +15,18 @@ export function Companion({ compact = false }: { compact?: boolean }) {
     setReaction(action);
     setAnimation((n) => n + 1);
     setBubble(pick(companionResponses[action]));
+    discover("companion");
+    if (action === "Annoy") {
+      update((p) => ({ ...p, pokes: p.pokes + 1 }));
+      setBubble(
+        progress.pokes >= 4
+          ? "STOP POKING ME >:("
+          : progress.pokes >= 2
+            ? "Josh. I can chase you, you know."
+            : "JOSHHHH",
+      );
+      if (progress.pokes >= 4) unlock("professional-annoyer");
+    }
     update((p) => ({
       ...p,
       companion: {
@@ -40,38 +52,20 @@ export function Companion({ compact = false }: { compact?: boolean }) {
         </span>
       </div>
       <div className="avatar-stage">
-        <motion.div
-          key={`avatar-${animation}`}
-          animate={
-            reaction === "Annoy"
-              ? { rotate: [0, -8, 8, -8, 0] }
-              : { y: [0, -8, 0] }
+        <Couple
+          key={animation}
+          scene={
+            reaction === "Kiss"
+              ? "kiss"
+              : reaction === "Hug"
+                ? "hug"
+                : reaction === "Annoy"
+                  ? "poke"
+                  : reaction === "Feed"
+                    ? "celebrate"
+                    : "sit"
           }
-          className={`mini-avatar ${reaction === "Kiss" ? "blushing" : ""}`}
-          aria-label="Mini Janna, an original smiling avatar"
-        >
-          <div className="avatar-hair" />
-          <div className="avatar-body" />
-          <div className="avatar-face">
-            <span className="avatar-eyes">⌒ ⌒</span>
-            <span className="avatar-cheek left" />
-            <span className="avatar-cheek right" />
-            <span className="avatar-mouth">ᴗ</span>
-          </div>
-          <span className="avatar-bow">✿</span>
-        </motion.div>
-        <span className="avatar-sparkle">✧</span>
-        <span className="avatar-heart">♡</span>
-        {reaction === "Hug" && (
-          <motion.span
-            key={`hug-${animation}`}
-            className="hug-particle"
-            animate={{ y: [0, -70], opacity: [1, 0] }}
-            transition={{ duration: 1.5 }}
-          >
-            ♡ ♥ ♡
-          </motion.span>
-        )}
+        />
       </div>
       <p className="companion-bubble" aria-live="polite">
         {bubble}
@@ -118,6 +112,7 @@ export function Companion({ compact = false }: { compact?: boolean }) {
   );
 }
 export function CompanionRoom() {
+  const [scene, setScene] = useState<CoupleScene>("hold-hands");
   const chatLog = useRef<HTMLDivElement>(null);
   const { progress, update, unlock } = useUniverse();
   const [input, setInput] = useState("");
@@ -204,6 +199,35 @@ export function CompanionRoom() {
           </form>
         </section>
       </div>
+      <section className="couple-playground">
+        <h2>Two little people. Our whole universe.</h2>
+        <Couple key={scene} scene={scene} />
+        <div className="world-links">
+          {(
+            [
+              "hold-hands",
+              "hug",
+              "kiss",
+              "heart",
+              "sleep",
+              "hoodie",
+              "poke",
+              "gaming",
+              "walk",
+              "dance",
+              "celebrate",
+            ] as CoupleScene[]
+          ).map((s) => (
+            <button
+              key={s}
+              aria-pressed={s === scene}
+              onClick={() => setScene(s)}
+            >
+              {s.replace("-", " ")}
+            </button>
+          ))}
+        </div>
+      </section>
     </>
   );
 }

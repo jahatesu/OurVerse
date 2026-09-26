@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { songs } from "@/data/songs";
 import { SectionHeading } from "./ui";
+import { Couple } from "./characters";
 type PlayerState = {
   index: number;
   playing: boolean;
@@ -251,6 +252,7 @@ export function MusicRoom() {
           </div>
         </div>
       </div>
+      <Couple scene="sit" caption="our favorite kind of quiet." />
     </>
   );
 }

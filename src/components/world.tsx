@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Sun, Moon, Heart } from "lucide-react";
 import { relationship } from "@/data/relationship";
 import { SectionHeading } from "./ui";
+import { OurVerseCharacter } from "./characters";
 function localTime(now: Date, zone: string) {
   return {
     time: new Intl.DateTimeFormat("en-US", {
@@ -43,14 +44,14 @@ export function World() {
   }, []);
   const locations = [
     {
-      name: "Janna",
-      location: "Philippines",
+      name: relationship.names.author,
+      location: relationship.locations.author,
       zone: relationship.authorTimezone,
       flag: "🇵🇭",
     },
     {
-      name: "Josh",
-      location: "Colorado, USA",
+      name: relationship.names.recipient,
+      location: relationship.locations.recipient,
       zone: relationship.recipientTimezone,
       flag: "🇺🇸",
     },
@@ -124,7 +125,15 @@ export function World() {
             const local = now ? localTime(now, person.zone) : null;
             const daytime = local && local.hour >= 6 && local.hour < 18;
             return (
-              <div className="timezone-card" key={person.name}>
+              <div
+                className={`timezone-card sky-${local && local.hour >= 17 && local.hour < 20 ? "sunset" : daytime ? "day" : "night"}`}
+                key={person.name}
+              >
+                <OurVerseCharacter
+                  character={person.name === "Janna" ? "janna" : "josh"}
+                  pose="sit"
+                  expression={daytime ? "happy" : "sleepy"}
+                />
                 <span className="eyebrow">
                   {person.flag} {person.location}
                 </span>
@@ -147,6 +156,13 @@ export function World() {
           <em>you’re still my favorite person.</em>
         </blockquote>
         <Heart className="world-heart" size={24} />
+        <p className="same-us">
+          same sky.
+          <br />
+          same moon.
+          <br />
+          same us.
+        </p>
       </section>
     </>
   );

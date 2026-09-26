@@ -26,7 +26,7 @@ export const letters: Letter[] = [
   {
     id: "birthday",
     title: "A birthday wish for you",
-    unlockDate: "2027-12-31T00:00:00+08:00",
-    body: "Happy birthday, my favorite human! Edit the placeholder unlock date to Josh’s birthday and write your letter here. ♡",
+    occasion: "birthday",
+    body: "Happy birthday, my favorite human! Replace this sample with your birthday letter. ♡",
   },
 ];

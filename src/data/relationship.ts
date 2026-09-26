@@ -3,6 +3,7 @@ export const relationship = {
   startDate: "2026-04-21T00:00:00+08:00",
   authorTimezone: "Asia/Manila",
   recipientTimezone: "America/Denver",
+  locations: {author:"Philippines",recipient:"Colorado, USA"},
   vaultPassword: "04212026",
   vaultHint: "The date everything started. MMDDYYYY",
   finalLetter:

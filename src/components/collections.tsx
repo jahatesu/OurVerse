@@ -12,10 +12,14 @@ import type { Memory, Milestone, Letter } from "@/data/types";
 import { dateLabel } from "@/lib/utils";
 import { SectionHeading, Modal } from "./ui";
 import { useUniverse } from "./provider";
+import { Couple } from "./characters";
+import { dreams } from "@/data/expansion";
+import { settings } from "@/config/settings";
+import { relationship } from "@/data/relationship";
 export function MemoryRoom() {
   const [category, setCategory] = useState("All");
   const [selected, setSelected] = useState<Memory | null>(null);
-  const { unlock } = useUniverse();
+  const { unlock, discover, progress } = useUniverse();
   return (
     <>
       <SectionHeading
@@ -46,7 +50,8 @@ export function MemoryRoom() {
           </button>
         ))}
       </div>
-      <div className="memory-grid">
+      <Couple scene="sit" caption="remember this little piece of us?" />
+      <div className="memory-grid scrapbook" onPointerMove={e=>{if(e.pointerType!=="mouse"||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;const box=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty("--paper-drift",`${(e.clientX-box.left-box.width/2)/90}px`)}} onPointerLeave={e=>e.currentTarget.style.setProperty("--paper-drift","0px")}>
         {memories
           .filter((m) => category === "All" || m.category === category)
           .map((memory, i) => (
@@ -56,7 +61,10 @@ export function MemoryRoom() {
               animate={{ opacity: 1, y: 0, rotate: [-2, 2, -1][i % 3] }}
               className="polaroid"
               key={memory.id}
-              onClick={() => setSelected(memory)}
+              onClick={() => {
+                setSelected(memory);
+                discover("memory");
+              }}
             >
               <span className="tape" />
               <Image
@@ -72,6 +80,30 @@ export function MemoryRoom() {
             </motion.button>
           ))}
       </div>
+      {dreams
+        .filter((d) => progress.dreams[d.id])
+        .map((d) => (
+          <button
+            key={d.id}
+            className="polaroid dream-memory"
+            onClick={() =>
+              setSelected({
+                id: d.id,
+                image: d.photo,
+                date: progress.dreams[d.id],
+                caption: d.title,
+                description: d.description,
+                category: "Us",
+              })
+            }
+          >
+            <Image src={d.photo} alt={d.title} width={350} height={240} />
+            <span>{d.title}</span>
+            <small>
+              {dateLabel(progress.dreams[d.id])} · A dream became a memory
+            </small>
+          </button>
+        ))}
       <p className="placeholder-note">
         Illustrated sample memories — ready for our real photographs.
       </p>
@@ -117,6 +149,7 @@ export function MemoryRoom() {
   );
 }
 export function Story() {
+  const { discover, progress } = useUniverse();
   const [selected, setSelected] = useState<Milestone | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -131,7 +164,20 @@ export function Story() {
         title="The story of us."
         description="A few moments that turned you and me into our favorite word: us."
       />
-      <div className="timeline" ref={timelineRef}>
+      <div className="timeline story-constellation" ref={timelineRef}>
+        <svg
+          className="story-lines"
+          viewBox="0 0 1000 400"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M130 200L490 80L830 260"
+            fill="none"
+            stroke="#c2afd8"
+            strokeDasharray="5 8"
+          />
+        </svg>
         <motion.div
           className="timeline-progress"
           style={{ scaleY: reduced ? 1 : scrollYProgress }}
@@ -139,12 +185,15 @@ export function Story() {
         />
         {timeline.map((item, i) => (
           <motion.button
-            className="timeline-item"
+            className={`timeline-item ${progress.discoveries.includes(`story-${i}`) ? "illuminated" : ""}`}
             key={item.title}
             initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            onClick={() => setSelected(item)}
+            onClick={() => {
+              setSelected(item);
+              discover(`story-${i}`);
+            }}
           >
             <span className="timeline-dot">{item.icon}</span>
             <div className="timeline-copy">
@@ -184,6 +233,7 @@ export function Story() {
   );
 }
 export function Letters() {
+  const { discover, simulation } = useUniverse();
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -200,8 +250,8 @@ export function Letters() {
       />
       <div className="letters-grid">
         {letters.map((letter) => {
-          const locked =
-            !!letter.unlockDate && now < new Date(letter.unlockDate).getTime();
+          const birthdayToday = new Intl.DateTimeFormat("en-US",{timeZone:relationship.recipientTimezone,month:"2-digit",day:"2-digit"}).format(new Date(now)).replace("/","-") === settings.birthday;
+          const locked = simulation === "unlocked" ? false : letter.occasion === "birthday" ? !(birthdayToday || simulation === "birthday") : !!letter.unlockDate && now < new Date(letter.unlockDate).getTime() && !(simulation === "anniversary" && letter.id === "anniversary");
           return (
             <button
               key={letter.id}
@@ -210,7 +260,7 @@ export function Letters() {
               onClick={() => setOpening(letter.id)}
             >
               <motion.div
-                className="envelope"
+                className={`envelope ${opening===letter.id?"envelope-opening":""}`}
                 animate={
                   opening === letter.id
                     ? {
@@ -224,10 +274,12 @@ export function Letters() {
                 onAnimationComplete={() => {
                   if (opening === letter.id) {
                     setSelected(letter);
+                    discover("letter");
                     setOpening(null);
                   }
                 }}
               >
+                <i className="envelope-paper" aria-hidden="true">dear Josh, ♡</i>
                 <div className="envelope-flap" />
                 <span>
                   {locked ? <LockKeyhole size={20} /> : <Heart size={22} />}
@@ -236,7 +288,7 @@ export function Letters() {
               <h3>{letter.title}</h3>
               <p>
                 {locked
-                  ? `Opens ${dateLabel(letter.unlockDate!)}`
+                  ? letter.occasion === "birthday" ? settings.birthday ? "For your birthday" : "Birthday date to be added" : `Opens ${dateLabel(letter.unlockDate!)}`
                   : "A little love, just for you"}
               </p>
             </button>
@@ -244,8 +296,7 @@ export function Letters() {
         })}
       </div>
       <p className="placeholder-note">
-        Letters include sample prose. Anniversary date is set; birthday date is
-        a placeholder.
+        Letters include sample prose, ready for Janna’s own words.
       </p>
       {selected && (
         <Modal title={selected.title} onClose={() => setSelected(null)}>
@@ -259,13 +310,15 @@ export function Letters() {
   );
 }
 export function Love() {
-  const { progress, update, unlock } = useUniverse();
+  const { progress, update, unlock, discover } = useUniverse();
   const [showAchievements, setShowAchievements] = useState(false);
   function reveal() {
     if (progress.reasons >= 100) return;
     update((p) => ({ ...p, reasons: Math.min(100, p.reasons + 1) }));
+    if (progress.reasons === 0) discover("reasons");
     if (progress.reasons === 99) {
       unlock("reasons");
+      discover("100-reasons");
       update((p) => ({ ...p, vault: true }));
     }
   }
@@ -308,7 +361,7 @@ export function Love() {
             <h3>You really thought there were only 100?</h3>
             <p>
               There’s an infinity left. The Secret Vault is now open for you —
-              find it in the sidebar.
+              find its mysterious object in our galaxy.
             </p>
           </div>
         )}

@@ -48,7 +48,7 @@ export function Modal({
       if (event.key === "Escape") close.current();
       if (event.key === "Tab") {
         const elements = ref.current?.querySelectorAll<HTMLElement>(
-          'button:not(:disabled), a[href], input:not(:disabled), textarea:not(:disabled), [tabindex="0"]',
+          'button:not(:disabled), a[href], input:not(:disabled), textarea:not(:disabled), select:not(:disabled), summary, [tabindex="0"]',
         );
         if (!elements?.length) {
           event.preventDefault();

@@ -1,13 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { LockKeyhole, KeyRound, Heart } from "lucide-react";
 import { relationship } from "@/data/relationship";
 import { vaultContent } from "@/data/secrets";
 import { SectionHeading, Modal } from "./ui";
 import { useUniverse } from "./provider";
+import { Couple } from "./characters";
+import { endingLines } from "@/data/expansion";
+import { Constellation } from "./galaxy";
+import { settings } from "@/config/settings";
 export function Vault() {
-  const { progress, update, unlock } = useUniverse();
+  const { progress, update, unlock, discover } = useUniverse();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [opening, setOpening] = useState(false);
@@ -15,6 +19,8 @@ export function Vault() {
     if (password.trim() === relationship.vaultPassword) {
       setOpening(true);
       unlock("secret");
+      unlock("vault");
+      discover("vault");
     } else setError("Not quite, my love. Think back to our beginning.");
   }
   return (
@@ -103,28 +109,37 @@ export function Vault() {
   );
 }
 export function Ending({ onClose }: { onClose: () => void }) {
+  const { update } = useUniverse();
+  const reduced = useReducedMotion();
   const [step, setStep] = useState(0);
   useEffect(() => {
-    if (step >= 2) return;
+    if (step >= endingLines.length || reduced) return;
     const timer = setTimeout(() => setStep((s) => s + 1), 3500);
     return () => clearTimeout(timer);
-  }, [step]);
+  }, [step, reduced]);
+  useEffect(()=>{if(step>=endingLines.length)update(p=>({...p,endingSeen:true}))},[step,update]);
   return (
     <Modal title="One more thing…" onClose={onClose}>
-      <div className="ending">
+      <div className={`ending cinematic-ending ending-step-${step}`}>
+        <Constellation full illuminated={Math.min(settings.constellationTarget,Math.ceil(step*settings.constellationTarget/5))}/>
+        <Couple scene={step < 6 ? "walk" : step < 9 ? "hug" : "sit"} />
         <motion.div
           key={step}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.5 }}
         >
-          {step < 2 ? (
+          {step < endingLines.length ? (
             <>
               <span className="ending-star">✦</span>
-              <h2>{step === 0 ? "Josh…" : "There’s one more thing."}</h2>
+              <h2>{endingLines[step]}</h2>
               <button
                 className="text-button"
-                onClick={() => setStep((s) => s + 1)}
+                onClick={() => {
+                  setStep((s) => s + 1);
+                  if (step === endingLines.length - 1)
+                    update((p) => ({ ...p, endingSeen: true }));
+                }}
               >
                 Keep going ♡
               </button>
@@ -132,7 +147,13 @@ export function Ending({ onClose }: { onClose: () => void }) {
           ) : (
             <>
               <Heart size={36} />
-              <p>{relationship.finalLetter}</p>
+              <h2>OURVERSE</h2>
+              <p>Janna ♡ Josh</p>
+              <p className="handwritten">to be continued…</p>
+              <details>
+                <summary>Keep this letter</summary>
+                <p>{relationship.finalLetter}</p>
+              </details>
               <div className="ending-stars">✧ · ♡ · ✦ · ♡ · ✧</div>
             </>
           )}

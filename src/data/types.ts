@@ -20,6 +20,7 @@ export interface Letter {
   title: string;
   body: string;
   unlockDate?: string;
+  occasion?: "birthday";
 }
 export interface Question {
   question: string;

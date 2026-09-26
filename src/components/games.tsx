@@ -601,7 +601,7 @@ function CatchHearts() {
   );
 }
 function Roulette() {
-  const {discover} = useUniverse();
+  const { discover } = useUniverse();
   const reduced = useReducedMotion();
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);

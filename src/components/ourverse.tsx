@@ -18,6 +18,7 @@ import { Vault, Ending } from "./secrets";
 import { Modal } from "./ui";
 import { settings } from "@/config/settings";
 import { relationship } from "@/data/relationship";
+import "./infinity-footer.css";
 const GameRoom = dynamic(() => import("./games"), {
   loading: () => (
     <p className="section-loading">Turning on the arcade lights…</p>
@@ -81,13 +82,27 @@ function Shell() {
   const [entering, setEntering] = useState(false);
   const [dev, setDev] = useState(false);
   const [randomHug, setRandomHug] = useState(false);
-  const [clock, setClock] = useState(()=>new Date());
+  const [clock, setClock] = useState(() => new Date());
   const main = useRef<HTMLElement>(null);
   const logoClicks = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
-  useEffect(()=>{const tick=setInterval(()=>setClock(new Date()),60000);return()=>clearInterval(tick)},[]);
-  useEffect(()=>{if(!progress.entered)return;let leave:ReturnType<typeof setTimeout>;const visit=setTimeout(()=>{setRandomHug(true);leave=setTimeout(()=>setRandomHug(false),6000)},settings.rareHugDelayMs);return()=>{clearTimeout(visit);clearTimeout(leave)}},[progress.entered]);
+  useEffect(() => {
+    const tick = setInterval(() => setClock(new Date()), 60000);
+    return () => clearInterval(tick);
+  }, []);
+  useEffect(() => {
+    if (!progress.entered) return;
+    let leave: ReturnType<typeof setTimeout>;
+    const visit = setTimeout(() => {
+      setRandomHug(true);
+      leave = setTimeout(() => setRandomHug(false), 6000);
+    }, settings.rareHugDelayMs);
+    return () => {
+      clearTimeout(visit);
+      clearTimeout(leave);
+    };
+  }, [progress.entered]);
   const navigate = useCallback(
     (id: string, history = true) => {
       setSection(id);
@@ -235,7 +250,11 @@ function Shell() {
       />
     );
   const occasion =
-    (simulation ? (["birthday","anniversary","late-night"].includes(simulation) ? simulation : "normal") : "") ||
+    (simulation
+      ? ["birthday", "anniversary", "late-night"].includes(simulation)
+        ? simulation
+        : "normal"
+      : "") ||
     (() => {
       const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: relationship.authorTimezone,
@@ -249,7 +268,15 @@ function Shell() {
         ? "birthday"
         : settings.anniversary === date
           ? "anniversary"
-          : Number(new Intl.DateTimeFormat("en-GB",{timeZone:relationship.recipientTimezone,hour:"numeric",hourCycle:"h23"}).format(clock))<5 ? "late-night" : "";
+          : Number(
+                new Intl.DateTimeFormat("en-GB", {
+                  timeZone: relationship.recipientTimezone,
+                  hour: "numeric",
+                  hourCycle: "h23",
+                }).format(clock),
+              ) < 5
+            ? "late-night"
+            : "";
     })();
   return (
     <>
@@ -370,14 +397,37 @@ function Shell() {
               <Constellation />
             </div>
           )}
-          <footer className="universe-footer">
-            <span>OUR OWN LITTLE INFINITY</span>
-            <button onClick={() => travel("press")} aria-label="A little heart">
-              ♡
-            </button>
-            <span>MADE WITH LOVE, FROM JANNA</span>
-          </footer>
           <FloatingPlayer navigate={() => travel("music")} />
+          <footer className="universe-footer infinity-footer">
+            <div className="infinity-atmosphere" aria-hidden="true">
+              <div className="infinity-haze" />
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <i key={i} className={`infinity-star infinity-star-${i}`} />
+              ))}
+              <span className="infinity-dust dust-a" /><span className="infinity-dust dust-b" />
+              <span className="infinity-shooting-star" />
+            </div>
+            <div className="infinity-letter">
+              <p className="infinity-message">our own little infinity.</p>
+              <p className="infinity-signature">
+                made with love, from Janna
+                <button className="infinity-heart" onClick={() => travel("press")} aria-label="A little heart">
+                  <span className="infinity-heart-glyph" aria-hidden="true">♡</span>
+                  <span className="infinity-heart-particles" aria-hidden="true"><i /><i /><i /></span>
+                </button>
+              </p>
+            </div>
+            {process.env.NODE_ENV === "development" && (
+              <button
+                type="button"
+                className="dev-mode-pill"
+                onClick={() => setDev(true)}
+                title="Open Janna’s development controls (Alt + Shift + D)"
+              >
+                Janna Mode ✦
+              </button>
+            )}
+          </footer>
           {section !== "companion" && (
             <button
               className="companion-peek"
@@ -423,9 +473,9 @@ function Shell() {
         >
           <nav className="explore-menu" aria-label="Main navigation">
             {navigation.map(([id, title]) => (
-                <button
-                  key={id}
-                  aria-label={title}
+              <button
+                key={id}
+                aria-label={title}
                 aria-current={section === id ? "page" : undefined}
                 onClick={() => travel(id)}
               >
@@ -441,47 +491,278 @@ function Shell() {
           ✦ {toast}
         </div>
       )}
-      {randomHug && !menu && !ending && <div className="random-hug" aria-hidden="true"><Couple scene="hug"/></div>}
+      {randomHug && !menu && !ending && (
+        <div className="random-hug" aria-hidden="true">
+          <Couple scene="hug" />
+        </div>
+      )}
       {ending && <Ending onClose={() => setEnding(false)} />}
       {process.env.NODE_ENV === "development" && dev && (
         <Modal
           title="Janna’s development controls"
           onClose={() => setDev(false)}
         >
-          <p>Local browser only. Alt + Shift + D to reopen.</p>
+          <p>Local browser testing only. Alt + Shift + D to toggle.</p>
           <div className="dev-controls">
-            {[
-              "all",
-              "achievements",
-              "coupons",
-              "constellation",
-              "plant",
-              "games",
-              "puzzle",
-              "letters",
-              "vault",
-              "capsule",
-              "ending",
-            ].map((area) => (
-              <button
-                key={area}
-                onClick={() => {
-                  reset(area);
-                  setDev(false);
-                  navigate("home");
-                }}
-              >
-                Reset {area}
-              </button>
-            ))}
-            <button onClick={() => reset("unlock")}>
-              Unlock all / complete constellation
-            </button>
-            {["birthday", "anniversary", "late-night", "normal", ""].map((value) => (
-              <button key={value} onClick={() => simulate(value)}>
-                Simulate {value || "real clock"}
-              </button>
-            ))}
+            <div className="dev-group">
+              <h4>Love Plant previews</h4>
+              <div className="dev-buttons">
+                {[
+                  "Seed",
+                  "Sprout",
+                  "Small plant",
+                  "Large plant",
+                  "Flowering",
+                ].map((label, stage) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => {
+                      update((p) => ({
+                        ...p,
+                        plantActions: Array.from(
+                          { length: stage * 4 },
+                          (_, i) => `dev-plant-${i}`,
+                        ),
+                      }));
+                      setDev(false);
+                      navigate("garden");
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="dev-group">
+              <h4>✦ Unlocks & Simulations</h4>
+              <div className="dev-buttons">
+                <button
+                  type="button"
+                  className="dev-action-primary"
+                  onClick={() => {
+                    reset("unlock-all");
+                    setDev(false);
+                    navigate("home");
+                  }}
+                >
+                  Unlock all / full universe
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("mature-plant");
+                    setDev(false);
+                    navigate("garden");
+                  }}
+                >
+                  Mature Love Plant (Stage 4)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("vault-unlock");
+                    setDev(false);
+                    navigate("vault");
+                  }}
+                >
+                  Unlock Secret Vault
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("capsule-available");
+                    setDev(false);
+                    navigate("capsule");
+                  }}
+                >
+                  Simulate Capsule / Gifts Open
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("constellation-full");
+                    setDev(false);
+                    navigate("home");
+                  }}
+                >
+                  Full Constellation (Ending Ready)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("achievements-all");
+                    setDev(false);
+                    navigate("love");
+                  }}
+                >
+                  Unlock All Achievements
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    simulate("birthday");
+                    setDev(false);
+                  }}
+                >
+                  Simulate Birthday
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    simulate("anniversary");
+                    setDev(false);
+                  }}
+                >
+                  Simulate Anniversary
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    simulate("late-night");
+                    setDev(false);
+                  }}
+                >
+                  Simulate Late-Night (Can’t Sleep)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    simulate("");
+                    setDev(false);
+                  }}
+                >
+                  Reset Clock to Real Time
+                </button>
+              </div>
+            </div>
+
+            <div className="dev-group">
+              <h4>↺ Reset Progress</h4>
+              <div className="dev-buttons">
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("all");
+                    setDev(false);
+                    navigate("home");
+                  }}
+                >
+                  Reset all progress
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("plant");
+                    setDev(false);
+                    navigate("garden");
+                  }}
+                >
+                  Reset Love Plant
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("achievements");
+                    setDev(false);
+                  }}
+                >
+                  Reset achievements
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("exploration");
+                    setDev(false);
+                  }}
+                >
+                  Reset exploration
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("constellation");
+                    setDev(false);
+                  }}
+                >
+                  Reset constellation
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("coupons");
+                    setDev(false);
+                    navigate("coupons");
+                  }}
+                >
+                  Reset coupons
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("games");
+                    setDev(false);
+                    navigate("games");
+                  }}
+                >
+                  Reset all games
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("puzzle");
+                    setDev(false);
+                  }}
+                >
+                  Reset Piece of Us
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("crossword");
+                    setDev(false);
+                  }}
+                >
+                  Reset crossword
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("code");
+                    setDev(false);
+                  }}
+                >
+                  Reset code puzzles
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("vault");
+                    setDev(false);
+                  }}
+                >
+                  Reset vault lock
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("capsule");
+                    setDev(false);
+                  }}
+                >
+                  Reset time capsule
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    reset("ending");
+                    setDev(false);
+                  }}
+                >
+                  Reset ending
+                </button>
+              </div>
+            </div>
           </div>
         </Modal>
       )}

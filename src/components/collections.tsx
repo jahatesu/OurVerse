@@ -51,7 +51,24 @@ export function MemoryRoom() {
         ))}
       </div>
       <Couple scene="sit" caption="remember this little piece of us?" />
-      <div className="memory-grid scrapbook" onPointerMove={e=>{if(e.pointerType!=="mouse"||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;const box=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty("--paper-drift",`${(e.clientX-box.left-box.width/2)/90}px`)}} onPointerLeave={e=>e.currentTarget.style.setProperty("--paper-drift","0px")}>
+      <div
+        className="memory-grid scrapbook"
+        onPointerMove={(e) => {
+          if (
+            e.pointerType !== "mouse" ||
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          )
+            return;
+          const box = e.currentTarget.getBoundingClientRect();
+          e.currentTarget.style.setProperty(
+            "--paper-drift",
+            `${(e.clientX - box.left - box.width / 2) / 90}px`,
+          );
+        }}
+        onPointerLeave={(e) =>
+          e.currentTarget.style.setProperty("--paper-drift", "0px")
+        }
+      >
         {memories
           .filter((m) => category === "All" || m.category === category)
           .map((memory, i) => (
@@ -250,8 +267,24 @@ export function Letters() {
       />
       <div className="letters-grid">
         {letters.map((letter) => {
-          const birthdayToday = new Intl.DateTimeFormat("en-US",{timeZone:relationship.recipientTimezone,month:"2-digit",day:"2-digit"}).format(new Date(now)).replace("/","-") === settings.birthday;
-          const locked = simulation === "unlocked" ? false : letter.occasion === "birthday" ? !(birthdayToday || simulation === "birthday") : !!letter.unlockDate && now < new Date(letter.unlockDate).getTime() && !(simulation === "anniversary" && letter.id === "anniversary");
+          const birthdayToday =
+            new Intl.DateTimeFormat("en-US", {
+              timeZone: relationship.recipientTimezone,
+              month: "2-digit",
+              day: "2-digit",
+            })
+              .format(new Date(now))
+              .replace("/", "-") === settings.birthday;
+          const locked =
+            simulation === "unlocked"
+              ? false
+              : letter.occasion === "birthday"
+                ? !(birthdayToday || simulation === "birthday")
+                : !!letter.unlockDate &&
+                  now < new Date(letter.unlockDate).getTime() &&
+                  !(
+                    simulation === "anniversary" && letter.id === "anniversary"
+                  );
           return (
             <button
               key={letter.id}
@@ -260,7 +293,7 @@ export function Letters() {
               onClick={() => setOpening(letter.id)}
             >
               <motion.div
-                className={`envelope ${opening===letter.id?"envelope-opening":""}`}
+                className={`envelope ${opening === letter.id ? "envelope-opening" : ""}`}
                 animate={
                   opening === letter.id
                     ? {
@@ -279,7 +312,9 @@ export function Letters() {
                   }
                 }}
               >
-                <i className="envelope-paper" aria-hidden="true">dear Josh, ♡</i>
+                <i className="envelope-paper" aria-hidden="true">
+                  dear Josh, ♡
+                </i>
                 <div className="envelope-flap" />
                 <span>
                   {locked ? <LockKeyhole size={20} /> : <Heart size={22} />}
@@ -288,7 +323,11 @@ export function Letters() {
               <h3>{letter.title}</h3>
               <p>
                 {locked
-                  ? letter.occasion === "birthday" ? settings.birthday ? "For your birthday" : "Birthday date to be added" : `Opens ${dateLabel(letter.unlockDate!)}`
+                  ? letter.occasion === "birthday"
+                    ? settings.birthday
+                      ? "For your birthday"
+                      : "Birthday date to be added"
+                    : `Opens ${dateLabel(letter.unlockDate!)}`
                   : "A little love, just for you"}
               </p>
             </button>

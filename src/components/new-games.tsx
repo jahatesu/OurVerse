@@ -135,6 +135,7 @@ export function Crossword() {
   const { unlock, discover } = useUniverse();
   const [values, setValues] = useState<Record<string, string>>({});
   const [active, setActive] = useState(0);
+  const [selectedCell, setSelectedCell] = useState<string | null>(null);
   const [checked, setChecked] = useState(false);
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
   const cells = useMemo(() => {
@@ -168,22 +169,80 @@ export function Crossword() {
       discover("game-crossword");
     }
   }, [won, unlock, discover]);
+
   function clue(index: number) {
     const e = crossword.entries[index];
-    inputs.current[`${e.row}-${e.col}`]?.focus();
+    const firstKey = `${e.row}-${e.col}`;
     setActive(index);
+    setSelectedCell(firstKey);
+    inputs.current[firstKey]?.focus();
   }
+
+  function handleCellClick(key: string, cell: { entries: number[] }) {
+    if (selectedCell === key && cell.entries.length > 1) {
+      // Second tap on the already selected shared cell switches direction
+      const currentPos = cell.entries.indexOf(active);
+      const nextPos = (currentPos + 1) % cell.entries.length;
+      setActive(cell.entries[nextPos]);
+    } else {
+      setSelectedCell(key);
+      if (!cell.entries.includes(active)) {
+        const currentDir = crossword.entries[active]?.direction;
+        const sameDirEntry = cell.entries.find(
+          (idx) => crossword.entries[idx].direction === currentDir,
+        );
+        setActive(sameDirEntry !== undefined ? sameDirEntry : cell.entries[0]);
+      }
+    }
+  }
+
+  function handleCellFocus(key: string, cell: { entries: number[] }) {
+    if (selectedCell !== key) {
+      setSelectedCell(key);
+      if (!cell.entries.includes(active)) {
+        const currentDir = crossword.entries[active]?.direction;
+        const sameDirEntry = cell.entries.find(
+          (idx) => crossword.entries[idx].direction === currentDir,
+        );
+        setActive(sameDirEntry !== undefined ? sameDirEntry : cell.entries[0]);
+      }
+    }
+  }
+
+  const selectedCellData = selectedCell ? cells[selectedCell] : null;
+  const otherEntryIndex =
+    selectedCellData && selectedCellData.entries.length > 1
+      ? selectedCellData.entries.find((i) => i !== active)
+      : undefined;
+
   return (
     <div className="crossword-game">
       <span className="eyebrow">OURVERSE HISTORIAN IN TRAINING</span>
       <h2>OurVerse Crossword</h2>
       <p>
         Tap a clue, then type. Arrow keys move through the grid; tap a crossing
-        twice to change direction.
+        square again to change direction.
       </p>
-      <p className="active-clue" aria-live="polite">
-        {entry.number} {entry.direction}: {entry.clue}
-      </p>
+      <div className="active-clue-bar">
+        <p className="active-clue" aria-live="polite">
+          <strong>
+            {entry.number} {entry.direction.toUpperCase()}:
+          </strong>{" "}
+          {entry.clue}
+        </p>
+        {otherEntryIndex !== undefined && (
+          <button
+            type="button"
+            className="secondary-button switch-dir-button"
+            onClick={() => setActive(otherEntryIndex)}
+            aria-label={`Switch to ${crossword.entries[otherEntryIndex].direction} clue`}
+          >
+            ⇄ Switch to{" "}
+            {crossword.entries[otherEntryIndex].direction.toUpperCase()} (
+            {crossword.entries[otherEntryIndex].number})
+          </button>
+        )}
+      </div>
       <div className="crossword-layout">
         <div
           className="crossword-grid"
@@ -197,33 +256,31 @@ export function Crossword() {
             return cell ? (
               <label
                 key={key}
-                className={`${entryKeys.includes(key) ? "active-word" : ""} ${checked && values[key] !== cell.letter ? "wrong-cell" : ""}`}
+                className={`crossword-cell ${entryKeys.includes(key) ? "active-word" : ""} ${selectedCell === key ? "selected-cell" : ""} ${cell.entries.length > 1 ? "shared-cell" : ""} ${checked && values[key] !== cell.letter ? "wrong-cell" : ""}`}
               >
                 <small>{cell.number}</small>
+                {cell.entries.length > 1 && (
+                  <span
+                    className="shared-dot"
+                    title="Shared Across/Down cell — tap twice to toggle direction"
+                    aria-hidden="true"
+                  >
+                    ⇄
+                  </span>
+                )}
                 <input
                   ref={(el) => {
                     inputs.current[key] = el;
                   }}
-                  aria-label={`Row ${row + 1}, column ${col + 1}${cell.number ? `, clue ${cell.number}` : ""}`}
+                  aria-label={`Row ${row + 1}, column ${col + 1}${cell.number ? `, clue ${cell.number}` : ""}${cell.entries.length > 1 ? ", shared cell" : ""}`}
                   maxLength={1}
                   value={values[key] || ""}
                   autoComplete="off"
                   autoCapitalize="characters"
                   spellCheck={false}
                   inputMode="text"
-                  onFocus={() => {
-                    if (!cell.entries.includes(active))
-                      setActive(cell.entries[0]);
-                  }}
-                  onClick={() => {
-                    if (cell.entries.length > 1)
-                      setActive(
-                        cell.entries[
-                          (cell.entries.indexOf(active) + 1) %
-                            cell.entries.length
-                        ],
-                      );
-                  }}
+                  onFocus={() => handleCellFocus(key, cell)}
+                  onClick={() => handleCellClick(key, cell)}
                   onChange={(e) => {
                     const value = e.target.value
                       .replace(/[^a-z]/gi, "")
@@ -232,20 +289,90 @@ export function Crossword() {
                     setChecked(false);
                     if (value) {
                       const next = entryKeys[entryKeys.indexOf(key) + 1];
-                      if (next) inputs.current[next]?.focus();
+                      if (next) {
+                        setSelectedCell(next);
+                        inputs.current[next]?.focus();
+                      }
                     }
                   }}
                   onKeyDown={(e) => {
                     let target = "";
-                    if (e.key === "Backspace" && !values[key])
-                      target = entryKeys[entryKeys.indexOf(key) - 1];
-                    if (e.key === "ArrowRight") target = `${row}-${col + 1}`;
-                    if (e.key === "ArrowLeft") target = `${row}-${col - 1}`;
-                    if (e.key === "ArrowDown") target = `${row + 1}-${col}`;
-                    if (e.key === "ArrowUp") target = `${row - 1}-${col}`;
-                    if (target && inputs.current[target]) {
+                    if (e.key === "Backspace" && !values[key]) {
+                      const prev = entryKeys[entryKeys.indexOf(key) - 1];
+                      if (prev) {
+                        e.preventDefault();
+                        setSelectedCell(prev);
+                        inputs.current[prev]?.focus();
+                      }
+                    } else if (e.key === "ArrowRight") {
+                      target = `${row}-${col + 1}`;
+                      if (inputs.current[target]) {
+                        e.preventDefault();
+                        setSelectedCell(target);
+                        inputs.current[target]?.focus();
+                        const targetCell = cells[target];
+                        if (targetCell) {
+                          const match = targetCell.entries.find(
+                            (idx) =>
+                              crossword.entries[idx].direction === "across",
+                          );
+                          if (match !== undefined && active !== match)
+                            setActive(match);
+                        }
+                      }
+                    } else if (e.key === "ArrowLeft") {
+                      target = `${row}-${col - 1}`;
+                      if (inputs.current[target]) {
+                        e.preventDefault();
+                        setSelectedCell(target);
+                        inputs.current[target]?.focus();
+                        const targetCell = cells[target];
+                        if (targetCell) {
+                          const match = targetCell.entries.find(
+                            (idx) =>
+                              crossword.entries[idx].direction === "across",
+                          );
+                          if (match !== undefined && active !== match)
+                            setActive(match);
+                        }
+                      }
+                    } else if (e.key === "ArrowDown") {
+                      target = `${row + 1}-${col}`;
+                      if (inputs.current[target]) {
+                        e.preventDefault();
+                        setSelectedCell(target);
+                        inputs.current[target]?.focus();
+                        const targetCell = cells[target];
+                        if (targetCell) {
+                          const match = targetCell.entries.find(
+                            (idx) =>
+                              crossword.entries[idx].direction === "down",
+                          );
+                          if (match !== undefined && active !== match)
+                            setActive(match);
+                        }
+                      }
+                    } else if (e.key === "ArrowUp") {
+                      target = `${row - 1}-${col}`;
+                      if (inputs.current[target]) {
+                        e.preventDefault();
+                        setSelectedCell(target);
+                        inputs.current[target]?.focus();
+                        const targetCell = cells[target];
+                        if (targetCell) {
+                          const match = targetCell.entries.find(
+                            (idx) =>
+                              crossword.entries[idx].direction === "down",
+                          );
+                          if (match !== undefined && active !== match)
+                            setActive(match);
+                        }
+                      }
+                    } else if (e.key === " " && cell.entries.length > 1) {
                       e.preventDefault();
-                      inputs.current[target]?.focus();
+                      const currentPos = cell.entries.indexOf(active);
+                      const nextPos = (currentPos + 1) % cell.entries.length;
+                      setActive(cell.entries[nextPos]);
                     }
                   }}
                 />

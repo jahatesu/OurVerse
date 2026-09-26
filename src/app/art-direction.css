@@ -1,0 +1,261 @@
+/* Midnight atlas — atmosphere, paper, light, and space. */
+:root {
+  --bg: #090c19;
+  --text: #eee6d9;
+  --muted: #aca7b8;
+  --pink: #c797a5;
+  --lavender: #b5a5cc;
+  --display: "Baskerville", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+body {
+  font-family: "Aptos", "Segoe UI", sans-serif;
+  background: radial-gradient(ellipse at 85% 12%, #49324e55, transparent 42%), radial-gradient(ellipse at 4% 48%, #20375150, transparent 44%), #090c19;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.8' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+::selection { background: #a17a9270; color: #fff4e5; }
+:where(button, a, input, textarea):focus-visible { outline: 2px solid #d1b39c; outline-offset: 6px; }
+:where(h1, h2, h3) { font-weight: 400; text-wrap: balance; }
+:where(p, label, strong, small) { overflow-wrap: anywhere; }
+:where(button, input, textarea) { max-width: 100%; }
+.universe-header { background: transparent; backdrop-filter: none; border-bottom: 1px solid #c3b09a20; margin-inline: clamp(20px, 5vw, 80px); padding-inline: 0; }
+.universe-brand { letter-spacing: .17em; }
+.universe-main { max-width: 1380px; padding-inline: clamp(24px, 6vw, 88px); }
+.section-heading { position: relative; padding-block: 20px 14px; }
+.section-heading::before { content: ""; display: block; width: 1px; height: 36px; background: linear-gradient(transparent, #c5a78b90); margin: 0 auto 26px; }
+.section-heading h1 { font-size: clamp(42px, 5.7vw, 82px); letter-spacing: -.055em; line-height: 1.08; font-weight: 400; }
+.section-heading .eyebrow { color: #c5aa91; letter-spacing: .21em; font-size: 10px; }
+.section-heading p { max-width: 46ch; line-height: 1.9; color: #b6b0c1; }
+.primary-button { border-radius: 2px; background: #d6b6b9; border: 1px solid #f0dbca80; color: #211c2a; box-shadow: 0 8px 24px #0003; padding: 14px 28px; font-weight: 500; }
+.secondary-button { border-radius: 2px; background: transparent; border-color: #c4afbd45; padding: 13px 24px; }
+.text-button, .world-links button { border-radius: 0; letter-spacing: .025em; }
+.world-links { margin-block: 32px; }
+.world-links button { border-bottom: 1px solid #b59baa40; }
+.world-links button:hover { color: #f2d5c6; border-color: #d6b6b9; background: transparent; }
+.universe-shell .floating-player { background: transparent; border: 0; border-block: 1px solid #bda8bd20; border-radius: 0; box-shadow: none; }
+.modal { background: radial-gradient(ellipse at 100% 0, #44304c55, transparent 65%), #111523; border-radius: 3px; }
+.modal .letter-paper { color: #493746; border-radius: 1px; box-shadow: 0 18px 40px #0005; }
+.modal form input, .modal form textarea { min-width: 0; }
+.eyebrow { white-space: normal; }
+
+/* A navigable celestial chart, with quiet cartographic detail. */
+.galaxy { position: relative; isolation: isolate; }
+.galaxy-title { text-align: left; margin: 35px 0 0; max-width: 780px; }
+.atlas-edition { display: block; color: #a89480; letter-spacing: .24em; font: 9px/1.8 "Segoe UI", sans-serif; margin-bottom: 36px; }
+.galaxy-title .eyebrow { font-size: 9px; color: #aca2b5; letter-spacing: .2em; }
+.galaxy-title h1 { font-size: clamp(58px, 7.2vw, 104px); font-weight: 400; line-height: 1.03; margin-block: 22px; letter-spacing: -.065em; }
+.galaxy-title h1 em { color: #cfadbb; font-weight: 400; }
+.galaxy-title p { margin: 0; max-width: 42ch; font-size: 14px; }
+.galaxy-canvas { height: 880px; margin-top: 26px; isolation: isolate; }
+.galaxy-canvas::before { inset: 0 -5%; background: radial-gradient(ellipse at 48% 42%, #7652762e, transparent 44%), radial-gradient(ellipse at 73% 72%, #36567826, transparent 45%); filter: blur(12px); }
+.atlas-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; fill: none; stroke: #c2aa9224; stroke-width: .65; }
+.atlas-lines circle { stroke-dasharray: 1 9; }
+.galaxy-orbit { border-color: #cab2b10c; }
+.galaxy-destination { width: 195px; padding: 10px 8px; border: 0; border-radius: 0; background: transparent; }
+.galaxy-destination > .destination-art { height: 135px; filter: saturate(.68) drop-shadow(10px 18px 12px #0006); transition: transform .6s, filter .6s; }
+.galaxy-destination:hover > .destination-art, .galaxy-destination:focus-visible > .destination-art { transform: translateY(-9px) rotate(-3deg); filter: saturate(.9) drop-shadow(8px 22px 18px #0007); }
+.galaxy-destination .destination-index { display: block; margin: 15px 0 9px; font: 8px/1.5 "Segoe UI", sans-serif; letter-spacing: .2em; color: #b89d8b; }
+.galaxy-destination strong { display: block; font: 23px/1.2 var(--display); margin: 0; }
+.galaxy-destination > span { display: block; margin-top: 9px; font-size: 11px; line-height: 1.6; color: #a8a0b4; }
+.map-whisper { display: none; }
+.galaxy-couple { left: 62%; top: 47%; width: 130px; }
+.galaxy-couple .handwritten { font-size: 13px; }
+.galaxy-bottom { border-top: 1px solid #c7aa9626; padding-top: 44px; margin-top: 65px; align-items: center; }
+.daily-note { background: transparent; border-radius: 0; border: 0; border-left: 1px solid #be9c8880; padding: 14px 35px; box-shadow: none; text-align: left; }
+.daily-note p { font-size: clamp(22px, 2.5vw, 32px); }
+
+/* Our Home: a warmly lit theatrical miniature. */
+.cozy-room { border: 1px solid #bba6ac32; border-radius: 46% 46% 3px 3px / 16% 16% 3px 3px; background: radial-gradient(ellipse at 37% 56%, #b9846540, transparent 44%), linear-gradient(110deg, #38314b, #211f36 65%, #29263f); box-shadow: inset 0 0 0 10px #100e1d44, inset 0 -40px 75px #08091680, 0 55px 90px #0006; }
+.cozy-room::after { content: ""; pointer-events: none; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(115deg, transparent 38%, #d6b6a00c 40%, transparent 64%); }
+.room-object { z-index: 2; }
+.object-drawing { filter: saturate(.72) drop-shadow(6px 12px 7px #08081265); }
+.object-window .object-drawing { box-shadow: 0 0 65px #9fa5cb20, inset 0 0 22px #0008; border-color: #978697; }
+.object-label { background: #171522c7; border: 0; border-radius: 1px; color: #d9cbbc; font-size: 11px; letter-spacing: .035em; padding: 4px 8px; }
+.room-object:hover .object-label { color: #fff1d8; background: #57424ae8; }
+.room-note { max-width: 44ch; margin-top: 30px; font-size: 21px; color: #c5a9b2; }
+.room-rug { background: radial-gradient(ellipse, #8d737e75, #63536eaa); border: 7px double #d7b5b535; }
+.room-residents { z-index: 3; }
+
+/* Keepsakes spread across a writing desk. */
+.scrapbook { position: relative; isolation: isolate; gap: 60px 42px; padding: 45px 24px 100px; align-items: flex-start; }
+.scrapbook::before { content: ""; position: absolute; inset: 4% -2% 0; z-index: -1; background: radial-gradient(ellipse at 48% 42%, #87696629, transparent 68%); }
+.scrapbook .polaroid { width: 28%; padding: 14px 14px 25px; border: 0; border-radius: 1px; background: linear-gradient(120deg, #f0e6d4, #d7c8b5); color: #493c43; box-shadow: 1px 2px 0 #aa9985, 10px 25px 35px #0006; transform: rotate(-5deg); }
+.scrapbook .polaroid:nth-child(3n + 2) { margin-top: 90px; transform: rotate(6deg); }
+.scrapbook .polaroid:nth-child(3n) { margin-top: 22px; transform: rotate(-2deg); }
+.scrapbook .polaroid:hover { transform: translateY(-10px) rotate(0); z-index: 3; }
+.scrapbook .polaroid img { filter: saturate(.75) sepia(.12); }
+.scrapbook .polaroid > span:not(.tape) { font: italic 23px/1.3 var(--display); display: block; }
+.scrapbook .polaroid small { color: #6c5960; letter-spacing: .1em; font-size: 9px; }
+.tape { opacity: .65; background: #c9b6a0; box-shadow: none; }
+.letters-grid { position: relative; gap: 55px 35px; padding: 30px 0 75px; background: radial-gradient(ellipse at center, #78566d19, transparent 70%); align-items: flex-start; }
+.letter-card { border: 0; background: transparent; box-shadow: none; padding: 15px 18px; }
+.letter-card:nth-child(even) { margin-top: 65px; }
+.letter-card h3 { font-size: 25px; max-width: 20ch; margin: 26px auto 12px; }
+.letter-card > p { color: #b5a6b7; line-height: 1.8; }
+.envelope { background: linear-gradient(135deg, #e6d7c3, #c9b79f); border-radius: 1px; transform: rotate(-7deg); box-shadow: 1px 2px #a08f7c, 12px 22px 25px #0005; }
+.letter-card:nth-child(even) .envelope { transform: rotate(6deg); background: linear-gradient(135deg, #d9bdc1, #bd9ba8); }
+.envelope > span { background: #835269; border-radius: 50%; box-shadow: inset 0 0 0 3px #a47a842f, 1px 3px 4px #0003; color: #efd5bd; }
+.letter-paper { background: repeating-linear-gradient(0deg, #8b705504 0 2px, transparent 2px 5px), linear-gradient(115deg, #eee3d0, #dac7ae); }
+.filter-tabs { flex-wrap: wrap; gap: 10px 22px; }
+.filter-tabs button { border-radius: 0; background: transparent; border: 0; border-bottom: 1px solid #ac8c9a40; padding: 10px 3px; }
+.filter-tabs button.active { background: transparent; color: #efd7c9; border-color: #c6a18f; }
+
+/* The arcade is a small collection of physical machines. */
+.game-hub { gap: 65px 45px; padding: 20px 15px 90px; align-items: flex-start; background: radial-gradient(ellipse at 50% 80%, #79537425, transparent 65%); }
+.game-hub-card { width: 285px; border: 1px solid #aa859962; border-bottom: 20px solid #3d3046; border-radius: 4px; padding: 20px 22px 40px; background: linear-gradient(110deg, #514053, #28243a 60%); box-shadow: 10px 10px 0 #151525, 12px 12px 0 #a7869625, 15px 35px 45px #0006; transform: rotate(-2deg); }
+.game-hub-card:nth-child(even) { margin-top: 60px; transform: rotate(2deg); }
+.game-hub-card:hover { background: linear-gradient(110deg, #614b60, #30273e); transform: translateY(-8px) rotate(0); }
+.game-hub-card::after { content: ""; left: 30%; right: 30%; bottom: 10px; height: 4px; border-radius: 0; background: #171421; box-shadow: 0 1px #ad88964d; }
+.game-illustration { position: relative; height: 165px; border: 8px solid #151522; border-radius: 32% / 8%; background: radial-gradient(ellipse at 50% 40%, #5b48664d, transparent 70%), #111624; box-shadow: inset 0 0 25px #000, 0 1px 0 #c4a8bb55; }
+.game-illustration::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: repeating-linear-gradient(0deg, #0001 0 1px, transparent 1px 4px), linear-gradient(125deg, #fff1, transparent 40%); }
+.game-illustration > svg { filter: none; color: #cfabbf; }
+.game-hub-card h2 { line-height: 1.15; font-size: 30px; }
+.game-hub-card p { min-height: 0; font-size: 13px; }
+.game-panel { border-radius: 3px; border: 1px solid #ad8b9a38; background: radial-gradient(ellipse at 0 0, #59405330, transparent 55%), #111624; padding: clamp(22px, 4vw, 55px); }
+
+/* The garden grows out of the landscape. */
+.garden-world { position: relative; isolation: isolate; padding-bottom: 50px; }
+.garden-landscape { position: absolute; inset: 15% -4% 0; width: 108%; height: 85%; z-index: -1; pointer-events: none; }
+.garden-world::before { content: ""; position: absolute; z-index: -1; pointer-events: none; inset: 20% -3% 0; border-radius: 50% 50% 0 0; background: radial-gradient(ellipse at 50% 52%, #9e939325, transparent 45%), radial-gradient(ellipse at 50% 100%, #40564d65, transparent 65%); border-bottom: 1px solid #a0af9626; }
+.growing-plant { background: transparent; border: 0; border-radius: 0; box-shadow: none; width: 480px; max-width: 100%; padding-top: 10px; }
+.growing-plant .plant-illustration { width: min(360px, 100%); height: 365px; filter: drop-shadow(0 15px 25px #0004); }
+.growing-plant .plant-stage-title { font: italic 32px/1.3 var(--display); }
+.growing-plant .plant-stage-hint { display: block; max-width: 32ch; margin: 15px auto 0; }
+.garden-world > .couple { margin: -5px auto 10px; width: 280px; }
+.garden-world .shooting-star { background: transparent; border: 0; border-bottom: 1px solid #c7b08650; border-radius: 0; color: #dac4a4; padding: 10px 16px; }
+.wish-sky { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; position: relative; }
+.wish-sky > span { position: relative; max-width: 180px; }
+.wish-sky small { white-space: normal; line-height: 1.6; }
+.vault-lock { max-width: 650px; margin: auto; border: 0; border-radius: 45% 45% 0 0 / 25% 25% 0 0; background: radial-gradient(ellipse at 50% 18%, #9f7c5820, transparent 60%), linear-gradient(#17192855, transparent); padding: 70px 30px; box-shadow: inset 1px 0 #c0a07a25, inset -1px 0 #c0a07a25; }
+.vault-lock-icon { border-radius: 50%; color: #cbb087; border-color: #ac9171; outline-color: #ac917135; background: radial-gradient(circle at 30% 20%, #55485a, #151725 75%); }
+.vault-lock form { max-width: 360px; margin-inline: auto; }
+.cinematic-ending h2 { font-weight: 400; letter-spacing: -.035em; }
+
+/* A stage instead of a dashboard for the two leads. */
+.companion-room .companion-card { background: transparent; border: 0; box-shadow: none; padding: 30px 20px; }
+.companion-room .avatar-stage { position: relative; isolation: isolate; min-height: 310px; background: radial-gradient(ellipse at 50% 72%, #8e697c25, transparent 60%); border-radius: 50% 50% 0 0; }
+.companion-room .avatar-stage::after { content: ""; position: absolute; bottom: 15px; left: 12%; right: 12%; height: 32px; border-radius: 50%; background: #a487a411; border-bottom: 1px solid #c0a5bc32; z-index: -1; }
+.companion-bubble { position: relative; max-width: 34ch; margin: 20px auto; font: italic 24px/1.45 var(--display); min-height: 2.9em; }
+.companion-actions { gap: 8px 20px; justify-content: center; }
+.stat-bars > div { display: grid; grid-template-columns: 76px minmax(50px, 1fr) 36px; gap: 12px; }
+.stat-bars > div > span, .stat-bars small { width: auto; }
+.stat-bars > div > div { width: 100%; }
+.companion-header { flex-wrap: wrap; gap: 12px; }
+.chat-header { flex-wrap: wrap; gap: 8px 12px; }
+.chat-header h2 { line-height: 1.4; }
+.chat-card form { display: flex; gap: 10px; }
+.chat-card form input { min-width: 0; flex: 1; }
+.chat-suggestions { flex-wrap: wrap; }
+.chat-suggestions button { min-height: 40px; border-radius: 2px; }
+.companion-actions button { border-radius: 0; background: transparent; border: 0; border-bottom: 1px solid #b997a542; padding: 12px 4px; }
+.chat-card { border-radius: 3px; border: 1px solid #ab8c9e30; background: #121625; box-shadow: 15px 20px 60px #0003; }
+.couple-playground { background: radial-gradient(ellipse at 50% 50%, #77536d24, transparent 65%); border-top: 1px solid #c2a5c325; padding: 55px 0 35px; }
+.couple-playground .world-links { max-width: 720px; margin-inline: auto; }
+.couple-caption { line-height: 1.6; padding: 10px 0; }
+.couple-hold-hands .partner { --from: 0px; animation: none; }
+.couple-hold-hands .character-janna .arm-right { animation: take-hand-left 1.6s ease both; }
+.couple-hold-hands .character-josh .arm-left { animation: take-hand-right 1.6s ease both; }
+.couple-kiss .partner { --from: -25px; animation-duration: 2.4s; }
+.couple-kiss .partner-josh { --from: 25px; }
+.couple-kiss .character-janna .character-head { animation: kiss-lean-left 2.4s ease both; }
+.couple-kiss .character-josh .character-head { animation: kiss-lean-right 2.4s ease both; }
+.couple-hug .partner-janna, .couple-heart .partner-janna { --px: 70px; }
+.couple-hug .partner-josh, .couple-heart .partner-josh { --px: 110px; }
+.couple-hug .character-janna .character-head, .couple-heart .character-janna .character-head { transform: translate(-9px, -5px) rotate(-14deg); }
+.couple-hug .character-josh .character-head, .couple-heart .character-josh .character-head { transform: translate(9px, 1px) rotate(14deg); }
+.couple-hug .character-janna .arm-left, .couple-heart .character-janna .arm-left { opacity: 0; }
+.couple-sleep .partner-janna { --px: 52px; }
+.couple-sleep .partner-josh { --px: 132px; }
+.couple-sleep .character-janna .character-head { transform: translate(12px, 10px) rotate(25deg); }
+.couple-sleep .character-josh .character-head { transform: translate(-5px, 8px) rotate(-13deg); }
+.couple-sleep .character-head { animation: sleeping-breath 4.5s ease-in-out infinite; }
+.couple .pose-sleep .arm-left, .couple .pose-sleep .arm-right { transform: none; }
+.couple-walk .couple-stage { animation: evening-stroll 8s ease-in-out infinite alternate; }
+.couple-dance .partner { animation: none; }
+.couple-dance .couple-stage { animation: slow-dance 4s ease-in-out infinite; }
+.couple-celebrate .partner { animation: joyful-jump 1.4s ease-in-out 3; }
+.couple-celebrate .partner-josh { animation-delay: .16s; }
+@keyframes take-hand-left { 0%, 15% { transform: rotate(32deg); } 65%, 100% { transform: rotate(0); } }
+@keyframes take-hand-right { 0%, 15% { transform: rotate(-32deg); } 65%, 100% { transform: rotate(0); } }
+@keyframes kiss-lean-left { 0%, 18% { transform: rotate(-12deg); } 65%, 88% { transform: rotate(-4deg); } 100% { transform: rotate(-4deg); } }
+@keyframes kiss-lean-right { 0%, 18% { transform: rotate(12deg); } 65%, 100% { transform: rotate(4deg); } }
+@keyframes sleeping-breath { 50% { translate: 0 1.5px; } }
+@keyframes evening-stroll { 0% { translate: -28px 0; } 100% { translate: 28px 0; } }
+@keyframes slow-dance { 0%, 100% { transform: translate(-10px, 0) rotate(-4deg); } 25% { transform: translate(0, -4px) rotate(0) scaleX(.94); } 50% { transform: translate(10px, 0) rotate(4deg); } 75% { transform: translate(0, -4px) rotate(0) scaleX(.94); } }
+
+@media (min-width: 1050px) {
+  .world-room .section-heading, .world-memories .section-heading, .world-letters .section-heading, .world-games .section-heading { text-align: left; margin: 0 0 55px; max-width: 760px; }
+  .world-room .section-heading::before, .world-memories .section-heading::before, .world-letters .section-heading::before, .world-games .section-heading::before { margin-left: 0; }
+  .world-room .section-heading .eyebrow, .world-memories .section-heading .eyebrow, .world-letters .section-heading .eyebrow, .world-games .section-heading .eyebrow { justify-content: flex-start; }
+  .world-room .section-heading p, .world-memories .section-heading p, .world-letters .section-heading p, .world-games .section-heading p { margin-left: 0; }
+  .cozy-room { width: 90%; margin-left: auto; }
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+  .galaxy-destination { width: 155px; }
+  .galaxy-destination strong { font-size: 20px; }
+  .galaxy-destination > .destination-art { height: 110px; }
+  .galaxy-couple { width: 100px; }
+  .scrapbook { gap: 45px 28px; }
+  .scrapbook .polaroid { width: 42%; }
+}
+@media (max-width: 700px) {
+  .universe-header { height: 75px; margin-inline: 22px; }
+  .universe-main, .universe-main.world-home { padding-inline: 24px; }
+  .section-heading { padding-top: 10px; }
+  .section-heading h1 { font-size: clamp(42px, 11vw, 60px); line-height: 1.1; }
+  .section-heading::before { height: 24px; margin-bottom: 22px; }
+  .galaxy-title { margin: 20px 0 0; }
+  .atlas-edition { font-size: 8px; margin-bottom: 28px; }
+  .galaxy-title h1 { font-size: clamp(52px, 14vw, 78px); margin: 18px 0 24px; max-width: 10ch; }
+  .galaxy-title p { font-size: 14px; margin: 0; max-width: 29ch; }
+  .galaxy-title .eyebrow { font-size: 8px; letter-spacing: .13em; }
+  .galaxy-canvas { height: auto; gap: 28px 14px; padding-top: 32px; }
+  .atlas-lines { opacity: .35; }
+  .galaxy-destination { width: 100%; padding: 0 0 15px; }
+  .galaxy-destination:nth-of-type(even) { margin-top: 85px; }
+  .galaxy-destination > .destination-art { height: 108px; }
+  .galaxy-destination strong { font-size: 21px; line-height: 1.2; }
+  .galaxy-destination .destination-index { font-size: 7px; margin: 12px 0 8px; }
+  .galaxy-destination > span { font-size: 11px; max-width: 17ch; }
+  .galaxy-couple { left: auto; top: auto; width: 100%; }
+  .galaxy-bottom { margin-top: 55px; }
+  .daily-note { padding: 12px 22px; }
+  .cozy-room { min-height: 530px; border-radius: 44% 44% 3px 3px / 9% 9% 3px 3px; margin-inline: -5px; }
+  .object-label { font-size: 10px; max-width: 80px; line-height: 1.4; }
+  .room-note { font-size: 19px; padding-inline: 0; }
+  .scrapbook { gap: 55px; padding: 20px 10px 70px; }
+  .scrapbook .polaroid { width: 88%; max-width: 340px; padding: 12px 12px 25px; }
+  .scrapbook .polaroid:nth-child(3n + 2), .scrapbook .polaroid:nth-child(3n) { margin-top: 0; }
+  .scrapbook .polaroid:nth-child(even) { margin-left: 14px; }
+  .letters-grid { gap: 35px; padding-bottom: 40px; }
+  .letter-card:nth-child(even) { margin-top: 0; }
+  .letter-card { flex-basis: 100%; max-width: 300px; }
+  .game-hub { padding-inline: 8px; gap: 45px; }
+  .game-hub-card { width: 100%; max-width: 330px; }
+  .game-hub-card:nth-child(even) { margin-top: 0; }
+  .companion-room .companion-card { padding-inline: 0; }
+  .companion-room .avatar-stage { min-height: 260px; }
+  .companion-bubble { font-size: 23px; }
+  .companion-actions button { padding: 12px 5px; font-size: 13px; min-height: 44px; }
+  .couple-playground > .couple { width: 100%; }
+  .growing-plant .plant-illustration { height: 310px; }
+  .growing-plant .plant-stage-title { font-size: 29px; }
+  .garden-world::before { inset-inline: 0; }
+  .garden-landscape { inset-inline: 0; width: 100%; opacity: .65; }
+  .vault-lock { padding-inline: 20px; }
+  .universe-shell .floating-player { max-width: calc(100% - 48px); padding-inline: 0; gap: 10px; }
+  .universe-shell .floating-song { min-width: 0; }
+  .universe-shell .floating-song strong { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .couple *, .galaxy-destination > .destination-art { animation: none !important; transition: none !important; }
+}

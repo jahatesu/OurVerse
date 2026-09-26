@@ -188,46 +188,115 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
   }, []);
   const reset = useCallback((area: string) => {
     if (process.env.NODE_ENV !== "development") return;
-    if(area === "unlock") simulate("unlocked");
-    if(area === "all" || area === "capsule" || area === "letters") simulate("");
-    setProgress((p) =>
-      area === "all"
-        ? initial
-        : area === "unlock"
-          ? {
-              ...p,
-              entered: true,
-              vault: true,
-              fragments: codePuzzles.length,
-              reasons: 100,
-              discoveries: Array.from({ length: 18 }, (_, i) => `dev-${i}`),
-              plantActions: Array.from({ length: 20 }, (_, i) => `dev-${i}`),
-              unlocked: achievements.map((a) => a.id),
-            }
-          : area === "achievements"
-            ? { ...p, unlocked: [] }
-            : area === "coupons"
-              ? { ...p, redeemed: {} }
-              : area === "constellation"
-                ? { ...p, discoveries: [], explored: [] }
-                : area === "plant"
-                  ? { ...p, plantActions: [] }
-                  : area === "vault"
-                    ? { ...p, vault: false, fragments: 0 }
-                    : area === "games" ? {...p, fragments:0, discoveries:p.discoveries.filter(id=>!id.startsWith("game-")),unlocked:p.unlocked.filter(id=>!["quiz","memory","hearts","puzzle","crossword","code","kisses","arcade"].includes(id))}
-                    : area === "letters" ? {...p,discoveries:p.discoveries.filter(id=>id!=="letter")}
-                    : area === "ending"
-                      ? { ...p, endingSeen: false }
-                      : {
-                          ...p,
-                          discoveries: p.discoveries.filter(
-                            (id) => !id.includes(area),
-                          ),
-                          unlocked: p.unlocked.filter(
-                            (id) => !id.includes(area),
-                          ),
-                        },
-    );
+    if (area === "unlock" || area === "unlock-all") simulate("unlocked");
+    if (area === "capsule-available") simulate("capsule");
+    if (area === "all" || area === "capsule" || area === "letters")
+      simulate("");
+    setProgress((p) => {
+      switch (area) {
+        case "all":
+          return initial;
+        case "unlock":
+        case "unlock-all":
+          return {
+            ...p,
+            entered: true,
+            vault: true,
+            fragments: codePuzzles.length,
+            reasons: 100,
+            discoveries: Array.from({ length: 20 }, (_, i) => `dev-${i}`),
+            plantActions: Array.from({ length: 20 }, (_, i) => `dev-${i}`),
+            unlocked: achievements.map((a) => a.id),
+          };
+        case "achievements":
+          return { ...p, unlocked: [] };
+        case "achievements-all":
+          return { ...p, unlocked: achievements.map((a) => a.id) };
+        case "exploration":
+          return { ...p, explored: ["home"] };
+        case "constellation":
+          return { ...p, discoveries: [], explored: ["home"] };
+        case "constellation-full":
+        case "ending-available":
+          return {
+            ...p,
+            discoveries: Array.from({ length: 16 }, (_, i) => `dev-star-${i}`),
+          };
+        case "plant":
+          return { ...p, plantActions: [] };
+        case "mature-plant":
+          return {
+            ...p,
+            plantActions: Array.from(
+              { length: 20 },
+              (_, i) => `dev-plant-${i}`,
+            ),
+            unlocked: [...new Set([...p.unlocked, "plant"])],
+          };
+        case "coupons":
+          return { ...p, redeemed: {} };
+        case "vault":
+          return { ...p, vault: false, fragments: 0 };
+        case "vault-unlock":
+          return { ...p, vault: true, fragments: codePuzzles.length };
+        case "games":
+          return {
+            ...p,
+            fragments: 0,
+            discoveries: p.discoveries.filter((id) => !id.startsWith("game-")),
+            unlocked: p.unlocked.filter(
+              (id) =>
+                ![
+                  "quiz",
+                  "memory",
+                  "hearts",
+                  "puzzle",
+                  "crossword",
+                  "code",
+                  "kisses",
+                  "arcade",
+                ].includes(id),
+            ),
+          };
+        case "puzzle":
+          return {
+            ...p,
+            unlocked: p.unlocked.filter((id) => id !== "puzzle"),
+            discoveries: p.discoveries.filter((id) => id !== "game-puzzle"),
+          };
+        case "crossword":
+          return {
+            ...p,
+            unlocked: p.unlocked.filter((id) => id !== "crossword"),
+            discoveries: p.discoveries.filter((id) => id !== "game-crossword"),
+          };
+        case "code":
+          return {
+            ...p,
+            fragments: 0,
+            unlocked: p.unlocked.filter((id) => id !== "code"),
+            discoveries: p.discoveries.filter((id) => id !== "game-code"),
+          };
+        case "capsule":
+          return {
+            ...p,
+            discoveries: p.discoveries.filter((id) => id !== "capsule"),
+          };
+        case "letters":
+          return {
+            ...p,
+            discoveries: p.discoveries.filter((id) => id !== "letter"),
+          };
+        case "ending":
+          return { ...p, endingSeen: false };
+        default:
+          return {
+            ...p,
+            discoveries: p.discoveries.filter((id) => !id.includes(area)),
+            unlocked: p.unlocked.filter((id) => !id.includes(area)),
+          };
+      }
+    });
   }, []);
   useEffect(() => {
     if (!ready) return;

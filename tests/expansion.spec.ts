@@ -1,6 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import { crossword, codePuzzles } from "../src/data/expansion";
-test.beforeEach(()=>{test.setTimeout(90000)});
+test.beforeEach(() => {
+  test.setTimeout(90000);
+});
 async function enter(page: Page, id = "home") {
   await page.goto(`/#${id}`);
   await page.getByRole("button", { name: "Enter OurVerse" }).click();
@@ -165,6 +167,27 @@ test("photo puzzle at every difficulty and real intersecting crossword", async (
   }
   await page.getByRole("button", { name: "Back to the game room" }).click();
   await page.getByRole("button", { name: /OurVerse Crossword/ }).click();
+
+  // Test shared-cell predictable selection and direction switching
+  // Cell (row 2, col 5) is 0-indexed (1, 4), shared by JANNA (down) and SAME (across)
+  const sharedCell = page.getByRole("textbox", {
+    name: /^Row 2, column 5/,
+  });
+  await sharedCell.click();
+  const clueBar = page.locator(".active-clue");
+  await expect(clueBar).toBeVisible();
+  const dir1 = await clueBar.innerText();
+  // Second click on the already selected shared cell toggles direction
+  await sharedCell.click();
+  const dir2 = await clueBar.innerText();
+  expect(dir1).not.toEqual(dir2);
+  // Direction switch button also toggles direction
+  const switchBtn = page.locator(".switch-dir-button");
+  if (await switchBtn.isVisible()) {
+    await switchBtn.click();
+    expect(await clueBar.innerText()).toEqual(dir1);
+  }
+
   const expected = new Map<string, string>();
   for (const e of crossword.entries)
     for (let i = 0; i < e.answer.length; i++) {
@@ -244,7 +267,9 @@ test("calendar, garden, wishes, future memories, date locks and hidden extras", 
   await enter(page, "daily");
   const note = await page.locator(".paper-message").innerText();
   await page.reload();
-  await expect(page.locator(".paper-message")).toHaveText(note, {useInnerText:true});
+  await expect(page.locator(".paper-message")).toHaveText(note, {
+    useInnerText: true,
+  });
   await go(page, "calendar");
   await page.getByRole("button", { name: "Next month" }).click();
   await page.locator(".calendar-grid button").first().click();
@@ -260,6 +285,10 @@ test("calendar, garden, wishes, future memories, date locks and hidden extras", 
   await page.getByRole("button", { name: "Funny", exact: true }).click();
   await expect(page.locator(".emotional-line")).toContainText("worm");
   await go(page, "garden");
+  await expect(
+    page.locator(".growing-plant .plant-illustration"),
+  ).toBeVisible();
+  await expect(page.locator(".plant-stage-title")).toBeVisible();
   await page.getByRole("button", { name: "Catch a shooting star" }).click();
   await page.getByLabel("A little someday").fill("Same timezone, someday");
   await page.getByRole("button", { name: "Keep it in our sky" }).click();

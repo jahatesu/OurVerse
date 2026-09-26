@@ -1,8 +1,8 @@
 export const characters = {
   janna: {
     name: "Janna",
-    hairColor: "#8b0000 ",
-    hairHighlight: "#da7650",
+    hairColor: "#842e2c",
+    hairHighlight: "#c56e51",
     hairStyle: "long waves",
     skin: "#f2c7b1",
     outfit: "#252230",
@@ -23,7 +23,16 @@ export const characters = {
     accessories: ["glasses"],
   },
 } as const;
-export const characterPalette = { eyes:"#33272c", mouth:"#80444b", blush:"#dc7888", glasses:"#272938", shoes:"#e7d9cf", pin:"#f3dca6", tears:"#a9cce9", heart:"#bd546c" };
+export const characterPalette = {
+  eyes: "#33272c",
+  mouth: "#80444b",
+  blush: "#dc7888",
+  glasses: "#272938",
+  shoes: "#e7d9cf",
+  pin: "#f3dca6",
+  tears: "#a9cce9",
+  heart: "#bd546c",
+};
 export type Expression =
   | "idle"
   | "happy"

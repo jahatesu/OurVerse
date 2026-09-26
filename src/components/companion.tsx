@@ -63,7 +63,7 @@ export function Companion({ compact = false }: { compact?: boolean }) {
                   ? "poke"
                   : reaction === "Feed"
                     ? "celebrate"
-                    : "sit"
+                    : "idle"
           }
         />
       </div>
@@ -112,7 +112,7 @@ export function Companion({ compact = false }: { compact?: boolean }) {
   );
 }
 export function CompanionRoom() {
-  const [scene, setScene] = useState<CoupleScene>("hold-hands");
+  const [scene, setScene] = useState<CoupleScene>("idle");
   const chatLog = useRef<HTMLDivElement>(null);
   const { progress, update, unlock } = useUniverse();
   const [input, setInput] = useState("");
@@ -205,6 +205,8 @@ export function CompanionRoom() {
         <div className="world-links">
           {(
             [
+              "idle",
+              "sit",
               "hold-hands",
               "hug",
               "kiss",
@@ -223,7 +225,7 @@ export function CompanionRoom() {
               aria-pressed={s === scene}
               onClick={() => setScene(s)}
             >
-              {s.replace("-", " ")}
+              {s === "idle" ? "stand together" : s.replace("-", " ")}
             </button>
           ))}
         </div>

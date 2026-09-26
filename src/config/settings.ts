@@ -1,5 +1,5 @@
 export const settings = {
-  birthday: null as string | null, // MM-DD; unset until Janna supplies Josh's birthday
+  birthday: "08-25" as string | null, // Josh: August 25, 2003. Annual celebration uses MM-DD.
   anniversary: "04-21",
   constellationTarget: 14,
   rareHugDelayMs: 180000,

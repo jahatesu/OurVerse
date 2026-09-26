@@ -529,12 +529,31 @@ label {
   text-align: center;
   color: #c1aebc;
 }
-.galaxy-couple .character { width: 65px; height: 90px; }
-.random-hug { position: fixed; bottom: 75px; left: calc(50% - 120px); width: 240px; z-index: 30; pointer-events: none; animation: message-in 1s; }
-.story-constellation .timeline-item:hover { background: transparent; }
-.modal:has(.letter-paper) > h2 { color: #4c3a51; }
-.modal .letter-paper p { font-size: 18px; }
-.galaxy-destination:focus-visible { border-radius: 40%; }
+.galaxy-couple .character {
+  width: 65px;
+  height: 90px;
+}
+.random-hug {
+  position: fixed;
+  bottom: 75px;
+  left: calc(50% - 120px);
+  width: 240px;
+  z-index: 30;
+  pointer-events: none;
+  animation: message-in 1s;
+}
+.story-constellation .timeline-item:hover {
+  background: transparent;
+}
+.modal:has(.letter-paper) > h2 {
+  color: #4c3a51;
+}
+.modal .letter-paper p {
+  font-size: 18px;
+}
+.galaxy-destination:focus-visible {
+  border-radius: 40%;
+}
 .galaxy-bottom {
   display: flex;
   justify-content: space-between;
@@ -1507,6 +1526,25 @@ label {
 .crossword-grid .active-word {
   background: #dac5e7;
 }
+.crossword-grid .selected-cell {
+  background: #fbe3ae !important;
+  box-shadow: inset 0 0 0 2.5px #856199;
+  z-index: 2;
+}
+.crossword-grid .shared-cell {
+  box-shadow: inset 0 0 0 1px #a48bbd66;
+}
+.crossword-grid .shared-dot {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  font-size: 8px;
+  color: #795e8e;
+  line-height: 1;
+  pointer-events: none;
+  font-weight: 700;
+  opacity: 0.8;
+}
 .crossword-grid .wrong-cell {
   background: #e8a8ae;
 }
@@ -1534,11 +1572,31 @@ label {
 .crossword-clues button.active {
   background: #bca2d329;
 }
+.active-clue-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.active-clue-bar .active-clue {
+  margin: 0;
+  flex: 1;
+  min-width: 220px;
+}
 .active-clue {
   background: #ac8cba22;
   padding: 12px;
   border-radius: 5px;
   font-size: 12px;
+}
+.switch-dir-button {
+  padding: 6px 14px;
+  font-size: 11px;
+  min-height: 38px;
+  border-radius: 20px;
+  white-space: nowrap;
 }
 .dialog-actions {
   display: flex;
@@ -1991,34 +2049,50 @@ label {
 }
 .growing-plant {
   margin: 20px auto 0;
-  width: 300px;
+  width: 320px;
+  max-width: 100%;
   position: relative;
+  text-align: center;
 }
-.growing-plant > span {
-  display: block;
-  font: 19px var(--hand);
-  color: #c5b8c5;
-}
-.growing-plant .destination-art {
+.growing-plant .plant-illustration {
+  width: 240px;
   height: 260px;
-  transform-origin: 50% 90%;
-  transition: transform 0.7s;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  transition:
+    transform 0.6s ease-out,
+    filter 0.6s ease-out;
 }
-.plant-stage-0 .destination-art {
-  transform: scale(0.25);
-  filter: grayscale(0.7);
+.growing-plant.plant-stage-0 .plant-illustration {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
 }
-.plant-stage-1 .destination-art {
-  transform: scale(0.4);
+.growing-plant.plant-stage-1 .plant-illustration {
+  filter: drop-shadow(0 4px 14px rgba(110, 160, 120, 0.18));
 }
-.plant-stage-2 .destination-art {
-  transform: scale(0.65);
+.growing-plant.plant-stage-2 .plant-illustration {
+  filter: drop-shadow(0 4px 18px rgba(110, 170, 130, 0.25));
 }
-.plant-stage-3 .destination-art {
-  transform: scale(0.85);
+.growing-plant.plant-stage-3 .plant-illustration {
+  filter: drop-shadow(0 4px 22px rgba(100, 180, 130, 0.32));
 }
-.plant-stage-4 .destination-art {
-  filter: drop-shadow(0 0 25px #e2b7c344);
+.growing-plant.plant-stage-4 .plant-illustration {
+  filter: drop-shadow(0 0 28px rgba(245, 185, 205, 0.55));
+}
+.plant-sparkle {
+  animation: star-pulse 2.5s ease-in-out infinite alternate;
+}
+.growing-plant .plant-stage-title {
+  display: block;
+  font: 23px var(--hand);
+  color: #e5cfdc;
+  margin-top: 10px;
+}
+.growing-plant .plant-stage-hint {
+  display: block;
+  font-size: 11px;
+  color: #b39daf;
+  margin-top: 4px;
 }
 .shooting-star {
   position: absolute;
@@ -2328,14 +2402,66 @@ label {
 }
 .dev-controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 15px;
+  text-align: left;
 }
-.dev-controls button {
-  background: #ffffff10;
-  padding: 10px;
-  min-height: 44px;
+.dev-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dev-group h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #cca4be;
+  margin: 0 0 4px;
+}
+.dev-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dev-buttons button {
+  background: #ffffff12;
+  border: 1px solid #ffffff24;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  min-height: 40px;
+  color: #f0dfe9;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.dev-buttons button:hover,
+.dev-buttons button:focus-visible {
+  background: #bb86a533;
+  border-color: #d697b8;
+  color: #fff;
+}
+.dev-buttons button.dev-action-primary {
+  background: #8b3c6644;
+  border-color: #c9719c;
+  color: #ffeef6;
+  font-weight: 600;
+}
+.dev-mode-pill {
+  display: inline-block;
+  font: 11px var(--hand);
+  color: #cca2b8;
+  background: #3c293780;
+  border: 1px dashed #a86c8a;
+  border-radius: 12px;
+  padding: 3px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dev-mode-pill:hover {
+  background: #643956;
+  color: #fff;
 }
 .modal form {
   display: flex;
@@ -3700,13 +3826,37 @@ label {
     transform: none !important;
   }
 }
-.plant-illustration { width: 100%; height: 260px; }
-.borrowed-hoodie { transform: scale(1.12, 1.06); transform-origin: 70px 103px; }
-@media (max-width:700px) {
-  .floating-player { position:relative; left:auto; right:auto; bottom:auto; margin:0 16px 28px; width:calc(100% - 32px); }
-  .universe-footer { padding-bottom:30px; }
-  .companion-peek { display:none; }
-  .ending-trigger { bottom:20px; }
-  .galaxy-couple .character { width:55px; height:75px; }
-  .world-constellation { margin-top:0; }
+.plant-illustration {
+  width: 100%;
+  height: 260px;
+}
+.borrowed-hoodie {
+  transform: scale(1.12, 1.06);
+  transform-origin: 70px 103px;
+}
+@media (max-width: 700px) {
+  .floating-player {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    margin: 0 16px 28px;
+    width: calc(100% - 32px);
+  }
+  .universe-footer {
+    padding-bottom: 30px;
+  }
+  .companion-peek {
+    display: none;
+  }
+  .ending-trigger {
+    bottom: 20px;
+  }
+  .galaxy-couple .character {
+    width: 55px;
+    height: 75px;
+  }
+  .world-constellation {
+    margin-top: 0;
+  }
 }

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <radialGradient id="violet"><stop stop-color="#9874ba" stop-opacity=".75"/><stop offset=".4" stop-color="#68578c" stop-opacity=".6"/><stop offset="1" stop-color="#282341" stop-opacity="0"/></radialGradient>
+    <radialGradient id="rose"><stop stop-color="#c18aab" stop-opacity=".6"/><stop offset=".5" stop-color="#805279" stop-opacity=".45"/><stop offset="1" stop-color="#271e3a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blue"><stop stop-color="#708ab9" stop-opacity=".6"/><stop offset=".5" stop-color="#3c4d8b" stop-opacity=".5"/><stop offset="1" stop-color="#1e284e" stop-opacity="0"/></radialGradient>
+    <filter id="cloud" x="-25%" y="-30%" width="150%" height="160%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".008 .013" numOctaves="3" seed="17" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="145" xChannelSelector="R" yChannelSelector="G" result="cloud"/>
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.5 -.25" result="density"/>
+      <feComposite in="cloud" in2="density" operator="in"/>
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+  <g filter="url(#cloud)">
+    <ellipse cx="460" cy="470" rx="450" ry="225" transform="rotate(-28 460 470)" fill="url(#violet)"/>
+    <ellipse cx="725" cy="370" rx="350" ry="190" transform="rotate(-30 725 370)" fill="url(#rose)"/>
+    <ellipse cx="750" cy="580" rx="370" ry="160" transform="rotate(-35 750 580)" fill="url(#blue)"/>
+    <ellipse cx="330" cy="500" rx="260" ry="65" transform="rotate(-32 330 500)" fill="url(#rose)"/>
+  </g>
+</svg>

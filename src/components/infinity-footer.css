@@ -1,0 +1,135 @@
+.universe-shell .universe-footer.infinity-footer {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 390px;
+  margin: 0;
+  padding: 118px 110px 155px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+  letter-spacing: normal;
+  color: #b6a8be;
+}
+.infinity-footer .infinity-atmosphere {
+  position: absolute;
+  inset: -90px 0 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, #070b1766 22%, #060916d9 63%, #040711 100%);
+}
+.infinity-footer .infinity-haze {
+  position: absolute;
+  inset: 2% 7% 12%;
+  background: radial-gradient(ellipse at 48% 43%, #84608116, transparent 48%), radial-gradient(ellipse at 67% 65%, #aa7a8110, transparent 39%);
+  animation: infinity-haze-drift 29s ease-in-out -11s infinite alternate;
+}
+.infinity-footer .infinity-star {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  background: #d8cfdf;
+  opacity: .3;
+  animation: infinity-twinkle 8.3s ease-in-out infinite;
+}
+.infinity-footer .infinity-star-0 { left: 13%; top: 27%; animation-delay: -2s; }
+.infinity-footer .infinity-star-1 { left: 27%; top: 52%; animation-duration: 13.7s; animation-delay: -9s; }
+.infinity-footer .infinity-star-2 { left: 74%; top: 32%; animation-duration: 9.1s; animation-delay: -6s; }
+.infinity-footer .infinity-star-3 { left: 87%; top: 57%; animation-duration: 15.3s; animation-delay: -11s; }
+.infinity-footer .infinity-star-4 { left: 39%; top: 76%; animation-duration: 11.1s; animation-delay: -4s; }
+.infinity-footer .infinity-star-5 { left: 61%; top: 24%; animation-duration: 17.7s; animation-delay: -13s; }
+.infinity-footer .infinity-star-6 { left: 19%; top: 81%; animation-duration: 12.9s; animation-delay: -7s; }
+.infinity-footer .infinity-star-7 { left: 79%; top: 85%; animation-duration: 19.3s; animation-delay: -8s; }
+.infinity-footer .infinity-star-8 { left: 52%; top: 89%; animation-duration: 14.1s; animation-delay: -5s; }
+.infinity-footer .infinity-star-2, .infinity-footer .infinity-star-4 { width: 2px; height: 2px; box-shadow: 0 0 5px #d9c2d240; }
+.infinity-footer .infinity-dust { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #cbb2c9; filter: blur(.5px); opacity: 0; animation: infinity-dust-drift 23s ease-in-out -7s infinite; }
+.infinity-footer .dust-a { left: 31%; top: 58%; }
+.infinity-footer .dust-b { left: 71%; top: 72%; animation-duration: 31s; animation-delay: -19s; }
+.infinity-footer .infinity-shooting-star { position: absolute; top: 22%; left: 79%; width: 70px; height: 1px; background: linear-gradient(90deg, #dfd4e4b3, #ccb6d133 25%, transparent); opacity: 0; animation: infinity-shooting-star 47s linear -5s infinite; }
+.infinity-footer .infinity-shooting-star::before { content: ""; position: absolute; left: 0; top: -.5px; width: 2px; height: 2px; border-radius: 50%; background: #eedfdb; box-shadow: 0 0 5px #d4bfd170; }
+.infinity-footer .infinity-letter { position: relative; max-width: 620px; margin: 0 auto; }
+.infinity-footer .infinity-message {
+  margin: 0;
+  color: #d9cbd8;
+  font: italic 400 clamp(29px, 3.1vw, 44px)/1.3 var(--display);
+  letter-spacing: -.035em;
+  text-wrap: balance;
+  text-shadow: 0 0 35px #bd91b217;
+}
+.infinity-footer .infinity-signature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 19px 0 0;
+  color: #998b9f;
+  font: 400 12px/1.8 var(--display);
+  letter-spacing: .045em;
+}
+.universe-footer.infinity-footer .infinity-heart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  margin-left: -2px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #bd95ae;
+  background: none;
+  font: 18px/1 var(--display);
+  box-shadow: none;
+}
+.infinity-footer .infinity-heart-glyph { transition: transform .4s ease, color .4s; }
+.infinity-footer .infinity-heart:hover .infinity-heart-glyph,
+.infinity-footer .infinity-heart:focus-visible .infinity-heart-glyph { animation: infinity-heartbeat .9s ease-in-out; color: #e1b7ca; }
+.infinity-footer .infinity-heart:active .infinity-heart-glyph { transform: scale(1.16); }
+.infinity-footer .infinity-heart-particles { position: absolute; inset: 0; pointer-events: none; }
+.infinity-footer .infinity-heart-particles i { position: absolute; left: 50%; top: 45%; width: 2px; height: 2px; border-radius: 50%; background: #ddbdc8; opacity: 0; --particle-x: -13px; --particle-y: -20px; }
+.infinity-footer .infinity-heart-particles i:nth-child(2) { --particle-x: 3px; --particle-y: -29px; animation-delay: .1s; }
+.infinity-footer .infinity-heart-particles i:nth-child(3) { --particle-x: 15px; --particle-y: -17px; animation-delay: .18s; }
+.infinity-footer .infinity-heart:hover .infinity-heart-particles i,
+.infinity-footer .infinity-heart:focus-visible .infinity-heart-particles i { animation: infinity-heart-spark 1.5s ease-out both; }
+.universe-shell .universe-footer.infinity-footer .dev-mode-pill {
+  position: absolute;
+  right: 32px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  min-height: 44px;
+  margin: 0;
+  padding: 12px 2px;
+  border: 0;
+  border-radius: 0;
+  color: #82758e;
+  background: transparent;
+  box-shadow: none;
+  font: 10px/1.5 "Segoe UI", sans-serif;
+  letter-spacing: .06em;
+  transition: color .3s;
+}
+.universe-shell .universe-footer.infinity-footer .dev-mode-pill:hover,
+.universe-shell .universe-footer.infinity-footer .dev-mode-pill:focus-visible { color: #ccafc5; background: transparent; }
+@keyframes infinity-haze-drift { to { transform: translate(15px, -7px) scale(1.07); opacity: .7; } }
+@keyframes infinity-twinkle { 0%, 100% { opacity: .12; } 43% { opacity: .5; } 71% { opacity: .24; } }
+@keyframes infinity-dust-drift { 0%, 100% { opacity: 0; transform: translate(0, 12px); } 35% { opacity: .25; } 80% { opacity: 0; transform: translate(20px, -28px); } }
+@keyframes infinity-shooting-star { 0%, 24% { opacity: 0; transform: translate(0, 0) rotate(-26deg); } 25% { opacity: .6; } 28%, 100% { opacity: 0; transform: translate(-210px, 103px) rotate(-26deg); } }
+@keyframes infinity-heartbeat { 0%, 100% { transform: scale(1); } 32% { transform: scale(1.17); } 62% { transform: scale(1.04); } }
+@keyframes infinity-heart-spark { 0% { opacity: 0; transform: translate(0, 0); } 20% { opacity: .65; } 100% { opacity: 0; transform: translate(var(--particle-x), var(--particle-y)); } }
+@media (max-width: 700px) {
+  .universe-shell .universe-footer.infinity-footer { min-height: 390px; padding: 100px 65px 175px; }
+  .infinity-footer .infinity-message { font-size: clamp(29px, 7.5vw, 36px); line-height: 1.3; }
+  .infinity-footer .infinity-signature { font-size: 11px; letter-spacing: 0; margin-top: 16px; white-space: nowrap; }
+  .universe-shell .universe-footer.infinity-footer .dev-mode-pill { right: 78px; bottom: max(20px, env(safe-area-inset-bottom)); font-size: 9px; }
+  .universe-shell .infinity-footer ~ .companion-peek { display: flex; }
+  .infinity-footer .infinity-star-1, .infinity-footer .infinity-star-5 { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .infinity-footer *, .infinity-footer *::before, .infinity-footer *::after { animation: none !important; transition: none !important; }
+  .infinity-footer .infinity-shooting-star, .infinity-footer .infinity-dust, .infinity-footer .infinity-heart-particles { display: none; }
+}

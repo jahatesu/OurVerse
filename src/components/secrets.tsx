@@ -117,11 +117,47 @@ export function Ending({ onClose }: { onClose: () => void }) {
     const timer = setTimeout(() => setStep((s) => s + 1), 3500);
     return () => clearTimeout(timer);
   }, [step, reduced]);
-  useEffect(()=>{if(step>=endingLines.length)update(p=>({...p,endingSeen:true}))},[step,update]);
+  useEffect(() => {
+    if (step >= endingLines.length) update((p) => ({ ...p, endingSeen: true }));
+  }, [step, update]);
   return (
     <Modal title="One more thing…" onClose={onClose}>
       <div className={`ending cinematic-ending ending-step-${step}`}>
-        <Constellation full illuminated={Math.min(settings.constellationTarget,Math.ceil(step*settings.constellationTarget/5))}/>
+        <svg
+          className="reunion-landscape"
+          viewBox="0 0 1000 650"
+          preserveAspectRatio="xMidYMax slice"
+          aria-hidden="true"
+        >
+          <circle cx="770" cy="120" r="35" fill="#d6cfcc" opacity=".5" />
+          <circle cx="785" cy="109" r="34" fill="#0b1020" />
+          <path
+            d="M0 440Q140 315 290 440T570 410T1000 400V650H0Z"
+            fill="#22253a"
+          />
+          <path d="M0 520Q220 380 450 505T1000 460V650H0Z" fill="#151c2e" />
+          <path d="M0 575Q480 475 1000 565V650H0Z" fill="#0d1423" />
+          <path
+            d="M100 595Q500 520 900 585"
+            stroke="#cbb4ca"
+            strokeOpacity=".13"
+            fill="none"
+          />
+          <g fill="#e4d4ba" opacity=".6">
+            <circle cx="150" cy="155" r="1.5" />
+            <circle cx="340" cy="78" r="2" />
+            <circle cx="590" cy="185" r="1" />
+            <circle cx="880" cy="265" r="1.5" />
+            <circle cx="85" cy="305" r="1" />
+          </g>
+        </svg>
+        <Constellation
+          full
+          illuminated={Math.min(
+            settings.constellationTarget,
+            Math.ceil((step * settings.constellationTarget) / 5),
+          )}
+        />
         <Couple scene={step < 6 ? "walk" : step < 9 ? "hug" : "sit"} />
         <motion.div
           key={step}

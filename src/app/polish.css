@@ -1,0 +1,1366 @@
+/* The final art direction layer. Layout always reserves space for its lettering. */
+:root {
+  --bg: #090e1b;
+  --text: #f0e7dc;
+  --muted: #b3afc1;
+  --pink: #d3a3b4;
+  --lavender: #b9b1d0;
+}
+.starfield i {
+  animation: none;
+  opacity: 0.35;
+}
+.companion-peek .arm-right {
+  animation: none;
+  transform: rotate(-125deg);
+}
+.companion-peek:hover .arm-right,
+.companion-peek:focus-visible .arm-right {
+  animation: wave 1.2s ease-in-out 2;
+}
+.universe-footer .dev-mode-pill {
+  font:
+    12px/1.5 "Segoe UI",
+    sans-serif;
+  letter-spacing: 0;
+  min-height: 36px;
+  padding: 6px 12px;
+}
+body {
+  background:
+    radial-gradient(ellipse at 78% 8%, #39304438, transparent 48%),
+    radial-gradient(ellipse at 8% 48%, #243c5d30, transparent 55%), #090e1b;
+  font-size: 15px;
+  line-height: 1.7;
+}
+:where(h1, h2, h3, p, button, label) {
+  overflow-wrap: break-word;
+}
+:where(h1, h2, h3) {
+  text-wrap: balance;
+}
+:where(p) {
+  text-wrap: pretty;
+}
+:where(button, input, select, textarea) {
+  touch-action: manipulation;
+}
+.universe-main > *,
+.modal > *,
+.companion-room > *,
+.music-layout > * {
+  min-width: 0;
+}
+.universe-header {
+  height: 92px;
+  border-bottom-color: #c9b6ce18;
+}
+.header-dedication {
+  font-size: 10px;
+  letter-spacing: 1.6px;
+}
+.universe-menu {
+  font-size: 13px;
+}
+.universe-footer {
+  font-size: 10px;
+  letter-spacing: 1px;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.universe-main {
+  padding-top: 48px;
+  padding-bottom: 85px;
+}
+.eyebrow,
+.section-heading .eyebrow {
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 1.6px;
+  flex-wrap: wrap;
+}
+.section-heading {
+  margin: 8px auto 56px;
+}
+.section-heading h1 {
+  font-size: clamp(36px, 5.1vw, 66px);
+  line-height: 1.12;
+  margin: 18px 0 22px;
+  letter-spacing: -0.045em;
+}
+.section-heading p {
+  font-size: clamp(14px, 1.3vw, 16px);
+  line-height: 1.8;
+  max-width: 48ch;
+}
+.primary-button {
+  border-radius: 7px;
+  background: linear-gradient(135deg, #e6c6cc, #cda8bc);
+  border: 1px solid #f7e2dd55;
+  box-shadow:
+    inset 0 1px #fff4,
+    0 5px 0 #6d526d3d,
+    0 12px 30px #0002;
+  font-size: 14px;
+  padding: 13px 25px;
+}
+.secondary-button {
+  border-radius: 6px;
+  font-size: 13px;
+}
+.primary-button:active,
+.secondary-button:active {
+  transform: translateY(1px);
+}
+.text-button,
+.world-links button,
+.return-galaxy {
+  font-size: 13px;
+}
+.world-links {
+  gap: 10px 26px;
+}
+.world-links button {
+  padding: 10px 6px;
+}
+.world-links button[aria-pressed="true"] {
+  color: #f2d4dc;
+  border-bottom: 2px solid #d3a3b4;
+  background: #d3a3b40c;
+}
+.icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.universe-shell .floating-player {
+  position: relative;
+  inset: auto;
+  width: max-content;
+  max-width: calc(100% - 40px);
+  margin: 0 auto 40px;
+  border-radius: 9px;
+  padding: 16px 20px;
+}
+.universe-shell .floating-song strong {
+  font-size: 13px;
+}
+.universe-shell .floating-song small {
+  font-size: 11px;
+}
+.universe-shell .universe-footer {
+  padding-bottom: 35px;
+}
+.modal {
+  border: 1px solid #c6b2ce30;
+  border-radius: 12px;
+  background: #141929;
+  padding: clamp(24px, 4vw, 48px);
+  box-shadow: 0 32px 120px #0009;
+  max-height: calc(100dvh - 40px);
+  scrollbar-gutter: stable;
+}
+.modal > h2 {
+  padding-right: 35px;
+  font: clamp(25px, 3.5vw, 36px)/1.25 var(--display);
+  margin-bottom: 24px;
+}
+.modal p {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.modal-close {
+  top: 12px;
+  right: 12px;
+  min-width: 44px;
+  min-height: 44px;
+}
+.modal form {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.modal form input {
+  flex: 1 1 180px;
+}
+.explore-menu button {
+  gap: 12px;
+  font-size: 14px;
+  min-height: 52px;
+}
+.cinematic-intro h1 {
+  font-size: clamp(46px, 9.5vw, 128px);
+  letter-spacing: 0.055em;
+  line-height: 1.2;
+  max-width: 100%;
+}
+.cinematic-intro > p {
+  font-size: clamp(18px, 2.4vw, 25px);
+  max-width: 35ch;
+}
+.cinematic-intro .intro-names {
+  line-height: 1.8;
+}
+.intro-moon {
+  pointer-events: none;
+  opacity: 0.35;
+}
+.galaxy-title {
+  margin: 34px auto 8px;
+}
+.galaxy-title h1 {
+  font-size: clamp(40px, 5.3vw, 74px);
+  line-height: 1.13;
+  letter-spacing: -0.045em;
+  margin: 18px 0;
+}
+.galaxy-title .eyebrow {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+.galaxy-title p {
+  font-size: 14px;
+  max-width: 40ch;
+  margin: auto;
+  line-height: 1.8;
+}
+.galaxy-canvas {
+  height: 770px;
+  margin-top: 20px;
+}
+.galaxy-canvas:before {
+  inset: 8% 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, #63577e22, transparent 55%),
+    radial-gradient(ellipse at 25% 75%, #3e68801a, transparent 50%);
+}
+.galaxy-orbit {
+  border-color: #c7b1d018;
+}
+.galaxy-destination > .destination-art {
+  animation: none;
+  transition:
+    filter 0.4s,
+    scale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.galaxy-destination strong {
+  font: 400 clamp(17px, 1.6vw, 21px)/1.25 var(--display);
+  letter-spacing: -0.02em;
+  text-transform: none;
+  margin-top: 10px;
+}
+.galaxy-destination > span {
+  font:
+    12px/1.6 "Segoe UI",
+    sans-serif;
+  color: #a9a3ba;
+  margin-top: 7px;
+}
+.galaxy-destination:hover > .destination-art {
+  filter: drop-shadow(0 10px 22px #b7a0ce30);
+  scale: 1.035;
+}
+.map-whisper {
+  font-size: 14px;
+  top: 0;
+  right: 1%;
+}
+.galaxy-couple {
+  top: 42%;
+  left: 56%;
+  width: 130px;
+}
+.galaxy-couple .handwritten {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.galaxy-bottom {
+  align-items: center;
+  padding: 25px 0 45px;
+  border-top: 1px solid #bda9c21a;
+}
+.our-constellation > span {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.daily-note {
+  padding: 24px 30px;
+  border-left: 1px solid #d4b3c44d;
+  max-width: 480px;
+}
+.daily-note p {
+  font: italic clamp(20px, 2vw, 26px)/1.55 var(--display);
+  margin: 15px 0;
+}
+.daily-note .eyebrow {
+  font-size: 10px;
+}
+/* A single coordinate system keeps hands in contact at every rendered size. */
+.couple {
+  display: block;
+  width: 320px;
+  height: auto;
+  aspect-ratio: 320 / 215;
+  margin: 22px auto;
+  animation: none;
+}
+.couple-stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.couple .couple-stage .character {
+  width: 140px;
+  height: 180px;
+  transform: none;
+  animation: none;
+  overflow: visible;
+}
+.couple .character-head,
+.couple .character-eyes {
+  animation: none;
+}
+.couple .arm,
+.couple .character-legs {
+  transform: none;
+  animation: none;
+}
+.partner {
+  transform: translate(var(--px), 15px);
+}
+.partner-janna {
+  --px: 20px;
+  --from: -15px;
+}
+.partner-josh {
+  --px: 160px;
+  --from: 15px;
+}
+.couple-hold-hands .partner,
+.couple-kiss .partner,
+.couple-dance .partner {
+  animation: partner-arrive 1.7s cubic-bezier(0.22, 0.75, 0.25, 1) both;
+}
+.couple-hold-hands .partner-janna,
+.couple-kiss .partner-janna,
+.couple-dance .partner-janna {
+  --px: 40px;
+}
+.couple-hold-hands .partner-josh,
+.couple-kiss .partner-josh,
+.couple-dance .partner-josh {
+  --px: 140px;
+}
+.couple-hug .partner,
+.couple-heart .partner {
+  animation: partner-arrive 1.8s cubic-bezier(0.22, 0.75, 0.25, 1) both;
+}
+.couple-hug .partner-janna,
+.couple-heart .partner-janna {
+  --px: 66px;
+  --from: -46px;
+}
+.couple-hug .partner-josh,
+.couple-heart .partner-josh {
+  --px: 114px;
+  --from: 46px;
+}
+.couple-hug .character-janna .character-head,
+.couple-heart .character-janna .character-head {
+  transform: translate(-16px, -3px) rotate(-10deg);
+  transform-origin: 70px 100px;
+}
+.couple-hug .character-josh .character-head,
+.couple-heart .character-josh .character-head {
+  transform: translate(16px, -3px) rotate(10deg);
+  transform-origin: 70px 100px;
+}
+.couple-hug .arm-right,
+.couple-heart .arm-right,
+.couple-hug .character-josh .arm-left,
+.couple-heart .character-josh .arm-left {
+  opacity: 0;
+}
+.embrace-arms {
+  animation: embrace 1.8s ease both;
+}
+.couple-kiss .character-janna .character-head {
+  transform: rotate(-4deg);
+  transform-origin: 120px 88px;
+}
+.couple-kiss .character-josh .character-head {
+  transform: rotate(4deg);
+  transform-origin: 20px 88px;
+}
+.couple-kiss .character-janna .arm-right {
+  transform: rotate(-65deg);
+}
+.couple-kiss .character-josh .arm-left {
+  transform: rotate(65deg);
+}
+.couple-sleep .partner-janna {
+  --px: 45px;
+}
+.couple-sleep .partner-josh {
+  --px: 140px;
+}
+.couple-sleep .character-janna .character-head {
+  transform: translate(8px, 8px) rotate(22deg);
+  transform-origin: 70px 100px;
+}
+.couple-sleep .character-josh .character-head {
+  transform: translate(-5px, 7px) rotate(-12deg);
+  transform-origin: 70px 100px;
+}
+.pose-sleep .arm-left {
+  transform: rotate(-28deg);
+}
+.pose-sleep .arm-right {
+  transform: rotate(28deg);
+}
+.couple-caption {
+  position: static;
+  width: auto;
+  margin: 6px 0 16px;
+  font-size: 14px;
+}
+.couple:has(.couple-caption) {
+  height: auto;
+  aspect-ratio: auto;
+}
+.couple:has(.couple-caption) .couple-stage {
+  aspect-ratio: 320 / 215;
+  height: auto;
+}
+.pose-walk .character-legs,
+.pose-run .character-legs {
+  animation: none;
+}
+.pose-walk .leg,
+.pose-run .leg {
+  animation: step 0.8s ease-in-out infinite alternate;
+}
+.pose-walk .leg-right,
+.pose-run .leg-right {
+  animation-direction: alternate-reverse;
+}
+.pose-walk .arm-left,
+.pose-run .arm-left {
+  animation: arm-step 0.8s ease-in-out infinite alternate-reverse;
+}
+.pose-walk .arm-right,
+.pose-run .arm-right {
+  animation: arm-step 0.8s ease-in-out infinite alternate;
+}
+.couple-walk .partner {
+  animation: walking-bob 0.4s ease-in-out infinite alternate;
+}
+.couple-walk .couple-stage {
+  animation: stroll 7s ease-in-out infinite alternate;
+}
+.couple-dance .couple-stage {
+  animation: couple-turn 4s ease-in-out infinite;
+  transform-origin: 50% 85%;
+}
+.couple-dance .character-janna .arm-right {
+  transform: rotate(-30deg);
+  transform-origin: 120px 130px !important;
+}
+.couple-dance .character-josh .arm-left {
+  transform: rotate(30deg);
+  transform-origin: 20px 130px !important;
+}
+.couple-dance .leg {
+  animation: step 1s ease-in-out infinite alternate;
+}
+.couple-dance .leg-right {
+  animation-direction: alternate-reverse;
+}
+.couple-dance .character-janna .arm-left {
+  transform: rotate(55deg);
+}
+.couple-dance .character-josh .arm-right {
+  transform: rotate(-55deg);
+}
+.pose-celebrate .arm-left,
+.couple .pose-celebrate .arm-left {
+  transform: rotate(150deg);
+}
+.pose-celebrate .arm-right,
+.couple .pose-celebrate .arm-right {
+  transform: rotate(-150deg);
+}
+.couple-celebrate .partner {
+  animation: joyful-jump 1.15s cubic-bezier(0.25, 0.6, 0.3, 1) 3;
+  transform-origin: 70px 170px;
+}
+.couple-celebrate .partner-josh {
+  animation-delay: 0.12s;
+}
+.couple-playground {
+  padding: 40px 0 25px;
+  margin-top: 60px;
+  border-top: 1px solid #c2a5c328;
+}
+.couple-playground h2 {
+  font-size: clamp(25px, 3vw, 36px);
+  line-height: 1.35;
+}
+.couple-playground > .couple {
+  width: 400px;
+  height: auto;
+  max-width: 100%;
+}
+.companion-bubble {
+  font-size: 19px;
+  line-height: 1.5;
+}
+.companion-room .avatar-stage {
+  height: auto;
+  min-height: 230px;
+}
+.companion-room .avatar-stage .couple {
+  height: auto;
+}
+.companion-actions {
+  flex-wrap: wrap;
+}
+.companion-actions button {
+  font-size: 13px;
+}
+.stat-bars > div {
+  font-size: 12px;
+}
+.stat-bars small {
+  font-size: 11px;
+}
+/* Intimate physical surfaces, with room for the content to breathe. */
+.scrapbook {
+  gap: 18px 28px;
+  padding: 35px 18px 90px;
+}
+.scrapbook .polaroid {
+  width: 29%;
+  margin-left: 0;
+  margin-right: 0;
+  background: linear-gradient(145deg, #f1e7d7, #e0d2c0);
+  box-shadow:
+    2px 3px 1px #0002,
+    0 20px 35px #0005;
+}
+.scrapbook .polaroid > span:not(.tape) {
+  font: italic 20px/1.45 var(--display);
+  margin: 18px 0 8px;
+}
+.scrapbook .polaroid small {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+.letters-grid {
+  gap: 48px 32px;
+}
+.letter-card {
+  padding: 22px 18px;
+  flex: 0 1 260px;
+}
+.letter-card h3 {
+  font: 23px/1.3 var(--display);
+  margin-top: 22px;
+}
+.letter-card > p {
+  font-size: 12px;
+  margin-top: 10px;
+}
+.envelope {
+  box-shadow:
+    2px 4px 3px #0002,
+    0 18px 30px #0004;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.letter-card:hover .envelope,
+.letter-card:focus-visible .envelope {
+  transform: translateY(-6px) rotate(-3deg);
+}
+.letter-paper {
+  background: linear-gradient(120deg, #f1e5d1, #e5d4bd);
+  padding: clamp(22px, 4vw, 48px);
+}
+.modal .letter-paper p {
+  font: clamp(17px, 2vw, 21px)/1.9 var(--display);
+}
+.cozy-room {
+  border-color: #9d81924a;
+  box-shadow:
+    0 35px 70px #0004,
+    inset 0 0 100px #090d1b66;
+}
+.room-atmosphere {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.object-drawing > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.object-window .object-drawing {
+  overflow: hidden;
+  background: #17213a;
+}
+.object-window .object-drawing:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 58%;
+  border-top: 5px solid #97849b;
+  z-index: 1;
+}
+.object-books .object-drawing {
+  height: 85px;
+}
+.object-frame .object-drawing {
+  box-shadow:
+    inset 0 0 0 2px #dcc6a3,
+    3px 5px 9px #0004;
+}
+.object-label {
+  width: max-content;
+  max-width: 115px;
+  border-radius: 3px;
+  background: #181a2cd9;
+  border-color: #c4acb92b;
+  font-family: "Segoe UI", sans-serif;
+  letter-spacing: 0.2px;
+}
+.object-bed .object-drawing {
+  box-shadow:
+    inset 0 -18px 20px #32304b50,
+    0 10px 0 #695064,
+    8px 18px 15px #0003;
+}
+.cozy-room:has(.lamp-off) {
+  filter: brightness(0.7);
+}
+.room-floor {
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 38px, #c1a69c12 39px 40px),
+    repeating-linear-gradient(95deg, #4c3d5033 0 85px, #b79a9020 86px 87px);
+}
+.room-rug {
+  border: 5px double #bba4af30;
+  box-shadow: 0 8px 12px #0002;
+}
+.object-drawing {
+  filter: drop-shadow(3px 8px 5px #0003);
+}
+.object-label {
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+}
+.room-note {
+  position: static;
+  margin: 22px auto 0;
+  padding: 0 16px;
+  font: italic 17px/1.6 var(--display);
+  text-align: center;
+}
+.room-residents {
+  bottom: 12%;
+}
+.room-residents .couple {
+  height: auto;
+}
+.room-residents .couple-caption {
+  display: none;
+}
+.game-hub {
+  gap: 38px;
+}
+.game-hub-card {
+  border-color: #54465d;
+  border-radius: 18px 18px 5px 5px;
+  background: linear-gradient(135deg, #393044, #221e32);
+  padding: 22px 20px 42px;
+}
+.game-hub-card h2 {
+  font-size: 28px;
+  min-height: 0;
+  margin-bottom: 14px;
+}
+.game-hub-card p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.game-hub-card .eyebrow {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.game-hub-card .text-button {
+  font-size: 13px;
+}
+.game-hub-card:hover {
+  transform: translateY(-4px);
+}
+.game-panel {
+  background: linear-gradient(150deg, #1c2033, #101627);
+  border: 1px solid #b1a1bd40;
+  border-top: 3px solid #b997ab;
+  border-radius: 12px;
+}
+.game-panel h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.3;
+}
+.game-score {
+  position: static;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.quiz-options button {
+  font-size: 15px;
+  min-height: 52px;
+}
+.crossword-grid {
+  padding: 10px;
+  background: #b9a9bd;
+  border: 1px solid #e6d4d3;
+  box-shadow:
+    4px 7px 0 #524455,
+    0 18px 35px #0004;
+  border-radius: 4px;
+}
+.crossword-grid button {
+  border-radius: 2px;
+}
+.crossword-clues button {
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 44px;
+  padding: 9px 10px;
+}
+.active-clue-bar {
+  align-items: stretch;
+  gap: 10px;
+}
+.active-clue-bar .active-clue {
+  min-width: 0;
+  flex: 1 1 240px;
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 14px;
+  border-left: 2px solid #cfb6c5;
+}
+.switch-dir-button {
+  font-size: 13px;
+  min-height: 44px;
+  white-space: normal;
+  border-radius: 5px;
+}
+.dialog-actions {
+  flex-wrap: wrap;
+}
+.growing-plant {
+  width: 400px;
+  padding: 28px 20px 34px;
+  isolation: isolate;
+}
+.growing-plant:before {
+  content: "";
+  position: absolute;
+  inset: 5% -10% 15%;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 70%, #b1b79722, transparent 65%);
+  border-bottom: 1px solid #abb6b329;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.growing-plant .plant-illustration {
+  width: 300px;
+  height: 325px;
+}
+.growing-plant .plant-stage-title {
+  font: 27px/1.3 var(--display);
+  margin-top: 25px;
+}
+.growing-plant .plant-stage-hint {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-top: 10px;
+}
+.plant-sparkle {
+  animation: none;
+}
+.vault-lock {
+  padding: 50px 25px;
+  background: radial-gradient(ellipse at 50% 35%, #a78c9e19, transparent 65%);
+}
+.vault-lock-icon {
+  border: 1px solid #a899b6;
+  outline: 1px solid #a899b644;
+  outline-offset: 10px;
+  background: radial-gradient(circle at 35% 30%, #454051, #191b2c);
+  box-shadow:
+    inset 0 0 30px #0007,
+    0 20px 50px #0004;
+}
+.vault-lock h2 {
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.25;
+}
+.vault-lock > p {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.vault-lock > small {
+  font-size: 12px;
+}
+.trait-message {
+  min-height: 110px;
+  height: auto;
+  align-items: center;
+}
+.trait-message p {
+  line-height: 1.5;
+}
+.cinematic-ending {
+  position: relative;
+  isolation: isolate;
+}
+.reunion-landscape {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.65;
+}
+.cinematic-ending .couple {
+  position: relative;
+  z-index: 1;
+}
+.cinematic-ending.ending-step-2 .partner-janna {
+  --px: 0px;
+}
+.cinematic-ending.ending-step-2 .partner-josh {
+  --px: 180px;
+}
+.cinematic-ending.ending-step-3 .partner-janna {
+  --px: 15px;
+}
+.cinematic-ending.ending-step-3 .partner-josh {
+  --px: 165px;
+}
+.cinematic-ending.ending-step-4 .partner-janna {
+  --px: 30px;
+}
+.cinematic-ending.ending-step-4 .partner-josh {
+  --px: 150px;
+}
+.cinematic-ending.ending-step-5 .partner-janna {
+  --px: 40px;
+}
+.cinematic-ending.ending-step-5 .partner-josh {
+  --px: 140px;
+}
+.garden-world .shooting-star {
+  position: relative;
+  top: auto;
+  right: auto;
+  left: auto;
+  display: block;
+  margin: 25px auto;
+  min-height: 50px;
+  animation: none;
+}
+.garden-world .shooting-star span {
+  font-size: 14px;
+}
+.cinematic-ending:before {
+  content: "";
+  position: absolute;
+  inset: 15% -10% 20%;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 85%, #b895ac28, transparent 64%);
+  border-bottom: 1px solid #ba9cb826;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.cinematic-ending .couple {
+  height: auto;
+  width: 480px;
+}
+.cinematic-ending.ending-step-0 .partner-janna,
+.cinematic-ending.ending-step-1 .partner-janna {
+  --px: -15px;
+}
+.cinematic-ending.ending-step-0 .partner-josh,
+.cinematic-ending.ending-step-1 .partner-josh {
+  --px: 195px;
+}
+.cinematic-ending h2 {
+  font-size: clamp(26px, 4vw, 46px);
+  line-height: 1.4;
+  margin: 28px auto;
+}
+.cinematic-ending .partner {
+  transition: transform 1.8s cubic-bezier(0.22, 0.75, 0.25, 1);
+}
+.cinematic-ending .ending-stars {
+  letter-spacing: 8px;
+}
+@keyframes partner-arrive {
+  0%,
+  12% {
+    transform: translate(calc(var(--px) + var(--from)), 15px);
+  }
+  65% {
+    transform: translate(var(--px), 13px);
+  }
+  100% {
+    transform: translate(var(--px), 15px);
+  }
+}
+@keyframes embrace {
+  0%,
+  35% {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  75%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes step {
+  from {
+    transform: rotate(-17deg);
+  }
+  to {
+    transform: rotate(17deg);
+  }
+}
+@keyframes arm-step {
+  from {
+    transform: rotate(-14deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+@keyframes walking-bob {
+  to {
+    transform: translate(var(--px), 12px);
+  }
+}
+@keyframes stroll {
+  from {
+    translate: -12px 0;
+  }
+  to {
+    translate: 12px 0;
+  }
+}
+@keyframes couple-turn {
+  0%,
+  100% {
+    transform: translateX(-9px) rotate(-3deg);
+  }
+  25% {
+    transform: translateY(-3px) scaleX(0.96);
+  }
+  50% {
+    transform: translateX(9px) rotate(3deg);
+  }
+  75% {
+    transform: translateY(-3px) scaleX(0.96);
+  }
+}
+@keyframes joyful-jump {
+  0%,
+  100% {
+    transform: translate(var(--px), 15px);
+  }
+  18% {
+    transform: translate(var(--px), 18px) scaleY(0.98);
+  }
+  48% {
+    transform: translate(var(--px), 0);
+  }
+  75% {
+    transform: translate(var(--px), 16px);
+  }
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .galaxy-canvas {
+    height: 820px;
+  }
+  .galaxy-destination {
+    width: 165px;
+  }
+  .galaxy-destination strong {
+    font-size: 18px;
+  }
+  .galaxy-couple {
+    left: 55%;
+    top: 43%;
+    width: 110px;
+  }
+}
+@media (max-width: 700px) {
+  body {
+    font-size: 15px;
+  }
+  .universe-main,
+  .universe-main.world-home {
+    padding: 28px 22px 65px;
+  }
+  .universe-header {
+    height: 76px;
+  }
+  .section-heading {
+    margin: 14px auto 38px;
+  }
+  .section-heading h1 {
+    font-size: clamp(36px, 9vw, 48px);
+  }
+  .section-heading p {
+    font-size: 15px;
+  }
+  .galaxy-title {
+    margin-top: 18px;
+  }
+  .galaxy-title h1 {
+    font-size: clamp(39px, 10vw, 58px);
+    max-width: 12ch;
+    margin: 18px auto;
+  }
+  .galaxy-title p {
+    font-size: 14px;
+    max-width: 29ch;
+  }
+  .galaxy-title .eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.1px;
+  }
+  .galaxy-canvas {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px 12px;
+    height: auto;
+    padding: 25px 0 15px;
+    margin: 10px 0 0;
+  }
+  .galaxy-destination {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    transform: none;
+    align-self: start;
+    padding: 6px 0 14px;
+  }
+  .galaxy-destination:nth-of-type(even) {
+    margin-top: 75px;
+  }
+  .galaxy-destination > .destination-art {
+    height: 115px;
+  }
+  .galaxy-destination strong {
+    font-size: 20px;
+    line-height: 1.2;
+  }
+  .galaxy-destination > span {
+    font-size: 12px;
+    line-height: 1.6;
+    max-width: 17ch;
+    margin: 8px auto 0;
+  }
+  .galaxy-couple {
+    position: relative;
+    left: auto;
+    top: auto;
+    align-self: center;
+    width: 100%;
+    transform: none;
+    margin-top: 55px;
+  }
+  .galaxy-couple .couple {
+    width: 140px;
+    height: auto;
+    margin: auto;
+  }
+  .galaxy-couple .handwritten {
+    font-size: 12px;
+  }
+  .galaxy-secret {
+    right: 0;
+    bottom: -38px;
+  }
+  .galaxy-bottom {
+    margin-top: 35px;
+    gap: 25px;
+    padding-top: 35px;
+  }
+  .daily-note {
+    padding: 12px 20px;
+  }
+  .universe-footer {
+    padding-bottom: 120px;
+    font-size: 10px;
+    line-height: 1.8;
+  }
+  .explore-menu {
+    gap: 0 16px;
+  }
+  .explore-menu button {
+    font-size: 13px;
+  }
+  .modal-backdrop {
+    padding: 12px;
+  }
+  .modal {
+    max-height: calc(100dvh - 24px);
+    padding: 28px 20px;
+  }
+  .modal > h2 {
+    font-size: 28px;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .floating-player {
+    border-radius: 12px;
+    bottom: 12px;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .floating-song {
+    min-width: 0;
+  }
+  .floating-song strong {
+    font-size: 12px;
+  }
+  .floating-song small {
+    font-size: 11px;
+  }
+  .companion-peek {
+    bottom: 80px;
+    left: 8px;
+    width: 48px;
+  }
+  .companion-peek > .character {
+    width: 48px;
+    height: 62px;
+  }
+  .ending-trigger {
+    bottom: 96px;
+    left: auto;
+    right: 18px;
+  }
+  .scrapbook {
+    gap: 40px 0;
+    padding: 20px 12px 75px;
+  }
+  .scrapbook .polaroid {
+    width: 88%;
+    max-width: 340px;
+    margin: 0;
+    padding: 12px 12px 24px;
+  }
+  .scrapbook .polaroid:nth-child(3n + 2),
+  .scrapbook .polaroid:nth-child(3n) {
+    margin-top: 0;
+  }
+  .scrapbook .polaroid:nth-child(even) {
+    margin-left: 20px;
+  }
+  .scrapbook .polaroid > span:not(.tape) {
+    font-size: 22px;
+  }
+  .letters-grid {
+    gap: 12px;
+  }
+  .letter-card {
+    flex-basis: 100%;
+    max-width: 300px;
+  }
+  .envelope {
+    width: 160px;
+    height: 105px;
+  }
+  .envelope-flap {
+    border-left-width: 80px;
+    border-right-width: 80px;
+    border-top-width: 60px;
+  }
+  .envelope > span {
+    left: 65px;
+    top: 39px;
+  }
+  .companion-room {
+    gap: 30px;
+  }
+  .companion-room .companion-card {
+    padding: 0;
+  }
+  .companion-room .companion-header h2 {
+    font-size: 22px;
+  }
+  .companion-room .online-pill {
+    font-size: 11px;
+  }
+  .companion-room .companion-actions button {
+    font-size: 12px;
+    padding: 12px 10px;
+  }
+  .chat-header h2 {
+    font-size: 17px;
+  }
+  .chat-header small {
+    font-size: 11px;
+  }
+  .chat-message,
+  .chat-card input {
+    font-size: 14px;
+  }
+  .cozy-room {
+    margin: 0 -4px;
+    min-height: 510px;
+  }
+  .room-note {
+    bottom: 16px;
+    left: 15px;
+    right: 15px;
+    font-size: 14px;
+  }
+  .room-residents {
+    bottom: 18%;
+    left: 30%;
+  }
+  .room-residents .couple {
+    width: 145px;
+    height: auto;
+  }
+  .object-label {
+    font-size: 11px;
+  }
+  .object-books .object-drawing {
+    height: 65px;
+  }
+  .object-label {
+    max-width: 90px;
+    bottom: -30px;
+    padding: 3px 6px;
+  }
+  .room-note {
+    bottom: 7px;
+    font-size: 16px;
+  }
+  .game-hub {
+    padding: 0 8px 40px;
+    gap: 30px;
+  }
+  .game-hub-card {
+    width: 100%;
+    max-width: 350px;
+    padding: 22px 22px 38px;
+  }
+  .game-illustration {
+    height: 150px;
+  }
+  .game-panel {
+    padding: 25px 15px;
+  }
+  .crossword-layout {
+    gap: 25px;
+  }
+  .crossword-grid {
+    padding: 5px;
+    max-width: 100%;
+  }
+  .crossword-clues {
+    width: 100%;
+    gap: 14px;
+  }
+  .crossword-clues > div {
+    min-width: 0;
+    flex: 1;
+  }
+  .crossword-clues button {
+    font-size: 13px;
+  }
+  .growing-plant {
+    padding: 15px 10px 30px;
+  }
+  .growing-plant:before {
+    inset-inline: 0;
+  }
+  .trait-orbit {
+    gap: 10px;
+    padding-top: 250px;
+  }
+  .trait {
+    border-radius: 5px;
+    font-size: 16px;
+    min-height: 46px;
+  }
+  .trait-message {
+    margin-top: 30px;
+  }
+  .trait-message p {
+    font-size: 22px;
+  }
+  .timezone-card {
+    padding: 20px 5px;
+  }
+  .timezone-card > .eyebrow {
+    font-size: 10px;
+  }
+  .timezone-card p {
+    font-size: 12px;
+  }
+  .local-time {
+    font-size: clamp(20px, 5vw, 26px);
+    flex-wrap: wrap;
+  }
+  .timezone-greeting {
+    font-size: 15px;
+  }
+  .song-note p {
+    font-size: 19px;
+  }
+  .modal:has(.cinematic-ending) {
+    padding: 60px 24px 35px;
+    align-items: safe center;
+  }
+  .cinematic-ending .couple {
+    width: 100%;
+    height: auto;
+  }
+  .cinematic-ending:before {
+    inset-inline: 0;
+  }
+  .cinematic-ending p {
+    font-size: 19px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .couple *,
+  .character *,
+  .galaxy *,
+  .plant-sparkle {
+    animation: none !important;
+    transition: none !important;
+  }
+  .embrace-arms {
+    opacity: 1;
+  }
+}

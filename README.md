@@ -61,60 +61,154 @@ public/memories/       Illustrations; add your real photos here
 tests/                 Desktop and mobile browser tests
 ```
 
-## Make it yours
+## Personalizing OurVerse
 
-Personal data lives in `src/data`. Sample dates, memories, birthday timing, quiz answers, letters, reasons, and songs are intentionally editable placeholders. The relationship start is already set to the real date provided.
+Every piece of personal content lives in clean, typed configuration files under `src/config` and `src/data`. Janna can personalize the entire universe without searching through component code.
 
-| File              | What to customize                                                                 |
-| ----------------- | --------------------------------------------------------------------------------- |
-| `relationship.ts` | Names, start timestamp, timezones, vault password/hint, final letter              |
-| `memories.ts`     | Photo paths, dates, captions, stories, categories                                 |
-| `timeline.ts`     | Milestone dates, titles, descriptions, photos, icons, special messages            |
-| `letters.ts`      | Letter titles/bodies and optional ISO `unlockDate` timestamps                     |
-| `quiz.ts`         | Questions, options, zero-based correct answer index, explanations                 |
-| `reasons.ts`      | 100 sample reasons; replace generated combinations with your array of 100 strings |
-| `songs.ts`        | Titles, artists, covers, personal notes, optional audio and external links        |
-| `achievements.ts` | Titles, descriptions, rarity, symbols; keep IDs stable for saved unlocks          |
-| `messages.ts`     | Affectionate reminders, companion responses, chat rules, arcade messages          |
-| `dateIdeas.ts`    | Activities on the spinning wheel                                                  |
-| `secrets.ts`      | Vault sections and their sample content                                           |
-| `types.ts`        | Shared content interfaces                                                         |
+Sample memories, dates, quotes, puzzle photos, letters, and reasons are intentionally clear, editable placeholders.
 
-### Photos
+> [!IMPORTANT]
+> **Sentimental UX vs. Authentication**: All vault passwords, date locks, and code ciphers are client-side romantic interactive experiences. They are not cryptographic authentication or server-side security. Do not store sensitive credentials, private keys, or sensitive personal data in client source files.
 
-Put photos in `public/memories/`, e.g. `public/memories/first-call.webp`, then use `/memories/first-call.webp` in `memories.ts` or `timeline.ts`. Write descriptive captions for accessible image descriptions. WebP/JPEG at roughly 1200–1800 pixels wide works well. Next Image handles raster image optimization. The included SVGs keep the layout complete before real photos are added.
+---
 
-### Letters and dates
+### Customization Map & Actual File Paths
 
-Edit bodies in `letters.ts`; use `\n\n` for paragraph breaks. An `unlockDate` such as `2027-04-21T00:00:00+08:00` specifies an exact instant. The anniversary is April 21, 2027. **The birthday currently uses December 31, 2027 as a placeholder — change it.** Date locks use the visitor’s device clock and are experience features, not security controls.
+| Feature / Content                 | File Path                                 | What to Edit                                                                                                                                                       |
+| --------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Relationship Core**             | `src/data/relationship.ts`                | Names (`Janna`, `Josh`), start date (`April 21, 2026`), timezones (`Asia/Manila`, `America/Denver`), vault password, hint, and final love letter.                  |
+| **Settings & Special Dates**      | `src/config/settings.ts`                  | Josh's birthday (`"08-25"`, August 25, 2003), anniversary (`"04-21"`), constellation target, rare hug delay, and Mission Control console telemetry.                |
+| **Mini Janna Appearance**         | `src/config/characters.ts`                | Hair color (`#8b0000` deep auburn/red), hair highlight, skin tone, outfit colors, accessories (moon hair pin).                                                     |
+| **Mini Josh Appearance**          | `src/config/characters.ts`                | Hair color (`#171820` soft black), hair highlight, skin tone, outfit colors, rounded glasses toggle and style.                                                     |
+| **Memories Scrapbook**            | `src/data/memories.ts`                    | Array of memories: photo paths, captions, dates, categories (`calls`, `gaming`, `milestones`, `ordinary`, `someday`, `favorites`), and complete narrative stories. |
+| **Story Constellation**           | `src/data/timeline.ts`                    | Chapters in your relationship journey: dates, milestone titles, descriptions, photo paths, icons, and blockquote special messages.                                 |
+| **Letters Constellation**         | `src/data/letters.ts`                     | Envelope titles, letter bodies (`\n\n` for paragraphs), romantic occasions, and optional ISO `unlockDate` timestamps (e.g. `2027-04-21T00:00:00+08:00`).           |
+| **Things I Love About You**       | `src/data/expansion.ts` (`loveTraits`)    | Orbiting traits around Mini Josh (title, reaction animation trigger, and heartfelt caption).                                                                       |
+| **100 Reasons**                   | `src/data/reasons.ts`                     | Array of 100 unique personal reasons why you love him.                                                                                                             |
+| **Relationship Quiz**             | `src/data/quiz.ts`                        | Questions, 4 answer choices per question, zero-based `correct` answer index, and post-question explanations.                                                       |
+| **OurVerse Crossword**            | `src/data/expansion.ts` (`crossword`)     | Grid dimensions, intersecting Across/Down entries, answers, clue numbers, and romantic clues.                                                                      |
+| **Code Ciphers (Crack the Code)** | `src/data/expansion.ts` (`codePuzzles`)   | 6 relationship ciphers (A1Z26, Caesar cipher, symbol substitution, hidden acronym, date code, word scramble) with hints and answers.                               |
+| **Who Said It?**                  | `src/data/expansion.ts` (`quotes`)        | Memorable quotes and conversations with attribution (`Janna` or `Josh`).                                                                                           |
+| **Date Roulette Ideas**           | `src/data/dateIdeas.ts`                   | Date activities and romantic plans on the spinning roulette wheel.                                                                                                 |
+| **Music Satellite**               | `src/data/songs.ts`                       | Song titles, artists, album art covers, personal love notes, optional local audio files (`/audio/...`), and optional streaming links.                              |
+| **Josh's Daily Messages**         | `src/data/expansion.ts` (`dailyMessages`) | Affectionate daily notes revealed deterministically on the desk each day.                                                                                          |
+| **Love Mailbox**                  | `src/data/expansion.ts` (`mailboxNotes`)  | Surprise notes Josh finds when opening the front-porch mailbox.                                                                                                    |
+| **The Love Jar**                  | `src/data/expansion.ts` (`jarNotes`)      | Categorized notes (`Love`, `Funny`, `Memory`, `Question`, `Challenge`) drawn when shaking the physical jar.                                                        |
+| **Couple Questions**              | `src/data/expansion.ts` (`questions`)     | Late-night conversation prompts categorized under `Deep`, `Romantic`, `Funny`, `Future`, and `Random`.                                                             |
+| **Love Coupons**                  | `src/data/expansion.ts` (`coupons`)       | Redeemable romantic coupon tickets (title, description, terms, icons, quantity).                                                                                   |
+| **Future Dreams Checklist**       | `src/data/expansion.ts` (`dreams`)        | Someday goals (`Close the distance`, `Airport hug`, `Movie night`) that turn into scrapbook memories when checked.                                                 |
+| **Time Capsule**                  | `src/data/expansion.ts` (`capsule`)       | Written date, unlock date (`April 21, 2027`), and long-term future love letter.                                                                                    |
+| **Adventure Map**                 | `src/data/expansion.ts` (`travel`)        | Coordinate pins on the world map for Janna (Philippines), Josh (Colorado), and future dream destinations.                                                          |
+| **Mystery Gifts**                 | `src/data/expansion.ts` (`gifts`)         | Date-locked gift boxes with surprise reveals.                                                                                                                      |
+| **Future Generator**              | `src/data/expansion.ts` (`futureOptions`) | Humorous and sweet randomized combinations for house, pets, who cooks, who cleans, and kisses.                                                                     |
+| **Josh's Mission Control**        | `src/config/settings.ts` (`mission`)      | Retro console monitors: Boyfriend Status, Janna Love Level, Kisses Owed, Hugs Pending, Distance, and Missing You status.                                           |
+| **Relationship Patch Notes**      | `src/data/expansion.ts` (`patchNotes`)    | Version string, changes/improvements, known unresolved issues (e.g. Distance bug), and upcoming features.                                                          |
+| **Achievements**                  | `src/data/achievements.ts`                | 11 unlockable badges (titles, descriptions, icons, rarity tiers). IDs are linked to local progression.                                                             |
+| **Secret Vault Content**          | `src/data/secrets.ts`                     | Unlocked vault tabs: `playlists`, `letters`, `promises`, `confessions`, and future travel plans.                                                                   |
+| **Cinematic Ending**              | `src/data/expansion.ts` (`endingLines`)   | 10 staged emotional lines revealed sequentially during the cinematic reunion finale under the starry sky.                                                          |
 
-### Music
+---
 
-Put audio you have permission to use in `public/audio/` and set `audioUrl` to `/audio/our-song.mp3`. Set `cover` to a local public image path. Optionally set an HTTPS `externalUrl` to the song on a streaming service; it opens in a new tab.
+### Step-by-Step Customization Guide
 
-Without audio, records, notes, track selection, and previous/next controls work. Play explains that audio is not configured; it does not fake playback or a timer. Selecting a track pauses playback. When a song ends, the next is selected and waits for Play.
+#### 1. Adding Real Photos & Puzzle Pictures
 
-### Local progress
+Place your image files in `public/memories/` (e.g. `public/memories/first-photo.webp` or `public/memories/josh.jpg`).
 
-Intro completion, explored sections, reasons, Mini Janna’s stats, chat interaction count, vault access, and achievements use the `ourverse-v1` localStorage key. Progress is per browser/device, not synchronized. If storage is blocked, the current visit continues in memory. To reset, delete that key in browser developer tools or clear this site’s browser data.
+- In `src/data/memories.ts`, set `image: "/memories/first-photo.webp"`.
+- In `src/data/expansion.ts`, update `puzzlePhotos` to reference your photos for the **Piece of Us** sliding puzzle.
+- Recommended image size: 1200×900px or 1600×1200px in WebP or JPG.
+- Next.js Image automatically optimizes and serves these images with responsive sizing.
 
-## Secret vault configuration
+#### 2. Setting Important Dates
 
-Edit `vaultPassword` and `vaultHint` in `relationship.ts`. The initial key is the relationship date in **MMDDYYYY** format. Revealing 100 reasons also opens the vault.
+- **Relationship Start**: Set in `src/data/relationship.ts` (`startDate: "2026-04-21T00:00:00+08:00"`).
+- **Anniversary**: Handled automatically on April 21 (`settings.anniversary = "04-21"`).
+- **Josh's Birthday**: Set to August 25, 2003. In `src/config/settings.ts`, `birthday: "08-25"` controls the annual celebration in `"MM-DD"` format.
+  When his birthday arrives, a special banner appears across the universe and birthday-locked letters unlock automatically!
 
-**This is a client-side puzzle, not authentication or encryption.** Its password/content can be inspected in browser assets, and date locks can be bypassed. Do not add genuinely private photos, credentials, sensitive messages, or other secrets. `noindex` discourages indexing but does not restrict access. For a truly private deployed site, add hosting-level authentication or real server-side access control first. That service is not required for the current local version.
+#### 3. Setting Timezones & Clocks
+
+In `src/data/relationship.ts`:
+
+- `authorTimezone: "Asia/Manila"` (Janna's timezone in the Philippines)
+- `recipientTimezone: "America/Denver"` (Josh's Mountain Time in Colorado)
+  Both clocks update in real time with live Daylight Saving Time calculations and day/night sky indicators.
+
+#### 4. Configuring Music Tracks
+
+In `src/data/songs.ts`, you can configure your favorite songs:
+
+- If you have an audio file, put it in `public/audio/our-song.mp3` and set `audioUrl: "/audio/our-song.mp3"`.
+- If no audio file is provided, OurVerse gracefully presents the song notes, vinyl record visual, and streaming links without crashing or faking playback.
+
+#### 5. Local Progress & Persistence
+
+All progress is saved directly in the user's browser under the `ourverse-v1` `localStorage` key.
+Saved state includes:
+
+- Entered universe state
+- Explored worlds & destinations
+- Revealed reasons counter (0–100)
+- Mini Janna happiness / affection stats
+- Redeemed love coupons
+- Checked future dreams
+- Written sky wishes
+- Solved crossword & puzzle completions
+- Code fragments & vault unlocked state
+- Unlocked achievements
+- Cinematic ending viewed
+
+Progress persists across browser refreshes and browser restarts.
+
+---
+
+### Development-Only "Janna Mode" & Testing Controls
+
+When running locally in development (`npm run dev`), Janna has access to complete testing controls:
+
+- **Shortcut**: Press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> anywhere on the screen.
+- **Mobile/Click**: Click the discreet **`Janna Mode ✦`** button in the footer.
+
+The development modal provides:
+
+- **Instant Unlocks**:
+  - Full Universe (all achievements, vault open, 100 reasons, mature plant, ending ready)
+  - Mature Love Plant (flowering stage 4 with blooms and sparkles)
+  - Unlock Secret Vault
+  - Unlock Time Capsule & Gifts (fast-forwards countdown)
+  - Complete Constellation (illuminates all 14+ stars)
+  - Unlock All Achievements
+- **Simulations**:
+  - Simulate Birthday (tests birthday banner, greeting, and birthday letter unlock)
+  - Simulate Anniversary (tests anniversary celebration)
+  - Simulate Late-Night Mode (tests Can't Sleep atmosphere when hour is past midnight)
+  - Reset Clock to Real Time
+- **Targeted Resets**:
+  - Reset all progress to fresh visitor state
+  - Reset Love Plant back to seed
+  - Reset achievements
+  - Reset constellation discoveries
+  - Reset redeemed coupons
+  - Reset games (quiz, memory match, Piece of Us, crossword, code ciphers)
+  - Reset secret vault
+  - Reset time capsule
+  - Reset cinematic ending
+
+_(These testing controls are completely stripped in production builds and never visible to normal visitors.)_
 
 <details>
-<summary>Creator’s guide to easter eggs (spoilers)</summary>
+<summary>Creator’s guide to easter eggs & secrets (spoilers)</summary>
 
-- Click the logo five times for a vault clue.
-- Find the little star in the top bar.
-- Click the sidebar’s tiny heart seven times.
-- Enter ↑ ↑ ↓ ↓ ← → ← → B A outside a text field.
-- Shift + J opens Mini Janna.
-- Perfect the quiz, complete Memory Match, or catch 20 hearts for achievements.
-- Reveal 100 reasons for a vault unlock and special message.
-- Visit seven sections to discover the final glowing heart. Its introduction fades through two lines and then displays the editable final letter.
+- **Logo Secret**: Click the `OURVERSE ✧` header logo 5 times to reveal a hidden shortcut to the Relationship Patch Notes.
+- **Konami Code**: Enter <kbd>↑</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>←</kbd> <kbd>→</kbd> <kbd>B</kbd> <kbd>A</kbd> outside an input field to activate Josh's Mission Control console.
+- **Quick Companion**: Press <kbd>Shift</kbd> + <kbd>J</kbd> to jump straight to Mini Janna.
+- **Footer Heart**: Click the tiny heart `♡` in the universe footer to visit the "DO NOT PRESS" button.
+- **Cozy Room Interactions**: Tap the desk lamp to turn room lighting on/off; tap Janna and Josh to cycle through cuddling scenes (hoodie stealing, gaming together, sleeping, hugging).
+- **Shooting Star Wishes**: Catch shooting stars in the Love Garden to write real wishes into your shared sky.
+- **Love Plant Growth**: Every 4 discoveries across OurVerse grows the Love Plant through 5 distinct visual stages: Seed → Sprout → Small Plant → Large Plant → Flowering Plant.
+- **Secret Vault**: Unlocks with the relationship date (`04212026`), by decoding all 6 code ciphers, or by revealing all 100 reasons.
+- **Cinematic Ending**: Once you illuminate the 14 stars of the Story Constellation, a glowing starlight icon appears in the bottom right leading to the 10-step reunion finale.
 
 </details>
 

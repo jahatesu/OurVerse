@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./universe.css";
+import "./polish.css";
+import "./art-direction.css";
 export const metadata: Metadata = {
   title: "OurVerse · A little universe for Josh",
   description:

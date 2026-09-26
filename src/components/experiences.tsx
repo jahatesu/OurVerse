@@ -90,6 +90,7 @@ const roomObjects = [
   { id: "garden", name: "Plant", kind: "plant", x: 65, y: 79 },
 ];
 function OurHome({ navigate }: Navigation) {
+  const [lampOn, setLampOn] = useState(true);
   const [scene, setScene] = useState<
     "sit" | "hoodie" | "sleep" | "gaming" | "hug"
   >("sit");
@@ -101,13 +102,58 @@ function OurHome({ navigate }: Navigation) {
         description="An imaginary room. A very real wish. Touch something and see where it takes you."
       />
       <div className="cozy-room">
+        <svg
+          className="room-atmosphere"
+          viewBox="0 0 1000 600"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="room-moonlight" x1="0" y1="0" x2="1" y2="1">
+              <stop stopColor="#bdc4df" stopOpacity=".12" />
+              <stop offset="1" stopColor="#bdc4df" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M430 210L540 210L890 575L575 575Z"
+            fill="url(#room-moonlight)"
+          />
+          <path
+            d="M18 417H982M18 426H982M30 430L0 600M200 430L155 600M400 430L385 600M600 430L620 600M800 430L850 600M970 430L1000 600"
+            stroke="#c2a699"
+            strokeOpacity=".13"
+            fill="none"
+          />
+          <path
+            d="M0 53Q250 135 500 65Q750 135 1000 53"
+            stroke="#baa8b4"
+            strokeOpacity=".4"
+            fill="none"
+          />
+          {[65, 170, 280, 390, 610, 720, 830, 935].map((x) => (
+            <g
+              key={x}
+              transform={`translate(${x} ${65 + Math.sin((x / 1000) * Math.PI) * 27})`}
+            >
+              <path d="M0 0V10" stroke="#bda6a1" />
+              <ellipse cy="14" rx="3" ry="5" fill="#ecd5a8" opacity=".8" />
+            </g>
+          ))}
+          <path
+            d="M5 5V408M995 5V408"
+            stroke="#c2a699"
+            strokeOpacity=".17"
+            strokeWidth="25"
+          />
+        </svg>
         <div className="room-floor" />
         <div className="room-rug" />
         <div className="room-desk" />
         <button
-          className="room-lamp"
+          className={`room-lamp ${lampOn ? "" : "lamp-off"}`}
           aria-label="Turn the lamp on or off"
-          onClick={(e) => e.currentTarget.classList.toggle("lamp-off")}
+          aria-pressed={lampOn}
+          onClick={() => setLampOn((on) => !on)}
         >
           <i />
           <span />
@@ -122,13 +168,51 @@ function OurHome({ navigate }: Navigation) {
           >
             <span className="object-drawing" aria-hidden="true">
               {o.kind === "window" ? (
-                "✦  ☾  ·"
+                <svg
+                  viewBox="0 0 140 140"
+                  aria-hidden="true"
+                  className="window-landscape"
+                >
+                  <circle cx="96" cy="33" r="15" fill="#e2d8bf" />
+                  <circle cx="103" cy="27" r="14" fill="#17213a" />
+                  <path
+                    d="M0 100L30 62L62 103L92 73L140 116V140H0Z"
+                    fill="#333d59"
+                  />
+                  <path
+                    d="M0 120Q34 100 70 118T140 108V140H0Z"
+                    fill="#242c45"
+                  />
+                  <g fill="#e5d4bc">
+                    <circle cx="32" cy="31" r="1" />
+                    <circle cx="60" cy="18" r="1.5" />
+                    <circle cx="118" cy="68" r="1" />
+                  </g>
+                </svg>
               ) : o.kind === "books" ? (
-                "▥ ▤ ▥"
+                <svg viewBox="0 0 110 80" aria-hidden="true">
+                  <path d="M3 78V25H17V78Z" fill="#9e7486" />
+                  <path d="M19 78V12H37V78Z" fill="#a8aca1" />
+                  <path d="M39 78V20H52V78Z" fill="#c1a18d" />
+                  <path d="M55 78V7H70V78Z" fill="#797b9e" />
+                  <path d="M82 78L70 24L85 21L98 75Z" fill="#ad8490" />
+                  <g stroke="#e2d1ba" strokeWidth="2" opacity=".65">
+                    <path d="M7 33H13M7 65H13M23 23H33M23 29H33M43 31H48M59 18H66M59 65H66M78 32L85 30" />
+                  </g>
+                </svg>
               ) : o.kind === "calendar" ? (
                 "21"
               ) : o.kind === "frame" ? (
-                "♡"
+                <svg viewBox="0 0 80 90" aria-hidden="true">
+                  <path d="M0 0H80V90H0Z" fill="#d9c5b4" />
+                  <circle cx="57" cy="25" r="11" fill="#ede0c5" />
+                  <path d="M0 62Q25 28 53 62L80 50V90H0Z" fill="#7f8394" />
+                  <path d="M0 75Q30 53 80 75V90H0Z" fill="#555e72" />
+                  <path
+                    d="M38 51C22 40 21 61 39 69C59 57 53 41 38 51Z"
+                    fill="#e4b4bb"
+                  />
+                </svg>
               ) : o.kind === "laptop" ? (
                 "you online? ♡"
               ) : o.kind === "console" ? (
@@ -155,10 +239,10 @@ function OurHome({ navigate }: Navigation) {
         >
           <Couple scene={scene} />
         </button>
-        <span className="room-note handwritten">
-          someday, no more goodbyes through a screen.
-        </span>
       </div>
+      <p className="room-note handwritten">
+        someday, no more goodbyes through a screen.
+      </p>
       <div className="world-links">
         {[
           ["coupons", "Tickets on the desk"],
@@ -526,7 +610,16 @@ function Calendar() {
   const { progress } = useUniverse();
   const events = [
     ...calendarEvents,
-    ...(settings.birthday ? [{date:`${month.getFullYear()}-${settings.birthday}`,title:"Josh’s birthday",type:"birthday",story:"Happy birthday, my favorite human. ♡"}] : []),
+    ...(settings.birthday
+      ? [
+          {
+            date: `${month.getFullYear()}-${settings.birthday}`,
+            title: "Josh’s birthday",
+            type: "birthday",
+            story: "Happy birthday, my favorite human. ♡",
+          },
+        ]
+      : []),
     ...memories.map((m) => ({
       date: m.date,
       title: m.caption,
@@ -597,11 +690,13 @@ function Calendar() {
                 <small>
                   {found
                     .map((e) =>
-                          e.type === "birthday" ? "♔" : e.type === "memory"
-                        ? "♡"
-                        : e.type === "milestone"
-                          ? "★"
-                          : "✦",
+                      e.type === "birthday"
+                        ? "♔"
+                        : e.type === "memory"
+                          ? "♡"
+                          : e.type === "milestone"
+                            ? "★"
+                            : "✦",
                     )
                     .join("")}
                 </small>
@@ -759,6 +854,594 @@ function Questions() {
     </section>
   );
 }
+export function LovePlantArt({ stage }: { stage: number }) {
+  const stageLabels = [
+    "Seed — resting in the warm soil",
+    "Sprout — two tiny leaves reaching up",
+    "Small plant — growing strong roots",
+    "Large plant — leafy and thriving",
+    "Flowering plant — blooming in full love",
+  ];
+  return (
+    <svg
+      className={`plant-illustration plant-stage-svg-${stage}`}
+      viewBox="0 0 240 260"
+      role="img"
+      aria-label={stageLabels[stage]}
+    >
+      <defs>
+        <radialGradient id="plantGlow" cx="50%" cy="30%" r="50%">
+          <stop offset="0%" stopColor="#fde2ec" stopOpacity="0.75" />
+          <stop offset="60%" stopColor="#fcd3e1" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#fcd3e1" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="potGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#b67a84" />
+          <stop offset="50%" stopColor="#c58a94" />
+          <stop offset="100%" stopColor="#9e656f" />
+        </linearGradient>
+        <linearGradient id="soilGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#4a343d" />
+          <stop offset="100%" stopColor="#674954" />
+        </linearGradient>
+      </defs>
+
+      {/* Pot Shadow */}
+      <ellipse cx="120" cy="238" rx="68" ry="12" fill="#00000030" />
+
+      {/* Pot Body */}
+      <path
+        d="M74 180L88 234C89 237 92 239 95 239H145C148 239 151 237 152 234L166 180Z"
+        fill="url(#potGrad)"
+      />
+      {/* Pot Rim */}
+      <path
+        d="M68 174H172C175 174 176 176 175 179L171 184H69L65 179C64 176 65 174 68 174Z"
+        fill="#b67a84"
+      />
+      <path
+        d="M71 176H169"
+        stroke="#dfa5af"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      {/* Stamped Heart on Pot */}
+      <path
+        d="M120 213C120 213 113 207 113 202C113 198 116 196 119 197C120 197.5 120 199 120 199C120 199 120 197.5 121 197C124 196 127 198 127 202C127 207 120 213 120 213Z"
+        fill="#deb4bd"
+        opacity="0.75"
+      />
+
+      {/* Soil */}
+      <ellipse cx="120" cy="180" rx="46" ry="11" fill="url(#soilGrad)" />
+      <ellipse cx="120" cy="179" rx="38" ry="7" fill="#3a272f" opacity="0.6" />
+
+      {/* Stage 0: SEED */}
+      {stage === 0 && (
+        <g className="stage-seed-group">
+          {/* Subtle warm glow around seed */}
+          <ellipse
+            cx="120"
+            cy="175"
+            rx="18"
+            ry="10"
+            fill="#fcecc4"
+            opacity="0.25"
+          />
+          {/* Tiny soil details */}
+          <circle cx="108" cy="178" r="1.5" fill="#694b56" />
+          <circle cx="132" cy="179" r="1.2" fill="#694b56" />
+          <circle cx="114" cy="181" r="1" fill="#7a5764" />
+          <circle cx="128" cy="181" r="1" fill="#7a5764" />
+          {/* The Seed */}
+          <ellipse
+            cx="120"
+            cy="175"
+            rx="8.5"
+            ry="6"
+            fill="#deb485"
+            stroke="#9f774e"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M116 175Q120 177 124 175"
+            stroke="#835c36"
+            strokeWidth="1"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Hopeful tiny green bud tip emerging */}
+          <path
+            d="M122 173Q123 169 125 170"
+            stroke="#8cc399"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <circle cx="118" cy="173" r="1" fill="#ffffff" opacity="0.85" />
+        </g>
+      )}
+
+      {/* Stage 1: SPROUT */}
+      {stage === 1 && (
+        <g className="stage-sprout-group">
+          {/* Gentle sprout stem */}
+          <path
+            d="M120 178Q119 160 120 144"
+            stroke="#7ba88a"
+            strokeWidth="4"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Left cotyledon (first baby leaf) */}
+          <path
+            d="M120 148C106 146 95 139 93 131C101 127 114 134 120 146Z"
+            fill="#9cc7a7"
+            stroke="#6e987c"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M97 132Q108 137 118 147"
+            stroke="#bfe2ca"
+            strokeWidth="1"
+            fill="none"
+          />
+          {/* Right cotyledon (second baby leaf) */}
+          <path
+            d="M120 147C134 144 145 137 147 129C139 125 126 133 120 145Z"
+            fill="#8bb896"
+            stroke="#5f896b"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M143 130Q132 135 122 146"
+            stroke="#b4dcbe"
+            strokeWidth="1"
+            fill="none"
+          />
+          {/* Tiny glistening dewdrop */}
+          <circle cx="94" cy="131" r="2" fill="#ffffff" opacity="0.9" />
+          <circle cx="95" cy="132" r="0.8" fill="#ffffff" />
+        </g>
+      )}
+
+      {/* Stage 2: SMALL PLANT */}
+      {stage === 2 && (
+        <g className="stage-small-group">
+          {/* Sturdy young stem */}
+          <path
+            d="M120 178Q118 145 120 112"
+            stroke="#6e9b7d"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Lower left leaf */}
+          <path
+            d="M120 162C92 165 74 154 68 140C86 134 110 143 120 159Z"
+            fill="#719e83"
+            stroke="#537b63"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M71 141Q95 146 118 160"
+            stroke="#97beaa"
+            strokeWidth="1"
+            fill="none"
+          />
+          {/* Lower right leaf */}
+          <path
+            d="M120 156C148 159 166 147 172 133C154 128 130 138 120 153Z"
+            fill="#628f73"
+            stroke="#476f57"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M169 134Q145 139 122 154"
+            stroke="#8ab29c"
+            strokeWidth="1"
+            fill="none"
+          />
+          {/* Upper left leaf */}
+          <path
+            d="M120 136C98 131 84 120 82 106C98 104 114 115 120 133Z"
+            fill="#86b297"
+            stroke="#628e73"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M84 107Q102 116 118 134"
+            stroke="#abd1ba"
+            strokeWidth="0.8"
+            fill="none"
+          />
+          {/* Upper right leaf */}
+          <path
+            d="M120 130C142 124 156 112 158 98C142 97 126 108 120 127Z"
+            fill="#78a489"
+            stroke="#568267"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M156 99Q138 109 122 128"
+            stroke="#9ec6ae"
+            strokeWidth="0.8"
+            fill="none"
+          />
+          {/* Top budding shoot */}
+          <path
+            d="M120 114C114 105 116 94 120 89C124 94 126 105 120 114Z"
+            fill="#a6cfb4"
+            stroke="#7ba489"
+            strokeWidth="1"
+          />
+        </g>
+      )}
+
+      {/* Stage 3: LARGE PLANT */}
+      {stage === 3 && (
+        <g className="stage-large-group">
+          {/* Main trunk */}
+          <path
+            d="M120 178Q117 132 120 68"
+            stroke="#5c876e"
+            strokeWidth="6"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Left branch */}
+          <path
+            d="M119 146Q94 138 70 118"
+            stroke="#5c876e"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M70 118C48 118 34 105 32 90C50 88 66 100 70 116Z"
+            fill="#568268"
+            stroke="#3e644d"
+            strokeWidth="1"
+          />
+          <path
+            d="M80 128C58 138 46 132 40 120C56 112 74 118 79 126Z"
+            fill="#67947a"
+            stroke="#4b755c"
+            strokeWidth="1"
+          />
+          <path
+            d="M94 138C80 152 66 150 60 140C72 130 88 132 92 136Z"
+            fill="#77a48a"
+            stroke="#5a866d"
+            strokeWidth="1"
+          />
+
+          {/* Right branch */}
+          <path
+            d="M120 134Q146 126 170 104"
+            stroke="#5c876e"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M170 104C192 104 206 92 208 78C190 76 174 88 170 102Z"
+            fill="#4e7960"
+            stroke="#375d46"
+            strokeWidth="1"
+          />
+          <path
+            d="M160 114C182 124 194 118 200 106C184 98 166 104 161 112Z"
+            fill="#5f8c72"
+            stroke="#456f57"
+            strokeWidth="1"
+          />
+          <path
+            d="M146 124C160 138 174 136 180 126C168 116 152 118 148 122Z"
+            fill="#729f85"
+            stroke="#547f67"
+            strokeWidth="1"
+          />
+
+          {/* Upper canopy leaves */}
+          <path
+            d="M120 102Q102 86 88 66"
+            stroke="#6e9b7f"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M88 66C70 62 60 48 62 36C76 38 88 52 88 64Z"
+            fill="#78a58a"
+            stroke="#58856b"
+            strokeWidth="1"
+          />
+
+          <path
+            d="M120 95Q140 80 154 60"
+            stroke="#6e9b7f"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M154 60C170 56 180 42 178 30C164 32 152 46 154 58Z"
+            fill="#6d9b7f"
+            stroke="#4f7b61"
+            strokeWidth="1"
+          />
+
+          {/* Crown top leaves */}
+          <path
+            d="M120 68C108 52 110 36 120 28C130 36 132 52 120 68Z"
+            fill="#8fc0a2"
+            stroke="#699a7d"
+            strokeWidth="1"
+          />
+
+          {/* Romantic curling vine tendril */}
+          <path
+            d="M120 115C132 108 138 98 134 90C130 84 122 88 124 94C126 98 132 98 133 94"
+            stroke="#a1ccb3"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </g>
+      )}
+
+      {/* Stage 4: FLOWERING */}
+      {stage === 4 && (
+        <g className="stage-flowering-group">
+          {/* Subtle magical romantic halo/aura */}
+          <circle cx="120" cy="52" r="54" fill="url(#plantGlow)" />
+
+          {/* Mature branching trunk and leafy canopy */}
+          <path
+            d="M120 178Q117 132 120 72"
+            stroke="#568067"
+            strokeWidth="6"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Left branch */}
+          <path
+            d="M119 146Q94 138 70 118"
+            stroke="#568067"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M70 118C48 118 34 105 32 90C50 88 66 100 70 116Z"
+            fill="#527d63"
+            stroke="#3a6148"
+            strokeWidth="1"
+          />
+          <path
+            d="M80 128C58 138 46 132 40 120C56 112 74 118 79 126Z"
+            fill="#638f75"
+            stroke="#476f57"
+            strokeWidth="1"
+          />
+          <path
+            d="M94 138C80 152 66 150 60 140C72 130 88 132 92 136Z"
+            fill="#729e84"
+            stroke="#558066"
+            strokeWidth="1"
+          />
+
+          {/* Right branch */}
+          <path
+            d="M120 134Q146 126 170 104"
+            stroke="#568067"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M170 104C192 104 206 92 208 78C190 76 174 88 170 102Z"
+            fill="#4a735b"
+            stroke="#355842"
+            strokeWidth="1"
+          />
+          <path
+            d="M160 114C182 124 194 118 200 106C184 98 166 104 161 112Z"
+            fill="#5a866d"
+            stroke="#406951"
+            strokeWidth="1"
+          />
+          <path
+            d="M146 124C160 138 174 136 180 126C168 116 152 118 148 122Z"
+            fill="#6d997f"
+            stroke="#4f7a62"
+            strokeWidth="1"
+          />
+
+          {/* Upper branches */}
+          <path
+            d="M120 102Q102 86 88 66"
+            stroke="#659074"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M88 66C70 62 60 48 62 36C76 38 88 52 88 64Z"
+            fill="#749f84"
+          />
+
+          <path
+            d="M120 95Q140 80 154 60"
+            stroke="#659074"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <path
+            d="M154 60C170 56 180 42 178 30C164 32 152 46 154 58Z"
+            fill="#68947a"
+          />
+
+          {/* Left Side Blossom */}
+          <g className="flower-side-left">
+            <ellipse cx="68" cy="98" rx="8" ry="10" fill="#f4b2c6" />
+            <ellipse cx="62" cy="106" rx="9" ry="8" fill="#ec9bb3" />
+            <ellipse cx="76" cy="106" rx="9" ry="8" fill="#ec9bb3" />
+            <ellipse cx="70" cy="113" rx="8" ry="8" fill="#e28aa4" />
+            <circle
+              cx="69"
+              cy="106"
+              r="4.5"
+              fill="#fde3a2"
+              stroke="#e9bf6d"
+              strokeWidth="0.8"
+            />
+          </g>
+
+          {/* Right Side Blossom */}
+          <g className="flower-side-right">
+            <ellipse cx="172" cy="88" rx="8" ry="10" fill="#f4b2c6" />
+            <ellipse cx="166" cy="96" rx="9" ry="8" fill="#ec9bb3" />
+            <ellipse cx="180" cy="96" rx="9" ry="8" fill="#ec9bb3" />
+            <ellipse cx="174" cy="103" rx="8" ry="8" fill="#e28aa4" />
+            <circle
+              cx="173"
+              cy="96"
+              r="4.5"
+              fill="#fde3a2"
+              stroke="#e9bf6d"
+              strokeWidth="0.8"
+            />
+          </g>
+
+          {/* Central Crown Blossom */}
+          <g className="flower-crown-main">
+            {/* 5 Outer Rose Petals */}
+            <ellipse
+              cx="120"
+              cy="30"
+              rx="12"
+              ry="16"
+              fill="#f3a7bf"
+              stroke="#dd88a3"
+              strokeWidth="1"
+            />
+            <ellipse
+              cx="100"
+              cy="42"
+              rx="15"
+              ry="13"
+              fill="#eb98b1"
+              stroke="#d67c97"
+              strokeWidth="1"
+            />
+            <ellipse
+              cx="140"
+              cy="42"
+              rx="15"
+              ry="13"
+              fill="#eb98b1"
+              stroke="#d67c97"
+              strokeWidth="1"
+            />
+            <ellipse
+              cx="108"
+              cy="62"
+              rx="14"
+              ry="13"
+              fill="#e287a1"
+              stroke="#cb6b86"
+              strokeWidth="1"
+            />
+            <ellipse
+              cx="132"
+              cy="62"
+              rx="14"
+              ry="13"
+              fill="#e287a1"
+              stroke="#cb6b86"
+              strokeWidth="1"
+            />
+
+            {/* 5 Inner Cream-Blush Petals */}
+            <ellipse cx="120" cy="38" rx="8" ry="11" fill="#fce0eb" />
+            <ellipse cx="109" cy="46" rx="9" ry="8" fill="#fcd7e5" />
+            <ellipse cx="131" cy="46" rx="9" ry="8" fill="#fcd7e5" />
+            <ellipse cx="113" cy="56" rx="8" ry="8" fill="#f9c8da" />
+            <ellipse cx="127" cy="56" rx="8" ry="8" fill="#f9c8da" />
+
+            {/* Golden Core with Tiny Heart Center */}
+            <circle
+              cx="120"
+              cy="49"
+              r="8"
+              fill="#fde29f"
+              stroke="#e9bc65"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M120 52C120 52 116 48.5 116 46C116 44 117.5 43 119 43.8C119.6 44.2 120 44.8 120 44.8C120 44.8 120.4 44.2 121 43.8C122.5 43 124 44 124 46C124 48.5 120 52 120 52Z"
+              fill="#dd854e"
+            />
+          </g>
+
+          {/* Falling Flower Petals */}
+          <path
+            d="M96 142C92 137 94 130 99 131C104 132 102 139 96 142Z"
+            fill="#f4b5c8"
+            opacity="0.9"
+          />
+          <path
+            d="M148 150C143 145 145 138 150 139C155 140 153 147 148 150Z"
+            fill="#f4b5c8"
+            opacity="0.9"
+          />
+
+          {/* Sparkles around blooms */}
+          <text
+            x="88"
+            y="24"
+            fill="#ffe299"
+            fontSize="15"
+            className="plant-sparkle"
+          >
+            ✦
+          </text>
+          <text
+            x="144"
+            y="26"
+            fill="#ffe299"
+            fontSize="17"
+            className="plant-sparkle"
+          >
+            ✦
+          </text>
+          <text
+            x="44"
+            y="82"
+            fill="#ffd4e0"
+            fontSize="13"
+            className="plant-sparkle"
+          >
+            ✧
+          </text>
+          <text
+            x="188"
+            y="74"
+            fill="#ffd4e0"
+            fontSize="13"
+            className="plant-sparkle"
+          >
+            ✧
+          </text>
+        </g>
+      )}
+    </svg>
+  );
+}
+
 function Garden() {
   const { progress, discover, unlock } = useUniverse();
   const [wish, setWish] = useState(false);
@@ -769,20 +1452,30 @@ function Garden() {
   }, [discover, stage, unlock]);
   return (
     <section className="quiet-experience garden-world">
+      <svg className="garden-landscape" viewBox="0 0 1100 750" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <circle cx="885" cy="130" r="54" fill="#d3c8ac" opacity=".12" />
+        <circle cx="905" cy="117" r="49" fill="#101421" />
+        <path d="M0 570Q180 455 390 558T770 538T1100 560V750H0Z" fill="#293b3c" opacity=".42" />
+        <path d="M0 641Q230 530 440 642T860 610T1100 620V750H0Z" fill="#1a3032" opacity=".7" />
+        <path d="M0 709Q250 645 500 710T1100 686V750H0Z" fill="#0c1c23" />
+        {[55, 115, 170, 900, 965, 1040].map((x, i) => (
+          <g key={x} transform={`translate(${x} ${690 - (i % 3) * 18}) scale(${i % 2 ? .85 : 1.1})`} fill="#4c6660" stroke="#657d6b" strokeWidth="1" opacity=".6">
+            <path d="M0 35Q-15 -30 8 -115M-4 -30Q-45 -73 -38 -90Q-6 -79 -4 -30M0 -53Q40 -83 35 -104Q4 -94 0 -53M-3 0Q-50 -28 -45 -48Q-13 -36 -3 0" />
+            <path d="M8 -115Q-8 -137 6 -144Q28 -140 8 -115" fill="#b593a2" stroke="none" />
+          </g>
+        ))}
+        {[[155, 340], [920, 435], [270, 515], [815, 350], [98, 485], [1005, 295]].map(([x, y]) => (
+          <g key={x} fill="#d8bd8e"><circle cx={x} cy={y} r="8" opacity=".045" /><circle cx={x} cy={y} r="1.5" opacity=".65" /></g>
+        ))}
+      </svg>
       <SectionHeading
         eyebrow="A LITTLE LOVE, EVERY DAY"
         title="Look what we’re growing."
         description="Memories, letters, games, puzzles and discoveries all help our plant grow."
       />
       <div className={`growing-plant plant-stage-${stage}`}>
-        <svg className="plant-illustration" viewBox="0 0 240 260" role="img" aria-label={["Seed", "Sprout", "Small plant", "Large plant", "Flowering plant"][stage]}>
-          <ellipse cx="120" cy="236" rx="70" ry="12" fill="#0003"/>
-          <path d="M76 180H164L150 232H90Z" fill="#b27d85"/><ellipse cx="120" cy="180" rx="44" ry="10" fill="#73545e"/>
-          {stage===0 ? <ellipse cx="120" cy="179" rx="8" ry="4" fill="#e6c29d"/> : <g><path d={`M120 180Q109 ${160-stage*15} 120 ${160-stage*29}`} stroke="#91b99d" strokeWidth="5" fill="none" strokeLinecap="round"/>
-          {Array.from({length:stage+1},(_,i)=><path key={i} d={i%2===0?`M118 ${165-i*25}Q75 ${170-i*25} 78 ${142-i*25}Q109 ${140-i*25} 118 ${165-i*25}`:`M117 ${165-i*25}Q158 ${172-i*25} 167 ${137-i*25}Q129 ${138-i*25} 117 ${165-i*25}`} fill={i%2===0?"#8fb09d":"#6f9b8a"}/>)}
-          {stage===4&&<g fill="#dca8bf"><circle cx="120" cy="34" r="16"/><circle cx="103" cy="49" r="16"/><circle cx="136" cy="49" r="16"/><circle cx="120" cy="64" r="16"/><circle cx="120" cy="49" r="12" fill="#f0d395"/></g>}</g>}
-        </svg>
-        <span>
+        <LovePlantArt stage={stage} />
+        <span className="plant-stage-title">
           {
             [
               "A seed of us",
@@ -793,8 +1486,13 @@ function Garden() {
             ][stage]
           }
         </span>
+        <small className="plant-stage-hint">
+          {stage === 4
+            ? "Fully in bloom. Beautiful and loved, just like us."
+            : `${progress.plantActions.length % 4} / 4 discoveries toward next growth stage`}
+        </small>
       </div>
-      <Couple scene="sit" />
+      <Couple scene={stage === 4 ? "celebrate" : "sit"} />
       <button
         className="shooting-star"
         aria-label="Catch a shooting star"
@@ -902,13 +1600,19 @@ function Future({ navigate }: Navigation) {
   );
 }
 function useNow() {
-  const {simulation} = useUniverse();
+  const { simulation } = useUniverse();
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
-  return simulation === "unlocked" ? Math.max(now,Date.parse(capsule.opens),...gifts.map(g=>Date.parse(g.opens)))+1000 : now;
+  return simulation === "unlocked" || simulation === "capsule"
+    ? Math.max(
+        now,
+        Date.parse(capsule.opens),
+        ...gifts.map((g) => Date.parse(g.opens)),
+      ) + 1000
+    : now;
 }
 function Capsule() {
   const now = useNow();

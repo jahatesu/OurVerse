@@ -1835,78 +1835,220 @@ label {
   margin-bottom: 100px;
 }
 .ticket-roll {
-  max-width: 900px;
-  margin: auto;
+  max-width: 1040px;
+  margin: 0 auto 38px;
 }
 .love-ticket {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  background: #e8dbc7;
-  color: #544154;
-  margin: 30px 0;
-  padding: 25px 30px;
+  --ticket-paper: #edb5c0;
+  --ticket-ink: #9d1427;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 162px;
+  align-items: stretch;
+  min-height: 220px;
+  background-color: var(--ticket-paper);
+  background-image: repeating-linear-gradient(0deg, #8d25320a 0 1px, transparent 1px 4px);
+  color: var(--ticket-ink);
+  margin: 29px 0;
+  padding: 0;
   position: relative;
-  box-shadow: 0 8px 20px #0003;
-  transform: rotate(-1deg);
-  border-radius: 4px;
+  border: 1px solid #a72b3d5c;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 4px #fff0f155, 0 5px 10px #03040b52, 0 1px 1px #0005;
+  transform: rotate(-.3deg);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
-.love-ticket:nth-child(even) {
-  transform: rotate(1deg);
-  background: #dbc7d0;
+.love-ticket:nth-child(even) { transform: rotate(.25deg); }
+.love-ticket:nth-child(3n) { transform: rotate(-.15deg); }
+.love-ticket:hover {
+  transform: translateY(-2px) rotate(0);
+  box-shadow: inset 0 0 0 4px #fff0f177, 0 9px 15px #03040b61;
 }
-.love-ticket .eyebrow {
-  color: #806978;
-  font-size: 8px;
+.love-ticket.ticket-variant-1 { --ticket-paper: #eab0bc; --ticket-ink: #991326; }
+.love-ticket.ticket-variant-2 { --ticket-paper: #efb9c3; --ticket-ink: #a01629; }
+.love-ticket.ticket-variant-3 { --ticket-paper: #e9afba; --ticket-ink: #971426; }
+.ticket-main {
+  position: relative;
+  min-width: 0;
+  padding: 24px 188px 59px 39px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.love-ticket .ticket-main .eyebrow {
+  color: #841626;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  margin: 0 0 10px;
 }
 .love-ticket h2 {
-  font-size: 29px;
-  margin: 8px 0;
+  max-width: 15ch;
+  margin: 0 0 25px;
+  color: var(--ticket-ink);
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+  font-size: clamp(3rem, 4.7vw, 4.25rem);
+  font-stretch: condensed;
+  font-weight: 900;
+  line-height: .96;
+  letter-spacing: -.005em;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 .love-ticket p {
-  color: #6a5362;
-  font-size: 12px;
-  margin-bottom: 8px;
+  max-width: 62ch;
+  margin: 0 0 17px;
+  color: #8c1c2b;
+  font: 600 11px/1.5 Arial, Helvetica, sans-serif;
+  letter-spacing: .055em;
+  text-transform: uppercase;
 }
-.love-ticket small {
-  color: #766473;
-  font-size: 10px;
+.love-ticket .ticket-main > small {
+  color: #8b2634;
+  font-size: 9px;
+  line-height: 1.4;
 }
 .ticket-symbol {
-  font: 60px var(--display);
-  color: #a96683;
+  position: absolute;
+  z-index: 0;
+  top: 26px;
+  right: 202px;
+  width: 51px;
+  height: 51px;
+  color: #fff0d5;
+  opacity: .76;
+  pointer-events: none;
 }
+.ticket-symbol::before,
+.ticket-symbol::after,
+.ticket-main::after {
+  content: "";
+  position: absolute;
+  display: block;
+  background: #fff0d5;
+  clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+}
+.ticket-symbol::before { inset: 0; }
+.ticket-symbol::after { width: 18px; height: 18px; right: -22px; bottom: -23px; }
+.ticket-main::after { z-index: 0; width: 13px; height: 13px; right: 29px; top: 50%; opacity: .62; }
+.ticket-main > * { position: relative; z-index: 1; }
 .ticket-stub {
-  border-left: 2px dashed #9e8998;
-  padding: 12px 0 12px 25px;
-  margin-left: auto;
-  min-width: 150px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-width: 0;
+  margin: 0;
+  padding: 22px 15px;
+  border-left: 2px dashed #9b2738;
+  background: #d9849630;
   text-align: center;
 }
-.ticket-stub > span {
-  display: block;
-  font-size: 10px;
-  color: #725d70;
-  margin-bottom: 15px;
+.ticket-stub::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg, #0b1020);
+  box-shadow: 0 0 0 1px #9a203126;
+  transform: translateY(-50%);
 }
-.ticket-stub button {
-  color: #654c65;
-  border-color: #a8879e;
+.ticket-stub::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 10px 8px;
+  border: 1px solid #9c263944;
+  pointer-events: none;
 }
+.ticket-stub > * { position: relative; z-index: 1; }
+.ticket-used {
+  color: #7e1425;
+  font: 700 9px/1.35 var(--display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ticket-barcode {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 70px;
+  padding: 13px 7px;
+  border: 0;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+.ticket-barcode::before,
+.ticket-barcode::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  height: 7px;
+  background: repeating-linear-gradient(135deg, transparent 0 5px, #921628 5px 6px, transparent 6px 10px);
+}
+.ticket-barcode::before { top: 1px; }
+.ticket-barcode::after { bottom: 1px; transform: scaleY(-1); }
+.ticket-barcode i { display: block; flex: 1 1 2px; background: #8f1426; opacity: .96; }
+.ticket-barcode i:nth-child(3n) { flex-grow: 2; }
+.ticket-barcode i:nth-child(4n) { flex-grow: .5; }
+.ticket-barcode i:nth-child(5n) { background: #b02b3a; }
+.ticket-stub-code {
+  color: #821525;
+  font: 700 8px/1.2 monospace;
+  letter-spacing: .16em;
+}
+.ticket-redeem.secondary-button {
+  position: absolute;
+  right: 23px;
+  bottom: 21px;
+  z-index: 2;
+  min-height: 34px;
+  padding: 6px 16px;
+  border: 1px solid #941628;
+  border-radius: 2px;
+  background: transparent;
+  box-shadow: none;
+  color: #901526;
+  font: 800 10px/1 Arial, sans-serif;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  transition: color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.ticket-redeem.secondary-button:hover:not(:disabled),
+.ticket-redeem.secondary-button:focus-visible {
+  transform: translateY(-1px);
+  background: #901526;
+  box-shadow: none;
+  color: #f7dce0;
+}
+.ticket-redeem.secondary-button:disabled { opacity: .55; }
 .love-ticket.redeemed {
   opacity: 0.65;
 }
 .love-ticket.redeemed:after {
   content: "REDEEMED ♡";
   position: absolute;
-  right: 32%;
-  border: 3px solid #a15474;
-  padding: 8px;
-  transform: rotate(-15deg);
-  color: #a15474;
+  z-index: 3;
+  right: 190px;
+  top: 40%;
+  border: 2px solid #991528;
+  padding: 5px 9px;
+  transform: rotate(-11deg);
+  color: #991528;
+  background: #edb5c099;
+  font: 900 12px/1 Arial, sans-serif;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: .16em;
   pointer-events: none;
   animation: stamp 0.3s;
 }
@@ -3613,37 +3755,40 @@ label {
     font-size: 27px;
   }
   .love-ticket {
-    padding: 20px 18px;
-    gap: 15px;
-    flex-wrap: wrap;
+    grid-template-columns: minmax(0, 1fr) 94px;
+    min-height: 205px;
   }
   .ticket-symbol {
-    font-size: 38px;
+    top: 16px;
+    right: 108px;
+    font-size: 37px;
   }
-  .love-ticket > div:not(.ticket-stub) {
-    flex: 1;
+  .ticket-main {
+    padding: 19px 109px 61px 19px;
   }
+  .love-ticket .ticket-main .eyebrow { max-width: 100%; font-size: 7px; letter-spacing: .12em; }
   .love-ticket h2 {
-    font-size: 24px;
+    font-size: clamp(1.75rem, 7.4vw, 2.8rem);
   }
   .ticket-stub {
-    flex-basis: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    border-left: 0;
-    border-top: 2px dashed #aa919d;
-    padding: 18px 0 0;
+    gap: 12px;
+    padding: 18px 7px;
   }
-  .ticket-stub > span {
-    margin: 0;
+  .ticket-barcode { height: 46px; gap: 1px; padding: 4px; }
+  .ticket-used { font-size: 7px; }
+  .ticket-stub-code { font-size: 7px; letter-spacing: .08em; }
+  .ticket-redeem.secondary-button {
+    right: 108px;
+    bottom: 13px;
+    min-height: 31px;
+    padding-inline: 10px;
+    font-size: 8px;
   }
   .love-ticket.redeemed:after {
-    right: 10px;
-    top: 20px;
-    font-size: 10px;
-    padding: 5px;
+    right: 108px;
+    top: 46%;
+    font-size: 9px;
+    padding: 4px 7px;
   }
   .paper-calendar {
     padding: 16px 10px;

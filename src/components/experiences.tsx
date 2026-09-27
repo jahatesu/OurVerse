@@ -593,38 +593,42 @@ function Coupons() {
       />
       {scene && <Couple scene={scene} caption="Redeemed with love. ♡" />}
       <div className="ticket-roll">
-        {coupons.map((c) => {
-          const redeemed = progress.redeemed[c.id] || 0;
+        {coupons.map((c, index) => {
+          const redeemed = Math.min(c.quantity, progress.redeemed[c.id] || 0);
+          const remainingUses = c.quantity - redeemed;
+          const exhausted = remainingUses === 0;
           const expired = !!c.expiration && now >= Date.parse(c.expiration);
           return (
             <article
-              className={`love-ticket ${redeemed >= c.quantity ? "redeemed" : ""}`}
+              className={`love-ticket ticket-variant-${index % 4} ${exhausted ? "redeemed" : ""}`}
               key={c.id}
             >
-              <span className="ticket-symbol">{c.icon}</span>
-              <div>
+              <span className="ticket-symbol" aria-hidden="true" />
+              <div className="ticket-main">
                 <span className="eyebrow">
-                  JANNA’S LOVE COUPONS · No. {c.id.split("-")[1]}
+                  JANNA’S LOVE COUPONS · No. {String(index).padStart(2, "0")}
                 </span>
                 <h2>{c.title}</h2>
                 <p>{c.description}</p>
                 <small>{c.terms}</small>
-              </div>
-              <div className="ticket-stub">
-                <span>
-                  {redeemed} / {c.quantity} used
-                </span>
                 <button
-                  className="secondary-button"
-                  disabled={redeemed >= c.quantity || expired}
+                  className="secondary-button ticket-redeem"
+                  disabled={exhausted || expired}
                   onClick={() => setSelected(c)}
                 >
                   {expired
                     ? "Expired"
-                    : redeemed >= c.quantity
-                      ? "REDEEMED ♡"
+                    : exhausted
+                      ? "REDEEMED"
                       : "Redeem"}
                 </button>
+              </div>
+              <div className="ticket-stub">
+                <span className="ticket-used">{exhausted ? "REDEEMED" : `USES · ${remainingUses}`}</span>
+                <div className="ticket-barcode" aria-hidden="true">
+                  {Array.from({ length: 15 }, (_, bar) => <i key={bar} />)}
+                </div>
+                <small className="ticket-stub-code">JV · {String(index).padStart(2, "0")}</small>
               </div>
             </article>
           );
@@ -655,11 +659,11 @@ function Coupons() {
                   },
                 }));
                 discover("coupon");
-                setScene(c.id === "coupon-0" ? "kiss" : "hug");
+                setScene(c.id === "coupon-v2-yes-day" ? "kiss" : "hug");
                 setSelected(null);
               }}
             >
-              {selected.id === "coupon-0"
+              {selected.id === "coupon-v2-yes-day"
                 ? "Give me my kiss"
                 : "Yes, redeem it ♡"}
             </button>

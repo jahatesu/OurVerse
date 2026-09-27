@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Heart, Cookie, Smile, Sparkles, Send } from "lucide-react";
-import { companionResponses, chatRules, chatFallbacks } from "@/data/messages";
+import { Heart, Cookie, Smile, Sparkles, Send, Wifi, BatteryFull } from "lucide-react";
+import { companionResponses } from "@/data/messages";
 import { pick } from "@/lib/utils";
 import { useUniverse } from "./provider";
 import { SectionHeading } from "./ui";
@@ -116,29 +116,35 @@ export function CompanionRoom() {
   const chatLog = useRef<HTMLDivElement>(null);
   const { progress, update, unlock } = useUniverse();
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
+  const [typing, setTyping] = useState(false);
+  const [error, setError] = useState("");
+  const [messages, setMessages] = useState<{ from: "josh" | "janna"; text: string; time: Date }[]>([
     {
       from: "janna",
-      text: "Hi Josh! Your pocket-sized Janna is here. Say something sweet? ♡",
+      text: "hello Josh, you made it ♡",
+      time: new Date(),
     },
   ]);
   useEffect(() => {
     if (chatLog.current)
-      chatLog.current.scrollTop = chatLog.current.scrollHeight;
+      chatLog.current.scrollTo({ top: chatLog.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
-  function send(text: string) {
-    if (!text.trim()) return;
-    const rule = chatRules.find((rule) =>
-      rule.keywords.some((keyword) => text.toLowerCase().includes(keyword)),
-    );
-    setMessages((m) => [
-      ...m.slice(-48),
-      { from: "josh", text: text.trim() },
-      { from: "janna", text: pick(rule?.replies ?? chatFallbacks) },
-    ]);
+  async function send(text: string) {
+    if (!text.trim() || typing) return;
+    const next = [...messages, { from: "josh", text: text.trim(), time: new Date() }].slice(-40);
+    setMessages(next);
     setInput("");
+    setError("");
+    setTyping(true);
     update((p) => ({ ...p, chats: p.chats + 1 }));
     if (progress.chats + 1 >= 5) unlock("chat");
+    try {
+      const response = await fetch("/api/mini-janna", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: next.map(({ from, text }) => ({ role: from === "josh" ? "user" : "assistant", content: text })) }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Couldn't reach Mini Janna right now.");
+      setMessages((current) => [...current, { from: "janna", text: data.reply, time: new Date() }].slice(-40));
+    } catch (err) { setError(err instanceof Error ? err.message : "Couldn't reach Mini Janna right now."); }
+    finally { setTyping(false); }
   }
   return (
     <>
@@ -149,25 +155,25 @@ export function CompanionRoom() {
       />
       <div className="companion-room">
         <Companion />
-        <section className="chat-card">
+        <section className="chat-card phone-shell" aria-label="Mini Janna chat">
+          <div className="phone-screen">
+          <div className="phone-status"><span>9:41</span><span className="island" /><span><Wifi size={13}/><BatteryFull size={15}/></span></div>
           <div className="chat-header">
-            <span className="status-dot" />
-            <h2>A little love line</h2>
-            <small>Scripted chat · no AI</small>
+            <span className="janna-avatar">♡</span>
+            <div className="chat-title"><h2>Mini Janna</h2><small><i className="status-dot"/> online ♡</small></div>
+            <span className="ai-label">AI character · OurVerse</span>
           </div>
           <div className="chat-log" role="log" aria-live="polite" ref={chatLog}>
             {messages.map((message, i) => (
               <div key={i} className={`chat-message ${message.from}`}>
-                <small>
-                  {message.from === "janna" ? "Mini Janna" : "Josh"}
-                </small>
-                <p>{message.text}</p>
+                <p>{message.text}</p><time>{message.time.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time>
               </div>
             ))}
           </div>
+          {typing && <div className="typing-bubble" aria-label="Mini Janna is typing"><i/><i/><i/></div>}
           <div className="chat-suggestions">
-            {["I miss you", "Hug", "Goodnight"].map((text) => (
-              <button key={text} onClick={() => send(text)}>
+            {["I miss you ♡", "come here for a hug", "goodnight"].map((text) => (
+              <button key={text} onClick={() => void send(text)}>
                 {text}
               </button>
             ))}
@@ -175,7 +181,7 @@ export function CompanionRoom() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              send(input);
+              void send(input);
             }}
           >
             <label className="sr-only" htmlFor="chat-input">
@@ -186,17 +192,20 @@ export function CompanionRoom() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               maxLength={500}
-              placeholder="Tell me what’s on your mind…"
+              placeholder="Message Mini Janna"
               autoComplete="off"
             />
             <button
               className="icon-button"
-              disabled={!input.trim()}
+              disabled={!input.trim() || typing}
               aria-label="Send message"
             >
               <Send size={19} />
             </button>
           </form>
+          {error && <p className="chat-error" role="status">{error}</p>}
+          <p className="phone-caption">A little AI character in OurVerse · just for fun</p>
+          </div>
         </section>
       </div>
       <section className="couple-playground">

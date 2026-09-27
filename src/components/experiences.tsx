@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { flushSync } from "react-dom";
 import { Couple, OurVerseCharacter } from "./characters";
 import { Modal, SectionHeading } from "./ui";
 import { useUniverse } from "./provider";
@@ -8,7 +9,6 @@ import {
   dailyMessages,
   conversations,
   coupons,
-  jarNotes,
   mailboxNotes,
   questions,
   loveTraits,
@@ -22,6 +22,7 @@ import {
 import { memories } from "@/data/memories";
 import { settings } from "@/config/settings";
 import { dateLabel, pick } from "@/lib/utils";
+import { CHAOS_CATEGORY_META, CHAOS_PAPER_SLOTS, CHAOS_REACTIONS, pickChaosEntry, type ChaosEntry } from "@/data/chaos-jar";
 import { DestinationArt } from "./galaxy";
 import { RoomLife } from "./room-life";
 import { AdventureMap } from "./adventure-map";
@@ -917,47 +918,504 @@ function Mailbox() {
   );
 }
 function LoveJar() {
-  const [note, setNote] = useState<(typeof jarNotes)[number] | null>(null);
-  const [shake, setShake] = useState(0);
+  type JarPhase = "idle" | "resetting" | "anticipating" | "shaking" | "selecting" | "escaping" | "flying" | "landing" | "unfolding" | "revealed" | "closing";
+  type Flight = {
+    left: number;
+    top: number;
+    targetLeft: number;
+    targetTop: number;
+    foldWidth: number;
+    foldHeight: number;
+    openWidth: number;
+    openHeight: number;
+    rotation: number;
+    scale: number;
+  };
+  const [entry, setEntry] = useState<ChaosEntry | null>(null);
+  const [game, setGame] = useState<{ status: "unanswered" } | { status: "choosing-winner" } | { status: "answered" | "completed"; choice?: string; reaction: string } | { status: "mission-revealed" } | { status: "wild-revealed"; choice: string; prompt: string }>({ status: "unanswered" });
+  const [promptVisible, setPromptVisible] = useState(false);
+  const [caseNumber, setCaseNumber] = useState(0);
+  const [phase, setPhase] = useState<JarPhase>("idle");
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [flight, setFlight] = useState<Flight | null>(null);
+  const [paperSpace, setPaperSpace] = useState(false);
+  const [unfolded, setUnfolded] = useState(false);
+  const sequenceLock = useRef(false);
+  const usedEntries = useRef(new Set<string>());
+  const promptTimer = useRef<number | null>(null);
+  const sceneRef = useRef<HTMLDivElement | null>(null);
+  const deskRef = useRef<HTMLDivElement | null>(null);
+  const jarRef = useRef<HTMLDivElement | null>(null);
+  const lidRef = useRef<HTMLDivElement | null>(null);
+  const flightNoteRef = useRef<HTMLDivElement | null>(null);
+  const resultCopyRef = useRef<HTMLDivElement | null>(null);
+  const slips = CHAOS_PAPER_SLOTS.map((type) => CHAOS_CATEGORY_META[type].symbol);
+
+  useEffect(() => () => {
+    if (promptTimer.current !== null) window.clearTimeout(promptTimer.current);
+  }, []);
+
+  const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  const pauseFor = (duration: number) => new Promise<void>((resolve) => window.setTimeout(resolve, duration));
+  async function animateElement(element: Element | null, frames: Keyframe[], duration: number, easing = "ease-in-out", keepFinalFrame = false) {
+    if (!element) return;
+    let animation: Animation;
+    try {
+      animation = element.animate(frames, { duration, easing, fill: "none" });
+    } catch {
+      return;
+    }
+    try {
+      await animation.finished;
+    } catch {
+      // A later interaction may cancel an animation during unmount.
+    } finally {
+      if (keepFinalFrame) {
+        try { animation.commitStyles(); } catch { /* The next state update supplies the settled pose. */ }
+      }
+      animation.cancel();
+    }
+  }
+  async function animateFlightElement(element: HTMLElement | null, frames: Keyframe[], duration: number, easing: string, settle: () => void) {
+    if (!element) return;
+    let animation: Animation;
+    try {
+      animation = element.animate(frames, { duration, easing, fill: "none" });
+    } catch {
+      flushSync(settle);
+      return;
+    }
+    try {
+      await animation.finished;
+    } catch {
+      // Keep the next settled flight pose if the animation is interrupted.
+    } finally {
+      flushSync(settle);
+      animation.cancel();
+    }
+  }
+  async function waitForLayoutMotion(elements: Array<HTMLElement | null>) {
+    await nextFrame();
+    const animations = elements
+      .filter((element): element is HTMLElement => element !== null)
+      .flatMap((element) => element.getAnimations());
+    await Promise.all(animations.map((animation) => animation.finished.catch(() => undefined)));
+  }
+
+  async function drawFromJar(afterClosing = false) {
+    if (sequenceLock.current && !afterClosing) return;
+    if (phase !== "idle" && !afterClosing) return;
+    sequenceLock.current = true;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (promptTimer.current !== null) window.clearTimeout(promptTimer.current);
+    const drawnEntry = pickChaosEntry(usedEntries.current);
+    const matchingSlots = CHAOS_PAPER_SLOTS.flatMap((type, index) => type === drawnEntry.type ? [index] : []);
+    const drawnIndex = pick(matchingSlots);
+    setEntry(drawnEntry);
+    setCaseNumber(100 + Math.floor(Math.random() * 900));
+    setGame({ status: "unanswered" });
+    setPromptVisible(false);
+    setSelectedIndex(drawnIndex);
+    setFlight(null);
+    setUnfolded(false);
+    setPaperSpace(true);
+    setPhase("anticipating");
+
+    try {
+      const scene = sceneRef.current;
+      const jar = jarRef.current;
+      if (!scene || !jar) throw new Error("The Love Jar scene is unavailable");
+      const expansion = waitForLayoutMotion([scene, deskRef.current]);
+      await Promise.all([
+        expansion,
+        animateElement(jar, [
+          { rotate: "0deg", offset: 0 },
+          { rotate: "1.35deg", translate: "0 0", offset: 1 },
+        ], 190, "cubic-bezier(.2,.7,.3,1)", true),
+        animateElement(lidRef.current, [
+          { translate: "0 0", rotate: "0deg", offset: 0 },
+          { translate: "0 -3px", rotate: "-2deg", offset: .5 },
+          { translate: "0 0", rotate: "0deg", offset: 1 },
+        ], 190),
+      ]);
+
+      if (!reducedMotion) {
+        setPhase("shaking");
+        await nextFrame();
+        const paperAnimations = [...jar.querySelectorAll<HTMLElement>(".jar-note")]
+          .flatMap((paper) => paper.getAnimations().map((animation) => animation.finished.catch(() => undefined)));
+        await Promise.all([
+          animateElement(jar, [
+            { rotate: "1.35deg", translate: "0 0", offset: 0 },
+            { rotate: "-4.4deg", translate: "-1px 1px", offset: .12 },
+            { rotate: "5.2deg", translate: "1px 0", offset: .27 },
+            { rotate: "-4.2deg", translate: "-1px 1px", offset: .43 },
+            { rotate: "3.2deg", translate: "1px 0", offset: .59 },
+            { rotate: "-2.35deg", translate: "-1px 0", offset: .73 },
+            { rotate: "1.5deg", translate: "0 0", offset: .85 },
+            { rotate: "-.65deg", translate: "0 -1px", offset: .94 },
+            { rotate: "0deg", translate: "0 0", offset: 1 },
+          ], 930, "cubic-bezier(.28,.05,.36,1)", true),
+          Promise.all(paperAnimations),
+        ]);
+      } else {
+        await animateElement(jar, [
+          { rotate: "1.35deg", translate: "0 0" },
+          { rotate: "0deg", translate: "0 0" },
+        ], 120, "ease-out", true);
+      }
+
+      setPhase("selecting");
+      await nextFrame();
+      const sourcePaper = jar.querySelector<HTMLElement>(`[data-jar-note="${drawnIndex}"]`);
+      if (!sourcePaper) throw new Error("The selected paper is unavailable");
+      await waitForLayoutMotion([sourcePaper]);
+
+      const sceneRect = scene.getBoundingClientRect();
+      const sourceRect = sourcePaper.getBoundingClientRect();
+      const sourceStyle = getComputedStyle(sourcePaper);
+      const matrix = new DOMMatrixReadOnly(sourceStyle.transform);
+      const rotation = Math.atan2(matrix.b, matrix.a) * 180 / Math.PI;
+      const sourceScale = Math.hypot(matrix.a, matrix.b) * (parseFloat(sourceStyle.getPropertyValue("scale")) || 1);
+      const foldWidth = parseFloat(sourceStyle.width) || sourceRect.width;
+      const foldHeight = parseFloat(sourceStyle.height) || sourceRect.height;
+      const mobile = sceneRect.width <= 700;
+      const openWidth = mobile ? Math.max(250, sceneRect.width - 32) : Math.min(370, sceneRect.width * .42);
+      const openHeight = mobile ? 236 : 208;
+      const targetLeft = mobile ? 16 : sceneRect.width * .54;
+      const deskTop = mobile ? 640 - 38 - 415 : sceneRect.height - 44 - 220;
+      const targetTop = deskTop + (mobile ? 155 : 16);
+      const left = sourceRect.left - sceneRect.left + (sourceRect.width - foldWidth) / 2;
+      const top = sourceRect.top - sceneRect.top + (sourceRect.height - foldHeight) / 2;
+      const nextFlight: Flight = {
+        left, top, targetLeft, targetTop, foldWidth, foldHeight, openWidth, openHeight, rotation, scale: sourceScale,
+      };
+      flushSync(() => {
+        setFlight(nextFlight);
+        setPhase(reducedMotion ? "flying" : "escaping");
+      });
+      await nextFrame();
+      const flyingNote = flightNoteRef.current;
+      if (!flyingNote) throw new Error("The selected paper could not be lifted from the jar");
+
+      if (reducedMotion) {
+        await animateFlightElement(flyingNote, [
+          { transform: `translate(0, 0) rotate(${rotation}deg) scale(${sourceScale})`, opacity: .94 },
+          { transform: `translate(${(targetLeft - left) * .5}px, ${(targetTop - top) * .5 - 8}px) rotate(${rotation * .35}deg) scale(${sourceScale * .98})`, opacity: 1, offset: .58 },
+          { transform: "translate(0, 0) rotate(0deg) scale(1)", opacity: 1 },
+        ], 240, "ease-out", () => {
+          setFlight({ ...nextFlight, left: targetLeft, top: targetTop, rotation: 0, scale: 1 });
+          setPhase("landing");
+        });
+      } else {
+        const jarRect = jar.getBoundingClientRect();
+        const jarTop = jarRect.top - sceneRect.top;
+        const openingLeft = jarRect.left - sceneRect.left + (jarRect.width - foldWidth) / 2;
+        const openingTop = jarTop + 30;
+        const clearLeft = openingLeft + 4;
+        const clearTop = Math.max(4, jarTop - foldHeight - 7);
+        const mouthDx = openingLeft - left;
+        const mouthDy = openingTop - top;
+        const clearDx = clearLeft - left;
+        const clearDy = clearTop - top;
+        await Promise.all([
+          animateFlightElement(flyingNote, [
+            { transform: `perspective(700px) translate(0, 0) rotateX(0deg) rotate(${rotation}deg) scale(${sourceScale})`, offset: 0 },
+            { transform: `perspective(700px) translate(${mouthDx * .72}px, ${mouthDy}px) rotateX(7deg) rotate(${rotation - 5}deg) scale(${sourceScale * .96})`, offset: .48 },
+            { transform: `perspective(700px) translate(${clearDx}px, ${clearDy + 12}px) rotateX(-5deg) rotate(${rotation - 11}deg) scale(${sourceScale * .93})`, offset: .82 },
+            { transform: `perspective(700px) translate(${clearDx}px, ${clearDy}px) rotateX(0deg) rotate(${rotation - 8}deg) scale(${sourceScale * .94})`, offset: 1 },
+          ], 650, "cubic-bezier(.22,.66,.25,1)", () => {
+            setFlight({ ...nextFlight, left: left + clearDx, top: top + clearDy, rotation: rotation - 8, scale: sourceScale * .94 });
+            setPhase("flying");
+          }),
+          animateElement(lidRef.current, [
+            { translate: "0 0", rotate: "0deg", offset: 0 },
+            { translate: "0 -10px", rotate: "4deg", offset: .42 },
+            { translate: "0 -6px", rotate: "2deg", offset: .72 },
+            { translate: "0 0", rotate: "0deg", offset: 1 },
+          ], 650, "cubic-bezier(.2,.72,.25,1)"),
+        ]);
+        await nextFrame();
+        const escapeLeft = left + clearDx;
+        const escapeTop = top + clearDy;
+        const dx = targetLeft - escapeLeft;
+        const dy = targetTop - escapeTop;
+        const arcLift = Math.max(0, Math.min(mobile ? 24 : 42, clearTop - 4));
+        await animateFlightElement(flightNoteRef.current, [
+          { transform: `perspective(700px) translate(0, 0) rotateX(0deg) rotate(${rotation - 8}deg) scale(${sourceScale * .94})`, boxShadow: "0 3px 5px #25182455, inset 0 1px #fff9", offset: 0 },
+          { transform: `perspective(700px) translate(${dx * .22}px, ${dy * .14 - arcLift}px) rotateX(8deg) rotate(${rotation - 15}deg) scale(${sourceScale * .9})`, boxShadow: "0 5px 9px #100b1c42, inset 0 1px #fff9", offset: .28 },
+          { transform: `perspective(700px) translate(${dx * .62}px, ${dy * .52 - arcLift * 1.15}px) rotateX(-3deg) rotate(${rotation - 4}deg) scale(${sourceScale * .93})`, boxShadow: "0 7px 13px #100b1c48, inset 0 1px #fff9", offset: .58 },
+          { transform: `perspective(700px) translate(${dx * .88}px, ${dy * .86 - arcLift * .4}px) rotateX(4deg) rotate(3deg) scale(${sourceScale * .97})`, boxShadow: "0 11px 18px #100b1c58, inset 0 1px #fff9", offset: .83 },
+          { transform: `translate(${dx}px, ${dy}px) rotate(0deg) scale(1)`, boxShadow: "0 12px 20px #100b1c55, inset 0 1px #fff9", offset: 1 },
+        ], 720, "cubic-bezier(.2,.68,.24,1)", () => {
+          setFlight({ ...nextFlight, left: targetLeft, top: targetTop, rotation: 0, scale: 1 });
+          setPhase("landing");
+        });
+      }
+
+      await nextFrame();
+      await animateElement(flightNoteRef.current, [
+        { transform: "translate(0, 0) rotate(0deg) scale(1)", boxShadow: "0 8px 14px #100b1c38, inset 0 1px #fff9", offset: 0 },
+        { transform: "translate(0, 3px) rotate(.8deg) scale(1.015)", boxShadow: "0 15px 22px #100b1c66, inset 0 1px #fff9", offset: .28 },
+        { transform: "translate(0, -2px) rotate(-.35deg) scale(.995)", boxShadow: "0 13px 21px #100b1c5c, inset 0 1px #fff9", offset: .58 },
+        { transform: "translate(0, 0) rotate(0deg) scale(1)", boxShadow: "0 12px 20px #100b1c55, inset 0 1px #fff9", offset: 1 },
+      ], reducedMotion ? 170 : 280, "cubic-bezier(.2,.72,.28,1)");
+      await pauseFor(240);
+
+      setPhase("unfolding");
+      await nextFrame();
+      const paper = flightNoteRef.current;
+      if (!paper) throw new Error("The paper reached the desk but could not unfold");
+      await animateFlightElement(paper, [
+        { width: `${foldWidth}px`, height: `${foldHeight}px`, transform: "perspective(700px) rotateX(0deg) rotateY(0deg) rotate(0deg) scale(1)", offset: 0 },
+        { width: `${foldWidth * 1.7}px`, height: `${foldHeight * 1.35}px`, transform: "perspective(700px) rotateX(12deg) rotateY(-55deg) rotate(-3deg) scale(.97)", offset: .25 },
+        { width: `${openWidth * .54}px`, height: `${openHeight * .58}px`, transform: "perspective(700px) rotateX(-9deg) rotateY(12deg) rotate(2deg) scale(1.01)", offset: .52 },
+        { width: `${openWidth}px`, height: `${openHeight * .86}px`, transform: "perspective(700px) rotateX(6deg) rotateY(-4deg) rotate(-1deg) scale(1)", offset: .78 },
+        { width: `${openWidth}px`, height: `${openHeight}px`, transform: "perspective(700px) rotateX(0deg) rotateY(0deg) rotate(0deg) scale(1)", offset: 1 },
+      ], reducedMotion ? 250 : 820, "cubic-bezier(.2,.78,.22,1)", () => {
+        setFlight((current) => current ? { ...current, rotation: 0, scale: 1 } : current);
+        setUnfolded(true);
+      });
+      await pauseFor(reducedMotion ? 80 : 190);
+      setPhase("revealed");
+      sequenceLock.current = false;
+      promptTimer.current = window.setTimeout(() => setPromptVisible(true), reducedMotion ? 100 : 180);
+    } catch (error) {
+      console.error("[Love Jar] Paper draw animation failed:", error instanceof Error ? error.message : "unknown error");
+      setPaperSpace(false);
+      setFlight(null);
+      setSelectedIndex(null);
+      setUnfolded(false);
+      setEntry(null);
+      setGame({ status: "unanswered" });
+      setPromptVisible(false);
+      setPhase("idle");
+      sequenceLock.current = false;
+    }
+  }
+
+  async function drawAnother() {
+    if (phase !== "revealed" || sequenceLock.current) return;
+    if (promptTimer.current !== null) window.clearTimeout(promptTimer.current);
+    sequenceLock.current = true;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setPhase("closing");
+    await nextFrame();
+    const copy = resultCopyRef.current;
+    if (copy) {
+      await animateElement(copy, [
+        { opacity: 1, transform: "translateY(0)" },
+        { opacity: 0, transform: "translateY(5px)" },
+      ], reducedMotion ? 90 : 140, "ease-in", true);
+    }
+    const paper = flightNoteRef.current;
+    if (paper && flight) {
+      const openedHeight = paper.getBoundingClientRect().height;
+      await animateElement(paper, reducedMotion ? [
+        { width: `${flight.openWidth}px`, height: `${openedHeight}px`, transform: "rotate(0deg) scale(1)", opacity: 1, offset: 0 },
+        { width: `${flight.foldWidth}px`, height: `${flight.foldHeight}px`, transform: "rotate(0deg) scale(.82)", opacity: 1, offset: 1 },
+      ] : [
+        { width: `${flight.openWidth}px`, height: `${openedHeight}px`, transform: "perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)", offset: 0 },
+        { width: `${flight.openWidth * .72}px`, height: `${openedHeight * .78}px`, transform: "perspective(700px) rotateX(-10deg) rotateY(25deg) scale(.98)", offset: .28 },
+        { width: `${flight.openWidth * .48}px`, height: `${openedHeight * .48}px`, transform: "perspective(700px) rotateX(18deg) rotateY(-58deg) scale(.94)", offset: .58 },
+        { width: `${flight.openWidth * .3}px`, height: `${flight.foldHeight * 1.3}px`, transform: "perspective(700px) rotateX(-28deg) rotateY(22deg) scale(.9)", offset: .82 },
+        { width: `${flight.foldWidth}px`, height: `${flight.foldHeight}px`, transform: "perspective(700px) rotateX(64deg) rotateY(0deg) scale(.86)", opacity: 1, offset: 1 },
+      ], reducedMotion ? 180 : 430, reducedMotion ? "ease-out" : "cubic-bezier(.35,.05,.7,.35)", true);
+    }
+    if (paper && flight && selectedIndex !== null && jarRef.current && sceneRef.current) {
+      flushSync(() => setUnfolded(false));
+      const returningNote = flightNoteRef.current;
+      const sourcePaper = jarRef.current.querySelector<HTMLElement>(`[data-jar-note="${selectedIndex}"]`);
+      if (returningNote && sourcePaper) {
+        const sceneRect = sceneRef.current.getBoundingClientRect();
+        const sourceRect = sourcePaper.getBoundingClientRect();
+        const sourceStyle = getComputedStyle(sourcePaper);
+        const sourceMatrix = new DOMMatrixReadOnly(sourceStyle.transform);
+        const sourceRotation = Math.atan2(sourceMatrix.b, sourceMatrix.a) * 180 / Math.PI;
+        const sourceScale = Math.hypot(sourceMatrix.a, sourceMatrix.b) * (parseFloat(sourceStyle.getPropertyValue("scale")) || 1);
+        const sourceLeft = sourceRect.left - sceneRect.left + (sourceRect.width - flight.foldWidth) / 2;
+        const sourceTop = sourceRect.top - sceneRect.top + (sourceRect.height - flight.foldHeight) / 2;
+        const dx = sourceLeft - flight.left;
+        const dy = sourceTop - flight.top;
+        await animateFlightElement(returningNote, reducedMotion ? [
+          { transform: "rotate(0deg) scale(.82)", opacity: 1, offset: 0 },
+          { transform: `translate(${dx * .5}px, ${dy * .5}px) rotate(${sourceRotation * .5}deg) scale(${sourceScale * .9})`, opacity: .6, offset: .55 },
+          { transform: `translate(${dx}px, ${dy}px) rotate(${sourceRotation}deg) scale(${sourceScale})`, opacity: 0, offset: 1 },
+        ] : [
+          { transform: "perspective(700px) rotateX(64deg) rotateY(0deg) scale(.86)", opacity: 1, offset: 0 },
+          { transform: `translate(${dx * .58}px, ${dy * .48 - 16}px) perspective(700px) rotateX(28deg) rotateY(-8deg) rotate(${sourceRotation - 5}deg) scale(${sourceScale * .9})`, opacity: .82, offset: .55 },
+          { transform: `translate(${dx}px, ${dy}px) rotate(${sourceRotation}deg) scale(${sourceScale})`, opacity: 0, offset: 1 },
+        ], reducedMotion ? 150 : 330, reducedMotion ? "ease-out" : "cubic-bezier(.25,.65,.3,1)", () => {
+          setFlight(null);
+          setSelectedIndex(null);
+          setEntry(null);
+          setGame({ status: "unanswered" });
+          setPromptVisible(false);
+          setPhase("resetting");
+        });
+      }
+    }
+    if (flightNoteRef.current) {
+      setUnfolded(false);
+      setEntry(null);
+      setGame({ status: "unanswered" });
+      setPromptVisible(false);
+      setFlight(null);
+      setSelectedIndex(null);
+      setPhase("resetting");
+    }
+    await waitForLayoutMotion([sceneRef.current, deskRef.current, jarRef.current]);
+    await drawFromJar(true);
+  }
+
+  const sceneClass = [
+    "jar-desk-scene",
+    paperSpace ? "has-paper-space" : "",
+    phase === "anticipating" ? "is-anticipating" : "",
+    phase === "shaking" ? "is-shaking" : "",
+    phase === "selecting" ? "is-selecting" : "",
+    phase === "escaping" ? "is-extracting" : "",
+    phase === "flying" || phase === "landing" || phase === "unfolding" || phase === "revealed" || phase === "closing" ? "has-open-note" : "",
+  ].filter(Boolean).join(" ");
+  const busy = phase !== "idle" && phase !== "revealed";
+  function answer(choice: string, status: "answered" | "completed" = "answered") {
+    if (phase !== "revealed" || sequenceLock.current) return;
+    setGame({ status, choice, reaction: pick(CHAOS_REACTIONS) });
+  }
+  function renderChaosContent() {
+    if (!entry || !promptVisible) return null;
+    if (game.status === "wild-revealed") return <><p className="chaos-prompt">{game.prompt}</p><span className="chaos-reaction">{game.choice} selected.</span></>;
+    if (entry.type === "blame") return <>
+      <p className="chaos-prompt">{entry.prompt}</p>
+      <div className="chaos-options" aria-label="Choose who is most likely">
+        {["JANNA", "JOSH"].map((name) => <button key={name} className={`chaos-choice ${game.status === "answered" && game.choice === name ? "is-marked" : ""}`} type="button" disabled={phase !== "revealed" || sequenceLock.current || game.status !== "unanswered"} onClick={() => answer(name)}>{name}</button>)}
+      </div>
+      {game.status === "answered" && <span className="chaos-reaction">{game.reaction}</span>}
+    </>;
+    if (entry.type === "wouldRather") return <>
+      <div className="chaos-options chaos-rather-options" aria-label="Choose one">
+        {[entry.optionA, entry.optionB].map((option, i) => <div className="chaos-option-wrap" key={i}>{i === 1 && <span className="chaos-or">OR</span>}<button type="button" className={`chaos-choice chaos-option ${game.status === "answered" && game.choice === option ? "is-marked" : ""}`} disabled={phase !== "revealed" || sequenceLock.current || game.status !== "unanswered"} onClick={() => answer(option)}>{option}</button></div>)}
+      </div>
+      {game.status === "answered" && <span className="chaos-reaction">{game.reaction}</span>}
+    </>;
+    if (entry.type === "court") return <>
+      <div className="chaos-case-number">CASE #{caseNumber}</div>
+      <small className="chaos-overline">THE CASE</small><p className="chaos-prompt">{entry.caseText}</p>
+      <div className="chaos-options">{entry.verdicts.map((verdict) => <button key={verdict} type="button" className={`chaos-choice ${game.status === "answered" && game.choice === verdict ? "is-marked chaos-stamp" : ""}`} disabled={phase !== "revealed" || sequenceLock.current || game.status !== "unanswered"} onClick={() => answer(verdict)}>{verdict}</button>)}</div>
+      {game.status === "answered" && <span className="chaos-reaction">{game.choice} · CASE CLOSED</span>}
+    </>;
+    if (entry.type === "battle") return <>
+      <small className="chaos-overline">THE BATTLE</small><p className="chaos-prompt">{entry.battle}</p>
+      <small className="chaos-overline">THE PRIZE</small><p className="chaos-prize">{entry.prize}</p>
+      {game.status === "unanswered" && <button className="chaos-action" type="button" disabled={phase !== "revealed" || sequenceLock.current} onClick={() => { if (phase === "revealed" && !sequenceLock.current) setGame({ status: "choosing-winner" }); }}>WE HAVE A WINNER →</button>}
+      {game.status === "choosing-winner" && <div className="chaos-options">{["JANNA", "JOSH"].map((name) => <button className="chaos-choice" type="button" key={name} disabled={phase !== "revealed" || sequenceLock.current} onClick={() => answer(name, "completed")}>{name} WON</button>)}</div>}
+      {game.status === "completed" && <span className="chaos-reaction chaos-victory">✦ {game.choice} WON ✦</span>}
+    </>;
+    if (entry.type === "mystery") return game.status === "mission-revealed" || game.status === "completed" ? <>
+      <p className="chaos-prompt">{entry.prompt}</p>
+      {game.status !== "completed" && <button className="chaos-action" type="button" disabled={phase !== "revealed" || sequenceLock.current} onClick={() => { if (phase === "revealed" && !sequenceLock.current) setGame({ status: "completed", reaction: "mission accepted." }); }}>MISSION ACCEPTED →</button>}
+      {game.status === "completed" && <span className="chaos-reaction">{game.reaction}</span>}
+    </> : <>
+      <span className="chaos-classified">CLASSIFIED</span>
+      <button className="chaos-action" type="button" disabled={phase !== "revealed" || sequenceLock.current} onClick={() => { if (phase === "revealed" && !sequenceLock.current) setGame({ status: "mission-revealed" }); }}>REVEAL MISSION</button>
+    </>;
+    if (entry.type === "wildcard" && entry.mode === "choice") return game.status === "unanswered" ? <div className="chaos-options">{entry.choices.map((choice) => <button className="chaos-choice" type="button" key={choice.label} disabled={phase !== "revealed" || sequenceLock.current} onClick={() => { if (phase === "revealed" && !sequenceLock.current) setGame({ status: "wild-revealed", choice: choice.label, prompt: choice.prompt }); }}>{choice.label}</button>)}</div> : null;
+    if (entry.type === "wildcard") return <><p className="chaos-prompt">{entry.prompt}</p>{game.status !== "completed" && <button className="chaos-action" type="button" onClick={() => answer("done", "completed")}>DONE →</button>}{game.status === "completed" && <span className="chaos-reaction">{game.reaction}</span>}</>;
+    if (entry.type === "doNow") return <><p className="chaos-prompt">{entry.prompt}</p>{game.status !== "completed" && <button className="chaos-action" type="button" onClick={() => answer("done", "completed")}>DONE →</button>}{game.status === "completed" && <span className="chaos-reaction">{game.reaction}</span>}</>;
+    if (entry.type === "emergency") return <><p className="chaos-prompt">{entry.prompt}</p>{game.status !== "completed" && <button className="chaos-action" type="button" onClick={() => answer("acknowledged", "completed")}>ACKNOWLEDGED →</button>}{game.status === "completed" && <span className="chaos-reaction">{game.reaction}</span>}</>;
+    return null;
+  }
+  const flightStyle: CSSProperties | undefined = flight ? {
+    left: `${flight.left}px`,
+    top: `${flight.top}px`,
+    width: `${unfolded ? flight.openWidth : flight.foldWidth}px`,
+    height: unfolded ? "auto" : `${flight.foldHeight}px`,
+    transform: `rotate(${flight.rotation}deg) scale(${flight.scale})`,
+    "--jar-open-width": `${flight.openWidth}px`,
+    "--jar-open-height": `${flight.openHeight}px`,
+  } as CSSProperties : undefined;
+
   return (
-    <section className="quiet-experience">
+    <section className="quiet-experience love-jar-experience">
       <SectionHeading
         eyebrow="A LITTLE BIT OF EVERYTHING"
-        title="The love jar"
-        description="Love, nonsense, questions, and something to try together."
+        title="The Love Jar"
+        description="Love, chaos, dares, and whatever happens when we shake it."
       />
-      <div
-        key={shake}
-        className={`love-jar ${shake ? "jar-shake" : ""}`}
-        aria-hidden="true"
-      >
-        {Array.from({ length: 9 }, (_, i) => (
-          <i
-            key={i}
-            style={{
-              left: `${15 + ((i * 23) % 60)}%`,
-              top: `${25 + ((i * 13) % 50)}%`,
-              rotate: `${i * 41}deg`,
-            }}
+      <div ref={sceneRef} className={sceneClass} aria-label="A keepsake jar filled with folded notes on a little writing desk">
+        <div className="jar-desk-glow" aria-hidden="true" />
+        <span className="jar-desk-star star-one" aria-hidden="true">✦</span>
+        <span className="jar-desk-star star-two" aria-hidden="true">✧</span>
+        <span className="jar-desk-star star-three" aria-hidden="true">·</span>
+        <div className="jar-loose-note loose-note-one" aria-hidden="true"><span>♡</span></div>
+        <div className="jar-loose-note loose-note-two" aria-hidden="true"><span>?</span></div>
+        <div className="jar-pencil" aria-hidden="true"><i /></div>
+        <div className="jar-ribbon" aria-hidden="true" />
+        <div className="jar-flower" aria-hidden="true"><i /><span>✿</span></div>
+        <div ref={deskRef} className="jar-desk-surface" aria-hidden="true">
+          <div className="jar-desk-seam" />
+        </div>
+        <div ref={jarRef} className="love-jar" aria-hidden="true">
+          <div ref={lidRef} className="jar-lid"><span /></div>
+          <div className="jar-rim" />
+          <div className="jar-glass-body">
+            <div className="jar-notes">
+              {slips.map((symbol, i) => (
+                <i
+                  className={`jar-note note-${i + 1} ${selectedIndex === i && phase === "selecting" ? "is-selected" : ""} ${flight && selectedIndex === i ? "is-extracted" : ""}`}
+                  data-jar-note={i}
+                  data-chaos-type={CHAOS_PAPER_SLOTS[i]}
+                  key={i}
+                >{symbol}</i>
+              ))}
+            </div>
+            <div className="jar-glass-glint" />
+          </div>
+          <div className="jar-neck-band" />
+          <div className="jar-label"><b>J + J</b><span>THE LOVE JAR</span></div>
+          <div className="jar-base-glint" />
+        </div>
+        {flight && (
+          <div
+            ref={flightNoteRef}
+            className={`jar-flight-note ${phase === "escaping" ? "is-lifting" : ""} ${phase === "landing" || phase === "unfolding" || phase === "revealed" || phase === "closing" ? "is-landed" : ""} ${phase === "unfolding" || phase === "revealed" || unfolded ? "is-opening" : ""} ${unfolded ? "is-open" : ""} ${phase === "closing" ? "is-closing" : ""}`}
+            data-chaos-type={entry?.type}
+            style={flightStyle}
+            aria-hidden={phase !== "revealed" && phase !== "closing"}
           >
-            ♡
-          </i>
-        ))}
+            {phase === "unfolding" && <span className="jar-fold-crease fold-horizontal" aria-hidden="true" />}
+            {phase === "unfolding" && <span className="jar-fold-crease fold-diagonal" aria-hidden="true" />}
+            {!unfolded && <span className="jar-fold-symbol" aria-hidden="true">{slips[selectedIndex ?? 0]}</span>}
+            {(phase === "revealed" || phase === "closing") && entry && (
+              <div ref={resultCopyRef} className={`jar-revealed-copy chaos-content chaos-${entry.type}`} data-chaos-type={entry.type} aria-live="polite">
+                <div className="chaos-category-heading"><small>{CHAOS_CATEGORY_META[entry.type].label}</small><span aria-hidden="true">{CHAOS_CATEGORY_META[entry.type].symbol}</span></div>
+                {renderChaosContent()}
+                <span aria-hidden="true">J + J</span>
+                <button
+                  className="jar-draw-another"
+                  type="button"
+                  onClick={() => void drawAnother()}
+                  disabled={phase !== "revealed" || !promptVisible}
+                >
+                  DRAW ANOTHER →
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
-      <button
-        className="primary-button"
-        onClick={() => {
-          setShake((s) => s + 1);
-          setNote(pick(jarNotes));
-        }}
-      >
-        Shake the jar
-      </button>
-      {note && (
-        <p className="paper-message" aria-live="polite">
-          <small>{note.category}</small>
-          {note.text}
-        </p>
+      {phase !== "revealed" && phase !== "closing" && (
+        <div className="jar-invitation">
+          <button
+            className="jar-shake-button"
+            onClick={() => void drawFromJar()}
+            disabled={busy}
+            aria-busy={busy}
+          >
+            {busy ? "THE PAPER IS IN MOTION..." : "SHAKE THE JAR"}
+          </button>
+          <small>no telling what comes out.</small>
+        </div>
       )}
     </section>
   );
@@ -2142,7 +2600,6 @@ function Generator() {
       setLoading(false);
     }
   }
-
   const currency = (amount: number) =>
     new Intl.NumberFormat("en-US", {
       style: "currency",

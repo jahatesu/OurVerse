@@ -15,7 +15,7 @@ type Progress = {
   unlocked: string[];
   explored: string[];
   reasons: number;
-  companion: { happiness: number; love: number; miss: number };
+  companion: { happiness: number; love: number; miss: number; lastInteraction: number };
   chats: number;
   vault: boolean;
   discoveries: string[];
@@ -32,7 +32,7 @@ const initial: Progress = {
   unlocked: [],
   explored: [],
   reasons: 0,
-  companion: { happiness: 70, love: 90, miss: 100 },
+  companion: { happiness: 70, love: 90, miss: 40, lastInteraction: 0 },
   chats: 0,
   vault: false,
   discoveries: [],
@@ -142,6 +142,11 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
                 100,
                 Math.max(0, Number(saved.companion?.miss) || 0),
               ),
+              lastInteraction:
+                Number.isFinite(saved.companion?.lastInteraction) &&
+                saved.companion.lastInteraction > 0
+                  ? saved.companion.lastInteraction
+                  : Date.now(),
             },
           };
           previous.current = loaded.unlocked;

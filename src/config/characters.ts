@@ -49,7 +49,8 @@ export type Expression =
   | "crying-happy"
   | "confused"
   | "embarrassed"
-  | "proud";
+  | "proud"
+  | "eating";
 export type Pose =
   | "idle"
   | "wave"
@@ -57,6 +58,7 @@ export type Pose =
   | "walk"
   | "run"
   | "hug"
+  | "heart"
   | "kiss"
   | "sleep"
   | "hold-hands"

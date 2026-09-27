@@ -11,12 +11,16 @@ export function OurVerseCharacter({
   expression = "idle",
   pose = "idle",
   hoodie = false,
+  shirt = false,
+  sleepHeadOnly = false,
   paired = false,
 }: {
   character: keyof typeof characters;
   expression?: Expression;
   pose?: Pose;
   hoodie?: boolean;
+  shirt?: boolean;
+  sleepHeadOnly?: boolean;
   paired?: boolean;
 }) {
   const c = characters[character];
@@ -24,7 +28,7 @@ export function OurVerseCharacter({
   const sleepy = pose === "sleep" || expression === "sleepy";
   const sitting = pose === "sit" || pose === "sleep" || pose === "gaming";
   const profile = paired && pose === "kiss";
-  const connected = paired && ["hold-hands", "dance"].includes(pose);
+  const connected = paired && ["hold-hands", "dance", "heart"].includes(pose);
   const upset = ["annoyed", "angry", "sad", "confused"].includes(expression);
   const blush =
     ["blushing", "love-struck", "embarrassed", "crying-happy", "eating"].includes(
@@ -32,16 +36,17 @@ export function OurVerseCharacter({
     ) || pose === "kiss";
   return (
     <svg
-      className={`character character-${character} pose-${pose} expression-${expression}`}
+      className={`character character-${character} pose-${pose} expression-${expression} ${sleepHeadOnly ? "sleep-head-only" : ""}`}
       viewBox="0 0 140 180"
       width="140"
       height="180"
       role="img"
       aria-label={`Mini ${c.name}, ${expression}, ${pose}`}
     >
-      <ellipse cx="70" cy="169" rx="34" ry="6" fill="#000" opacity=".18" />
+      <ellipse className="character-shadow" cx="70" cy="169" rx="34" ry="6" fill="#000" opacity=".18" />
       {janna && (
         <path
+          className="character-back-hair"
           d="M28 60Q15 115 31 139L108 139Q125 100 112 57Z"
           fill={c.hairColor}
         />
@@ -81,11 +86,14 @@ export function OurVerseCharacter({
         </g>
       </g>
       <path
-        className={hoodie ? "borrowed-hoodie" : ""}
-        d="M46 103Q70 94 94 103L100 144Q70 153 40 144Z"
-        fill={hoodie ? characters.josh.outfit : c.outfit}
+        className={hoodie ? "character-body borrowed-hoodie" : "character-body"}
+        d={hoodie ? "M41 99Q70 87 99 99L108 151Q70 163 32 151Z" : "M46 103Q70 94 94 103L100 144Q70 153 40 144Z"}
+        fill={hoodie ? characters.josh.outfit : shirt ? "#f4ece5" : c.outfit}
       />
+      {hoodie && <path className="character-details" d="M48 101Q70 84 92 101L83 113Q70 105 57 113Z" fill="#62677a" stroke="#343241" strokeWidth="3" />}
+      {shirt && <path className="character-details" d="M59 102Q70 113 81 102" fill="none" stroke="#d8cad0" strokeWidth="3" strokeLinecap="round" />}
       <path
+        className="character-details"
         d="M57 102Q70 120 83 102M64 116L63 130M77 116L78 129"
         fill="none"
         stroke={c.accentColor}
@@ -93,30 +101,30 @@ export function OurVerseCharacter({
       />
       <g className="arm arm-left" style={{ transformOrigin: "45px 111px" }}>
         <path
-          d={connected && !janna ? "M45 112Q32 128 20 130" : sitting ? "M45 112Q32 124 47 137" : "M45 112L31 133"}
+          d={pose === "heart" && !janna ? "M45 112Q29 110 20 95" : pose === "dance" && janna ? "M45 112Q78 96 125 103" : pose === "dance" && !janna ? "M45 112Q37 110 30 104" : pose === "poke" && !janna ? "M45 112Q18 83 -42 84" : connected && !janna ? "M45 112Q32 128 20 130" : sitting ? "M45 112Q32 124 47 137" : "M45 112L31 133"}
           fill="none"
-          stroke={hoodie ? characters.josh.outfit : c.outfit}
-          strokeWidth="14"
+          stroke={hoodie ? characters.josh.outfit : shirt ? "#f4ece5" : c.outfit}
+          strokeWidth={hoodie ? 17 : 14}
           strokeLinecap="round"
         />
         <circle
-          cx={connected && !janna ? 20 : sitting ? 47 : 29}
-          cy={connected && !janna ? 130 : 136}
+          cx={pose === "heart" && !janna ? 20 : pose === "dance" && janna ? 125 : pose === "dance" && !janna ? 30 : pose === "poke" && !janna ? -42 : connected && !janna ? 20 : sitting ? 47 : 29}
+          cy={pose === "heart" && !janna ? 95 : pose === "dance" ? 103 : pose === "poke" && !janna ? 84 : connected && !janna ? 130 : 136}
           r="7"
           fill={c.skin}
         />
       </g>
       <g className="arm arm-right" style={{ transformOrigin: "94px 111px" }}>
         <path
-          d={connected && janna ? "M94 112Q108 128 120 130" : sitting ? "M94 112Q108 124 92 137" : "M94 112L108 133"}
+          d={pose === "heart" && janna ? "M94 112Q111 109 120 95" : pose === "dance" && janna ? "M94 112Q107 110 110 104" : pose === "dance" && !janna ? "M94 112Q62 139 18 137" : connected && janna ? "M94 112Q108 128 120 130" : sitting ? "M94 112Q108 124 92 137" : "M94 112L108 133"}
           fill="none"
-          stroke={hoodie ? characters.josh.outfit : c.outfit}
-          strokeWidth="14"
+          stroke={hoodie ? characters.josh.outfit : shirt ? "#f4ece5" : c.outfit}
+          strokeWidth={hoodie ? 17 : 14}
           strokeLinecap="round"
         />
         <circle
-          cx={connected && janna ? 120 : sitting ? 92 : 110}
-          cy={connected && janna ? 130 : 136}
+          cx={pose === "heart" && janna ? 120 : pose === "dance" && janna ? 110 : pose === "dance" && !janna ? 18 : connected && janna ? 120 : sitting ? 92 : 110}
+          cy={pose === "heart" && janna ? 95 : pose === "dance" ? (janna ? 104 : 137) : connected && janna ? 130 : 136}
           r="7"
           fill={c.skin}
         />
@@ -286,7 +294,7 @@ export function OurVerseCharacter({
         )}
       </g>
       {pose === "gaming" && (
-        <g>
+        <g className="game-controller">
           <rect x="43" y="126" width="54" height="22" rx="9" fill="#a7a3c4" />
           <path d="M51 137H64M57 131V143" stroke="#302d41" strokeWidth="3" />
           <circle cx="84" cy="134" r="3" fill="#ca748d" />
@@ -329,7 +337,7 @@ export function Couple({
   dialogueJosh?: string;
   dialogueClosing?: boolean;
 }) {
-  const pose: Pose = scene === "heart" ? "hug" : scene === "hoodie" ? "idle" : scene;
+  const pose: Pose = scene === "hoodie" ? "idle" : scene;
   const feedStage = interaction.startsWith("feed-");
   const snackTease = interaction.startsWith("annoy-4");
   const foodVisible = feedStage || snackTease;
@@ -341,26 +349,43 @@ export function Couple({
       : "translate(188 139)";
   const jannaMood: Expression = feedStage
     ? interaction === "feed-bite" || interaction === "feed-chew" ? "eating" : interaction === "feed-satisfied" ? "blushing" : "excited"
-    : annoyLevel >= 5 ? "angry" : annoyLevel >= 3 ? "annoyed" : annoyLevel > 0 ? "confused" : scene === "poke" ? "annoyed" : scene === "kiss" ? "blushing" : scene === "celebrate" ? "excited" : scene === "idle" ? jannaExpression || "happy" : "happy";
-  const joshMood: Expression = feedStage ? "happy" : annoyLevel >= 4 ? "laughing" : scene === "hoodie" ? "confused" : scene === "kiss" ? "blushing" : "happy";
+    : annoyLevel >= 5 ? "angry" : annoyLevel >= 3 ? "annoyed" : annoyLevel > 0 ? "confused" : scene === "poke" ? "annoyed" : scene === "heart" ? "love-struck" : scene === "sleep" ? "sleepy" : scene === "kiss" ? "blushing" : scene === "celebrate" ? "excited" : scene === "idle" ? jannaExpression || "happy" : "happy";
+  const joshMood: Expression = feedStage ? "happy" : annoyLevel >= 4 ? "laughing" : scene === "hoodie" ? "confused" : scene === "heart" ? "love-struck" : scene === "sleep" ? "sleepy" : scene === "celebrate" ? "excited" : scene === "kiss" ? "blushing" : "happy";
   return (
     <div className={`couple couple-${scene} ${interaction ? `couple-interaction-${interaction}` : ""}`}>
       <svg key={scene} className="couple-stage" viewBox="0 0 320 215" role="group" aria-label={`Janna and Josh: ${scene.replace("-", " ")}`}>
-        {(scene === "sit" || scene === "sleep" || scene === "gaming") && (
+        {scene === "sleep" && (
+          <g className="bed-scene" aria-hidden="true">
+            <ellipse cx="160" cy="151" rx="154" ry="41" fill="#b6a4cb" opacity=".18" />
+            <path d="M39 24A15 15 0 1 0 53 45A12 12 0 0 1 39 24Z" fill="#f4e9c8" opacity=".9" />
+            <circle cx="78" cy="42" r="1.6" fill="#e9dcff" /><circle cx="272" cy="67" r="1.4" fill="#e9dcff" />
+            <path d="M17 127Q17 112 34 112H286Q303 112 303 129V180H17Z" fill="#594e70" stroke="#a79aba" strokeWidth="3" />
+            <path d="M22 145Q160 126 298 145V177H22Z" fill="#c5b7cf" />
+            <rect x="99" y="89" width="102" height="42" rx="19" fill="#eee4ed" stroke="#d5c2dc" strokeWidth="2" />
+            <rect x="166" y="89" width="102" height="42" rx="19" fill="#eee4ed" stroke="#d5c2dc" strokeWidth="2" />
+            <path d="M28 171H292" stroke="#dfd2e4" strokeWidth="3" opacity=".7" />
+          </g>
+        )}
+        {scene === "sleep" && <g className="sleep-bodies" aria-hidden="true"><path d="M172 112Q210 97 247 116L286 144Q252 157 214 143L172 129Z" fill={characters.josh.outfit} /><path d="M105 112Q142 99 179 117L222 145Q188 157 151 142L108 129Z" fill={characters.janna.outfit} /><path d="M239 120Q213 100 180 119" fill="none" stroke={characters.josh.outfit} strokeWidth="15" strokeLinecap="round" /><path d="M180 119L171 121" fill="none" stroke={characters.josh.skin} strokeWidth="11" strokeLinecap="round" /><circle cx="171" cy="121" r="5" fill={characters.josh.skin} /></g>}
+        {(scene === "sit" || scene === "gaming") && (
           <g aria-hidden="true">
             <rect x="52" y="151" width="216" height="21" rx="10" fill="#66576e" />
             <path d="M69 172V190M250 172V190" stroke="#97828b" strokeWidth="7" />
           </g>
         )}
+        {scene === "sit" && <g className="sit-hearts" aria-hidden="true">{[0, 1, 2, 3].map((i) => <path key={`sit-heart-${i}`} className={`sit-heart sit-heart-${i}`} d="M0 5C-8-2-12-7-8-11C-4-15 0-11 0-8C0-11 5-15 9-11C13-7 8-1 0 5Z" transform={`translate(${83 + i * 44} ${91 + (i % 2) * 14}) scale(${0.65 + (i % 2) * 0.25})`} fill="#ffb8d0" />)}</g>}
+        {scene === "heart" && <g className="joined-heart" aria-hidden="true"><circle cx="160" cy="101" r="28" fill="#ff91c4" opacity=".22" /><path className="joined-heart-shape" d="M160 114C151 105 136 98 139 88C142 77 155 79 160 88C165 79 178 77 181 88C184 98 169 106 160 114Z" fill="#f28ab7" /></g>}
+        {scene === "celebrate" && <g className="fireworks" aria-hidden="true">{[0, 1, 2].map((i) => <g key={`firework-${i}`} className={`firework firework-${i}`} transform={`translate(${77 + i * 82} ${60 + (i % 2) * 8})`}><circle r="3" fill="#ffd98a" /><path d="M0-20V-12M14-14L9-9M20 0H12M14 14L9 9M0 20V12M-14 14L-9 9M-20 0H-12M-14-14L-9-9" stroke="#ffd98a" strokeWidth="2" strokeLinecap="round" /></g>)}</g>}
+        {scene === "dance" && <g className="dance-particles" aria-hidden="true">{[0, 1, 2, 3, 4].map((i) => <circle key={`dance-glow-${i}`} className={`dance-glow dance-glow-${i}`} cx={42 + i * 57} cy={49 + (i % 2) * 39} r={i % 2 ? 1.5 : 2.2} fill="#ffd6aa" />)}</g>}
         <g className="partner partner-janna">
-          <OurVerseCharacter paired character="janna" pose={pose} hoodie={scene === "hoodie"} expression={jannaMood} />
-          {dialogueJanna && <foreignObject className="character-speech character-speech-janna" x="-2" y="-40" width="144" height="46"><div xmlns="http://www.w3.org/1999/xhtml" className={`speech-bubble speech-janna ${dialogueClosing ? "speech-leaving" : ""}`} role="status">{dialogueJanna}</div></foreignObject>}
+          <OurVerseCharacter paired character="janna" pose={pose} hoodie={scene === "hoodie"} sleepHeadOnly={scene === "sleep"} expression={jannaMood} />
+          {(dialogueJanna || scene === "hoodie") && <foreignObject className="character-speech character-speech-janna" x={scene === "gaming" ? 31 : -2} y="-40" width={scene === "gaming" ? 78 : 144} height="46"><div xmlns="http://www.w3.org/1999/xhtml" className={`speech-bubble speech-janna ${dialogueClosing ? "speech-leaving" : ""}`} role="status">{dialogueJanna || "mine now ♡"}</div></foreignObject>}
         </g>
         <g className="partner partner-josh">
-          <OurVerseCharacter paired character="josh" pose={pose} expression={joshMood} />
-          {dialogueJosh && <foreignObject className="character-speech character-speech-josh" x="-2" y="-40" width="144" height="46"><div xmlns="http://www.w3.org/1999/xhtml" className={`speech-bubble speech-josh ${dialogueClosing ? "speech-leaving" : ""}`} role="status">{dialogueJosh}</div></foreignObject>}
+          <OurVerseCharacter paired character="josh" pose={pose} shirt={scene === "hoodie"} sleepHeadOnly={scene === "sleep"} expression={joshMood} />
+          {dialogueJosh && <foreignObject className="character-speech character-speech-josh" x={scene === "gaming" ? 31 : -2} y="-40" width={scene === "gaming" ? 78 : 144} height="46"><div xmlns="http://www.w3.org/1999/xhtml" className={`speech-bubble speech-josh ${dialogueClosing ? "speech-leaving" : ""}`} role="status">{dialogueJosh}</div></foreignObject>}
         </g>
-        {["hug", "heart"].includes(scene) && (
+        {scene === "hug" && (
           <g className="embrace-arms" fill="none" strokeLinecap="round" aria-hidden="true">
             <path d="M124 121Q129 146 182 139" stroke={characters.janna.outfit} strokeWidth="14" />
             <path d="M199 119Q190 126 143 123" stroke={characters.josh.outfit} strokeWidth="14" />
@@ -382,8 +407,10 @@ export function Couple({
           </g>
         )}
         {annoyLevel > 0 && <g className={`tease-mark tease-mark-${annoyLevel}`} aria-hidden="true"><path d="M132 91Q145 84 150 96" fill="none" stroke="#ee9bab" strokeWidth="3" strokeLinecap="round"/><path d="M145 76l5-8m2 10 8-3" stroke="#e6ad7c" strokeWidth="3" strokeLinecap="round"/></g>}
+        {scene === "sleep" && <g className="sleep-effects" aria-hidden="true"><path className="sleep-blanket" d="M29 151Q92 137 155 149Q218 135 291 151V180H29Z" fill="#8e7fa9" stroke="#c2b3d1" strokeWidth="2" /><path d="M29 152Q45 144 62 151" fill="none" stroke="#e6dbea" strokeWidth="3" opacity=".8" /><path d="M154 149Q218 136 291 152" fill="none" stroke="#d7c8df" strokeWidth="2" opacity=".8"/><text className="sleep-z sleep-z-1" x="250" y="78">z</text><text className="sleep-z sleep-z-2" x="267" y="62">z</text><text className="sleep-z sleep-z-3" x="281" y="45">z</text></g>}
+        {scene === "celebrate" && <g className="confetti" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <rect key={`confetti-piece-${i}`} className={`confetti-piece confetti-piece-${i}`} x={24 + i * 20} y={12 + (i % 3) * 6} width={3 + (i % 3)} height="8" rx="1" fill={["#ffd58a", "#ff92bd", "#b8a5ff", "#fff0c4"][i % 4]} />)}</g>}
       </svg>
-      {(caption || scene === "hoodie") && <p className="handwritten couple-caption">{caption || "mine now."}</p>}
+      {caption && <p className="handwritten couple-caption">{caption}</p>}
     </div>
   );
 }

@@ -199,7 +199,11 @@ export function Companion({ compact = false }: { compact?: boolean }) {
 }
 export function CompanionRoom() {
   const [scene, setScene] = useState<CoupleScene>("idle");
+  const [sceneRun, setSceneRun] = useState(0);
+  const [sceneDialogue, setSceneDialogue] = useState<{ janna: string; josh?: string } | null>(null);
   const chatLog = useRef<HTMLDivElement>(null);
+  const sceneDialogueTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pokeDialogueIndex = useRef(0);
   const { progress, update, unlock } = useUniverse();
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -215,6 +219,29 @@ export function CompanionRoom() {
     if (chatLog.current)
       chatLog.current.scrollTo({ top: chatLog.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
+  useEffect(() => () => { if (sceneDialogueTimer.current) clearTimeout(sceneDialogueTimer.current); }, []);
+  function selectCoupleScene(nextScene: CoupleScene) {
+    if (sceneDialogueTimer.current) clearTimeout(sceneDialogueTimer.current);
+    setSceneDialogue(null);
+    setScene(nextScene);
+    setSceneRun((run) => run + 1);
+    if (nextScene === "poke") {
+      const lines = ["Joshhh >:(", "stop poking me!", "you're annoying", "JOSH."];
+      const line = lines[pokeDialogueIndex.current % lines.length];
+      pokeDialogueIndex.current += 1;
+      setSceneDialogue({ janna: line });
+      sceneDialogueTimer.current = setTimeout(() => setSceneDialogue(null), 2600);
+    } else if (nextScene === "gaming") {
+      const exchanges = [
+        { janna: "HOW DID YOU DO THAT", josh: "skill issue" },
+        { janna: "you're cheating >:(", josh: "hehe" },
+        { janna: "rematch.", josh: "you almost had me" },
+        { janna: "BABE!", josh: "that was close" },
+      ];
+      setSceneDialogue(exchanges[sceneRun % exchanges.length]);
+      sceneDialogueTimer.current = setTimeout(() => setSceneDialogue(null), 2600);
+    }
+  }
   async function send(text: string) {
     if (!text.trim() || typing) return;
     const next = [...messages, { from: "josh", text: text.trim(), time: new Date() }].slice(-40);
@@ -296,7 +323,7 @@ export function CompanionRoom() {
       </div>
       <section className="couple-playground">
         <h2>Two little people. Our whole universe.</h2>
-        <Couple key={scene} scene={scene} />
+        <Couple key={`${scene}-${sceneRun}`} scene={scene} dialogueJanna={sceneDialogue?.janna} dialogueJosh={sceneDialogue?.josh} />
         <div className="world-links">
           {(
             [
@@ -318,7 +345,7 @@ export function CompanionRoom() {
             <button
               key={s}
               aria-pressed={s === scene}
-              onClick={() => setScene(s)}
+              onClick={() => selectCoupleScene(s)}
             >
               {s === "idle" ? "stand together" : s.replace("-", " ")}
             </button>

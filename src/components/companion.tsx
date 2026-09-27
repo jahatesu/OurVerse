@@ -1,92 +1,186 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Heart, Cookie, Smile, Sparkles, Send, Wifi, BatteryFull } from "lucide-react";
-import { companionResponses } from "@/data/messages";
-import { pick } from "@/lib/utils";
 import { useUniverse } from "./provider";
 import { SectionHeading } from "./ui";
 import { Couple, type CoupleScene } from "./characters";
 export function Companion({ compact = false }: { compact?: boolean }) {
-  const { progress, update, unlock, discover } = useUniverse();
-  const [reaction, setReaction] = useState("");
-  const [bubble, setBubble] = useState("Waiting for my favorite human…");
+  const { progress, update, unlock, discover, ready } = useUniverse();
+  const [reaction, setReaction] = useState<"idle" | "Hug" | "Kiss">("idle");
+  const [interaction, setInteraction] = useState("");
+  const [exchange, setExchange] = useState<{ josh: string; janna: string } | null>(null);
+  const [dialogueClosing, setDialogueClosing] = useState(false);
+  const [snack, setSnack] = useState<"samgyupsal" | "strawberry" | "cookie" | "mochi">("strawberry");
   const [animation, setAnimation] = useState(0);
-  function interact(action: keyof typeof companionResponses) {
-    setReaction(action);
+  const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
+  const visitedRef = useRef(false);
+  const dialogueTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastAnnoyDialogue = useRef<{ josh: string; janna: string } | null>(null);
+  const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const bound = (value: number) => Math.max(0, Math.min(100, value));
+  const hugs = [
+    { josh: "Come here, baby.", janna: "Finallyyy. Don't let go ♡" },
+    { josh: "I needed this hug too.", janna: "Mhm. You're staying right here." },
+    { josh: "My favorite place is here.", janna: "Then keep your arms around me." },
+  ];
+  const kisses = [
+    { josh: "One more kiss?", janna: "You owe me like 100 more." },
+    { josh: "Kiss for my pretty girl?", janna: "Only one? Absolutely not." },
+    { josh: "Come closer, love.", janna: "I was already coming ♡" },
+  ];
+  const foods = [
+    { item: "samgyupsal" as const, josh: "Have some samgyupsal, my love.", janna: "AAAA thank you baby ♡" },
+    { item: "strawberry" as const, josh: "A strawberry for you.", janna: "The sweetest one? That's me, right?" },
+    { item: "cookie" as const, josh: "I saved you the last cookie.", janna: "You do love me. Hand it over." },
+    { item: "mochi" as const, josh: "Tiny mochi for my tiny Janna.", janna: "Cute. I want three more." },
+  ];
+  const mood = progress.companion.miss >= 70 ? "misses you" : progress.companion.happiness >= 75 ? "feeling adored" : progress.companion.happiness < 35 ? "needs a cuddle" : "cozy with you";
+
+  useEffect(() => {
+    if (!ready || visitedRef.current) return;
+    visitedRef.current = true;
+    const now = Date.now();
+    const last = progress.companion.lastInteraction;
+    const days = last > 0 ? Math.floor(Math.max(0, now - last) / 86_400_000) : 0;
+    update((p) => {
+      if (p.companion.lastInteraction !== last) return p;
+      return {
+        ...p,
+        companion: {
+          ...p.companion,
+          happiness: bound(p.companion.happiness - Math.min(8, days)),
+          miss: bound(p.companion.miss + Math.min(24, days * 3)),
+          lastInteraction: now,
+        },
+      };
+    });
+  }, [ready, progress.companion.lastInteraction, update]);
+
+  async function interact(action: "Hug" | "Kiss" | "Feed" | "Annoy") {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    if (dialogueTimer.current) clearTimeout(dialogueTimer.current);
+    setDialogueClosing(false);
+    setBusy(true);
     setAnimation((n) => n + 1);
-    setBubble(pick(companionResponses[action]));
     discover("companion");
-    if (action === "Annoy") {
-      update((p) => ({ ...p, pokes: p.pokes + 1 }));
-      setBubble(
-        progress.pokes >= 4
-          ? "STOP POKING ME >:("
-          : progress.pokes >= 2
-            ? "Josh. I can chase you, you know."
-            : "JOSHHHH",
-      );
-      if (progress.pokes >= 4) unlock("professional-annoyer");
-    }
     update((p) => ({
       ...p,
+      pokes: p.pokes + (action === "Annoy" ? 1 : 0),
       companion: {
-        happiness: Math.min(
-          100,
-          Math.max(0, p.companion.happiness + (action === "Annoy" ? -5 : 7)),
-        ),
-        love: Math.min(100, p.companion.love + 3),
-        miss: Math.max(0, p.companion.miss - (action === "Hug" ? 8 : 2)),
+        ...p.companion,
+        happiness: bound(p.companion.happiness + (action === "Annoy" ? -2 : action === "Feed" ? 8 : 7)),
+        love: bound(p.companion.love + (action === "Annoy" ? 0 : 1)),
+        miss: bound(p.companion.miss - (action === "Annoy" ? 3 : 12)),
+        lastInteraction: Date.now(),
       },
     }));
     if (action === "Hug") unlock("hug");
-    if (action === "Annoy") unlock("annoy");
+    if (action === "Annoy") {
+      unlock("annoy");
+      const variant = progress.pokes % 4 + 1;
+      const lines = [
+        [
+          { josh: "hehe", janna: "Joshhh stop!" },
+          { josh: "what?", janna: "JOSHHHH" },
+        ],
+        [
+          { josh: "you still love me though", janna: "You're so annoying >:(" },
+          { josh: "I didn't do anything", janna: "Keep going. See what happens." },
+        ],
+        [
+          { josh: "catch me first", janna: "Josh, I can chase you, you know." },
+          { josh: "hehe, too slow", janna: "Come back here!" },
+        ],
+        [
+          { josh: "what?", janna: "No more kisses for you." },
+          { josh: "catch me first", janna: "I'm warning you >:(" },
+        ],
+      ];
+      const choices = lines[variant - 1].filter((line) => line.josh !== lastAnnoyDialogue.current?.josh || line.janna !== lastAnnoyDialogue.current?.janna);
+      const exchangeForAnnoy = choices[Math.floor(Math.random() * choices.length)] || lines[variant - 1][0];
+      lastAnnoyDialogue.current = exchangeForAnnoy;
+      setReaction("idle");
+      setExchange(exchangeForAnnoy);
+      setInteraction(`annoy-${variant}`);
+      if (progress.pokes + 1 >= 5) unlock("professional-annoyer");
+      if (variant === 3) {
+        await pause(500);
+        setInteraction("annoy-3-chase");
+        await pause(1650);
+      } else if (variant === 4) {
+        const snacks: (typeof snack)[] = ["samgyupsal", "strawberry", "cookie", "mochi"];
+        setSnack(snacks[Math.floor(Math.random() * snacks.length)]);
+        await pause(550);
+        setInteraction("annoy-4-away");
+        await pause(650);
+        setInteraction("annoy-4-reach");
+        await pause(900);
+      } else {
+        await pause(1900);
+      }
+    } else if (action === "Feed") {
+      const chosen = foods[Math.floor(Math.random() * foods.length)];
+      setSnack(chosen.item);
+      setReaction("idle");
+      setExchange({ josh: chosen.josh, janna: chosen.janna });
+      setInteraction("feed-notice");
+      await pause(600);
+      setInteraction("feed-offer");
+      await pause(650);
+      setInteraction("feed-bite");
+      await pause(700);
+      setInteraction("feed-chew");
+      await pause(850);
+      setInteraction("feed-satisfied");
+      await pause(950);
+    } else {
+      const lines = action === "Hug" ? hugs : kisses;
+      setExchange(lines[Math.floor(Math.random() * lines.length)]);
+      setReaction(action);
+      setInteraction(action.toLowerCase());
+      // Preserve the existing Hug and Kiss choreography.
+      await pause(2500);
+    }
+    setReaction("idle");
+    setInteraction("");
+    setDialogueClosing(true);
+    dialogueTimer.current = setTimeout(() => {
+      setExchange(null);
+      setDialogueClosing(false);
+    }, 380);
+    setBusy(false);
+    busyRef.current = false;
   }
+
   return (
     <section className={`companion-card ${compact ? "compact" : ""}`}>
       <div className="companion-header">
-        <h2>
-          Mini Janna <span>✿</span>
-        </h2>
-        <span className="online-pill">
-          <i /> here for you
-        </span>
+        <h2>Mini Janna <span>✿</span></h2>
+        <span className="online-pill"><i /> {mood}</span>
       </div>
-      <div className="avatar-stage">
+      <div className={`avatar-stage companion-stage ${interaction ? "is-interacting" : ""}`}>
         <Couple
-          key={animation}
-          scene={
-            reaction === "Kiss"
-              ? "kiss"
-              : reaction === "Hug"
-                ? "hug"
-                : reaction === "Annoy"
-                  ? "poke"
-                  : reaction === "Feed"
-                    ? "celebrate"
-                    : "idle"
-          }
+          key={`couple-${animation}`}
+          scene={reaction === "Kiss" ? "kiss" : reaction === "Hug" ? "hug" : "idle"}
+          interaction={interaction}
+          food={snack}
+          dialogueJanna={exchange?.janna}
+          dialogueJosh={exchange?.josh}
+          dialogueClosing={dialogueClosing}
+          jannaExpression={interaction ? undefined : progress.companion.miss >= 70 ? "love-struck" : progress.companion.happiness < 35 ? "annoyed" : "happy"}
         />
       </div>
-      <p className="companion-bubble" aria-live="polite">
-        {bubble}
-      </p>
-      <div className="stat-bars">
-        {(
-          [
-            ["Happiness", progress.companion.happiness],
-            ["Love", progress.companion.love],
-            ["Miss Josh", progress.companion.miss],
-          ] as const
-        ).map(([label, value]) => (
-          <div key={label}>
-            <span>{label}</span>
-            <div
-              role="meter"
-              aria-label={label}
-              aria-valuenow={value}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
+      <div className={`stat-bars companion-stats ${interaction ? "stat-pulse" : ""}`}>
+        {([
+          ["Happiness", progress.companion.happiness, progress.companion.happiness >= 75 ? "glowing" : progress.companion.happiness >= 40 ? "cozy" : "needs cuddles"],
+          ["Love", progress.companion.love, progress.companion.love >= 75 ? "steady & sweet" : "growing together"],
+          ["Miss Josh", progress.companion.miss, progress.companion.miss >= 70 ? "missed you lots" : progress.companion.miss >= 35 ? "a little" : "right here"],
+        ] as const).map(([label, value, note]) => (
+          <div className="stat-row" key={label}>
+            <span><b>{label}</b><em>{note}</em></span>
+            <div role="meter" aria-label={label} aria-valuenow={value} aria-valuemin={0} aria-valuemax={100}>
               <i style={{ width: `${value}%` }} />
             </div>
             <small>{value}%</small>
@@ -94,17 +188,9 @@ export function Companion({ compact = false }: { compact?: boolean }) {
         ))}
       </div>
       <div className="companion-actions">
-        {(
-          [
-            ["Hug", Heart],
-            ["Kiss", Sparkles],
-            ["Feed", Cookie],
-            ["Annoy", Smile],
-          ] as const
-        ).map(([action, Icon]) => (
-          <button key={action} onClick={() => interact(action)}>
-            <Icon size={15} />
-            <span>{action}</span>
+        {([ ["Hug", Heart], ["Kiss", Sparkles], ["Feed", Cookie], ["Annoy", Smile] ] as const).map(([action, Icon]) => (
+          <button key={action} disabled={busy} onClick={() => void interact(action)}>
+            <Icon size={15} /><span>{action}</span>
           </button>
         ))}
       </div>

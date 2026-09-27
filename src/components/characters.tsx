@@ -27,7 +27,7 @@ export function OurVerseCharacter({
   const connected = paired && ["hold-hands", "dance"].includes(pose);
   const upset = ["annoyed", "angry", "sad", "confused"].includes(expression);
   const blush =
-    ["blushing", "love-struck", "embarrassed", "crying-happy"].includes(
+    ["blushing", "love-struck", "embarrassed", "crying-happy", "eating"].includes(
       expression,
     ) || pose === "kiss";
   return (
@@ -208,7 +208,7 @@ export function OurVerseCharacter({
               pose === "hug" ||
               pose === "celebrate" ||
               expression === "laughing" ||
-              expression === "crying-happy" ? (
+              expression === "crying-happy" || expression === "eating" ? (
                 <>
                   <path d={pose === "celebrate" ? "M43 73Q49 65 55 73" : "M43 72Q49 77 55 72"} />
                   <path d={pose === "celebrate" ? "M84 73Q90 65 96 73" : "M84 72Q90 77 96 72"} />
@@ -256,6 +256,8 @@ export function OurVerseCharacter({
             </g>
             {pose === "celebrate" ? (
               <path d="M61 87Q70 91 80 87Q78 101 70 101Q63 100 61 87Z" fill={palette.mouth} />
+            ) : expression === "eating" ? (
+              <ellipse className="character-mouth eating-mouth" cx="70" cy="91" rx="5" ry="7" fill={palette.mouth} />
             ) : expression === "surprised" ? (
               <ellipse cx="70" cy="89" rx="4" ry="5" fill={palette.mouth} />
             ) : (
@@ -311,102 +313,77 @@ export type CoupleScene =
 export function Couple({
   scene = "idle",
   caption,
+  interaction = "",
+  food = "strawberry",
+  jannaExpression,
+  dialogueJanna,
+  dialogueJosh,
+  dialogueClosing = false,
 }: {
   scene?: CoupleScene;
   caption?: string;
+  interaction?: string;
+  food?: string;
+  jannaExpression?: Expression;
+  dialogueJanna?: string;
+  dialogueJosh?: string;
+  dialogueClosing?: boolean;
 }) {
-  const pose: Pose =
-    scene === "heart" ? "hug" : scene === "hoodie" ? "idle" : scene;
+  const pose: Pose = scene === "heart" ? "hug" : scene === "hoodie" ? "idle" : scene;
+  const feedStage = interaction.startsWith("feed-");
+  const snackTease = interaction.startsWith("annoy-4");
+  const foodVisible = feedStage || snackTease;
+  const annoyLevel = Number(interaction.match(/^annoy-(\d)/)?.[1] || 0);
+  const foodPosition = interaction === "feed-bite" || interaction === "feed-chew" || interaction === "feed-satisfied"
+    ? "translate(90 106)"
+    : interaction === "annoy-4-away" || interaction === "annoy-4-reach"
+      ? "translate(230 112)"
+      : "translate(188 139)";
+  const jannaMood: Expression = feedStage
+    ? interaction === "feed-bite" || interaction === "feed-chew" ? "eating" : interaction === "feed-satisfied" ? "blushing" : "excited"
+    : annoyLevel >= 5 ? "angry" : annoyLevel >= 3 ? "annoyed" : annoyLevel > 0 ? "confused" : scene === "poke" ? "annoyed" : scene === "kiss" ? "blushing" : scene === "celebrate" ? "excited" : scene === "idle" ? jannaExpression || "happy" : "happy";
+  const joshMood: Expression = feedStage ? "happy" : annoyLevel >= 4 ? "laughing" : scene === "hoodie" ? "confused" : scene === "kiss" ? "blushing" : "happy";
   return (
-    <div className={`couple couple-${scene}`}>
-      <svg
-        key={scene}
-        className="couple-stage"
-        viewBox="0 0 320 215"
-        role="group"
-        aria-label={`Janna and Josh: ${scene.replace("-", " ")}`}
-      >
+    <div className={`couple couple-${scene} ${interaction ? `couple-interaction-${interaction}` : ""}`}>
+      <svg key={scene} className="couple-stage" viewBox="0 0 320 215" role="group" aria-label={`Janna and Josh: ${scene.replace("-", " ")}`}>
         {(scene === "sit" || scene === "sleep" || scene === "gaming") && (
           <g aria-hidden="true">
-            <rect
-              x="52"
-              y="151"
-              width="216"
-              height="21"
-              rx="10"
-              fill="#66576e"
-            />
-            <path
-              d="M69 172V190M250 172V190"
-              stroke="#97828b"
-              strokeWidth="7"
-            />
+            <rect x="52" y="151" width="216" height="21" rx="10" fill="#66576e" />
+            <path d="M69 172V190M250 172V190" stroke="#97828b" strokeWidth="7" />
           </g>
         )}
         <g className="partner partner-janna">
-          <OurVerseCharacter
-            paired
-            character="janna"
-            pose={pose}
-            hoodie={scene === "hoodie"}
-            expression={
-              scene === "poke"
-                ? "annoyed"
-                : scene === "kiss"
-                  ? "blushing"
-                  : scene === "celebrate"
-                    ? "excited"
-                    : "happy"
-            }
-          />
+          <OurVerseCharacter paired character="janna" pose={pose} hoodie={scene === "hoodie"} expression={jannaMood} />
+          {dialogueJanna && <foreignObject className="character-speech character-speech-janna" x="-2" y="-40" width="144" height="46"><div xmlns="http://www.w3.org/1999/xhtml" className={`speech-bubble speech-janna ${dialogueClosing ? "speech-leaving" : ""}`} role="status">{dialogueJanna}</div></foreignObject>}
         </g>
         <g className="partner partner-josh">
-          <OurVerseCharacter
-            paired
-            character="josh"
-            pose={pose}
-            expression={
-              scene === "hoodie"
-                ? "confused"
-                : scene === "kiss"
-                  ? "blushing"
-                  : "happy"
-            }
-          />
+          <OurVerseCharacter paired character="josh" pose={pose} expression={joshMood} />
+          {dialogueJosh && <foreignObject className="character-speech character-speech-josh" x="-2" y="-40" width="144" height="46"><div xmlns="http://www.w3.org/1999/xhtml" className={`speech-bubble speech-josh ${dialogueClosing ? "speech-leaving" : ""}`} role="status">{dialogueJosh}</div></foreignObject>}
         </g>
         {["hug", "heart"].includes(scene) && (
-          <g
-            className="embrace-arms"
-            fill="none"
-            strokeLinecap="round"
-            aria-hidden="true"
-          >
-            <path
-              d="M124 121Q129 146 182 139"
-              stroke={characters.janna.outfit}
-              strokeWidth="14"
-            />
-            <path
-              d="M199 119Q190 126 143 123"
-              stroke={characters.josh.outfit}
-              strokeWidth="14"
-            />
-            <path
-              d="M178 139L186 137"
-              stroke={characters.janna.skin}
-              strokeWidth="11"
-            />
-            <path
-              d="M147 123L139 125"
-              stroke={characters.josh.skin}
-              strokeWidth="11"
-            />
+          <g className="embrace-arms" fill="none" strokeLinecap="round" aria-hidden="true">
+            <path d="M124 121Q129 146 182 139" stroke={characters.janna.outfit} strokeWidth="14" />
+            <path d="M199 119Q190 126 143 123" stroke={characters.josh.outfit} strokeWidth="14" />
+            <path d="M178 139L186 137" stroke={characters.janna.skin} strokeWidth="11" />
+            <path d="M147 123L139 125" stroke={characters.josh.skin} strokeWidth="11" />
           </g>
         )}
+        {foodVisible && (
+          <g className={`companion-food companion-food-${food}`} transform={foodPosition} aria-hidden="true">
+            {food === "samgyupsal" ? (
+              <><path d="M-13 4Q-18-8-7-13L5-12Q17-8 14 5Q5 12-13 4Z" fill="#9cae7c"/><rect x="-12" y="-9" width="25" height="16" rx="6" fill="#d88e83" stroke="#f3c6a7" strokeWidth="2"/><path d="M-6-6L-2 4M3-7L7 3" stroke="#8b4d4b" strokeWidth="2" strokeLinecap="round"/></>
+            ) : food === "strawberry" ? (
+              <><path d="M0-12L-10-18M0-12L10-18" stroke="#66815a" strokeWidth="4" strokeLinecap="round"/><path d="M0-13C-18-16-17-2 0 12C17-2 18-16 0-13Z" fill="#ed7185" stroke="#ffc0bf" strokeWidth="2"/><circle cx="-5" cy="-4" r="1" fill="#ffe4aa"/><circle cx="5" cy="2" r="1" fill="#ffe4aa"/></>
+            ) : food === "cookie" ? (
+              <><circle r="13" fill="#d69c61" stroke="#f5d4a0" strokeWidth="2"/><circle cx="-5" cy="-5" r="2" fill="#735044"/><circle cx="5" cy="-3" r="2" fill="#735044"/><circle cx="1" cy="6" r="2" fill="#735044"/></>
+            ) : (
+              <><rect x="-12" y="-10" width="24" height="20" rx="9" fill="#fff0df" stroke="#e7bfd0" strokeWidth="2"/><circle cx="-4" cy="-1" r="1.5" fill="#765264"/><circle cx="4" cy="-1" r="1.5" fill="#765264"/><path d="M-3 4Q0 7 3 4" fill="none" stroke="#b56d83" strokeWidth="1.5" strokeLinecap="round"/></>
+            )}
+          </g>
+        )}
+        {annoyLevel > 0 && <g className={`tease-mark tease-mark-${annoyLevel}`} aria-hidden="true"><path d="M132 91Q145 84 150 96" fill="none" stroke="#ee9bab" strokeWidth="3" strokeLinecap="round"/><path d="M145 76l5-8m2 10 8-3" stroke="#e6ad7c" strokeWidth="3" strokeLinecap="round"/></g>}
       </svg>
-      {(caption || scene === "hoodie") && (
-        <p className="handwritten couple-caption">{caption || "mine now."}</p>
-      )}
+      {(caption || scene === "hoodie") && <p className="handwritten couple-caption">{caption || "mine now."}</p>}
     </div>
   );
 }

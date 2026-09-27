@@ -184,6 +184,100 @@ body::after {
 .couple-dance .couple-stage { animation: slow-dance 4s ease-in-out infinite; }
 .couple-celebrate .partner { animation: joyful-jump 1.4s ease-in-out 3; }
 .couple-celebrate .partner-josh { animation-delay: .16s; }
+
+/* Companion character interactions: dialogue floats above the unchanged couple choreography. */
+.companion-room .companion-stage { height: 300px; min-height: 300px; overflow: visible; align-items: flex-end; padding-top: 78px; box-sizing: border-box; }
+.companion-room .companion-stage .couple { position: relative; z-index: 1; width: min(100%, 360px); height: 200px; margin: 0 auto; }
+.companion-stage .couple-stage { width: 100%; height: 100%; overflow: visible; }
+.character-speech { overflow:visible; pointer-events:none; }
+.speech-bubble { position:relative; width:100%; height:100%; box-sizing:border-box; display:grid; place-items:center; padding:6px 9px; margin:0; overflow:visible; border:1px solid #f5d9dc; border-radius:13px; background:linear-gradient(145deg,#fff4e8,#f7e7e8); color:#493747; box-shadow:0 6px 16px #17101c30,inset 0 1px #fff; font:600 11px/1.2 system-ui,sans-serif; text-align:center; animation:speech-pop .3s cubic-bezier(.2,.8,.2,1) both; }
+.speech-bubble::after { content:""; position:absolute; left:calc(50% - 5px); bottom:-5px; width:9px; height:9px; background:#f7e7e8; border-right:1px solid #f5d9dc; border-bottom:1px solid #f5d9dc; transform:rotate(45deg); }
+.character-speech-janna .speech-bubble { border-radius:13px 13px 13px 5px; }
+.character-speech-josh .speech-bubble { border-radius:13px 13px 5px 13px; }
+.speech-bubble.speech-leaving { animation:speech-away .32s ease both; }
+.companion-stage .couple-interaction-feed-notice .partner-janna { animation: snack-notice .55s ease both; }
+.companion-stage .couple-interaction-feed-notice .partner-janna .character-eyes { transform-origin: 70px 73px; animation: eager-blink .5s ease both; }
+.companion-stage .couple-interaction-feed-offer .partner-josh .arm-left,
+.companion-stage .couple-interaction-feed-bite .partner-josh .arm-left,
+.companion-stage .couple-interaction-feed-chew .partner-josh .arm-left { transform:rotate(52deg); transition:transform .45s ease; }
+.companion-stage .companion-food { transform-box:fill-box; transform-origin:center; opacity:1; scale:1; transition:transform .68s cubic-bezier(.2,.8,.2,1),scale .35s ease,opacity .35s ease; }
+.companion-stage .couple-interaction-feed-notice .companion-food { animation: snack-appear .42s ease-out both; }
+.companion-stage .couple-interaction-feed-offer .companion-food { animation: snack-present .4s ease both; }
+.companion-stage .couple-interaction-feed-chew .companion-food,
+.companion-stage .couple-interaction-feed-satisfied .companion-food { opacity:0; scale:.16; }
+.companion-stage .couple-interaction-annoy-4-away .companion-food,
+.companion-stage .couple-interaction-annoy-4-reach .companion-food { filter:drop-shadow(0 3px 5px #160d1980); }
+.companion-stage .couple-interaction-feed-chew .partner-janna .character-head { transform-origin:70px 100px; animation: happy-chew .25s ease-in-out 3; }
+.companion-stage .couple-interaction-feed-chew .partner-janna .eating-mouth { transform-box:fill-box; transform-origin:center; animation: chew-mouth .25s ease-in-out 3 alternate; }
+.companion-stage .couple-interaction-feed-satisfied .partner-janna { animation: satisfied-bounce .55s ease both; }
+.companion-stage .couple-interaction-annoy-1 .partner-josh { animation: cheek-poke .72s ease-in-out both; }
+.companion-stage .couple-interaction-annoy-1 .partner-josh .arm-left { animation: teasing-arm .72s ease both; }
+.companion-stage .couple-interaction-annoy-1 .partner-janna .character-head { animation: cheek-recoil .65s ease both; transform-origin:70px 100px; }
+.companion-stage .couple-interaction-annoy-2 .partner-josh { animation: teasing-lean .9s ease-in-out both; }
+.companion-stage .couple-interaction-annoy-2 .partner-janna { animation: tiny-stomp .78s ease .3s both; }
+.companion-stage .couple-interaction-annoy-2 .partner-janna .arm-left,
+.companion-stage .couple-interaction-annoy-2 .partner-janna .arm-right { animation: hands-on-hips .55s ease .25s both; }
+.companion-stage .couple-interaction-annoy-3 .partner-josh { animation: teasing-lean .5s ease both; }
+.companion-stage .couple-interaction-annoy-3-chase .partner-janna { animation: playful-chase-janna 1.6s ease-in-out both; }
+.companion-stage .couple-interaction-annoy-3-chase .partner-josh { animation: playful-chase-josh 1.6s ease-in-out both; }
+.companion-stage .couple-interaction-annoy-3-chase .character-legs { transform-origin:70px 139px; animation: walk .2s ease-in-out 8 alternate; }
+.companion-stage .couple-interaction-annoy-4 .partner-josh .arm-left,
+.companion-stage .couple-interaction-annoy-4-away .partner-josh .arm-left,
+.companion-stage .couple-interaction-annoy-4-reach .partner-josh .arm-left { transform:rotate(52deg); transition:transform .4s ease; }
+.companion-stage .couple-interaction-annoy-4-away .partner-josh { animation: snack-pull-away .55s ease both; }
+.companion-stage .couple-interaction-annoy-4-reach .partner-josh { animation: snack-hold-away .9s ease both; }
+.companion-stage .couple-interaction-annoy-4-reach .partner-janna { animation: reach-for-snack .75s ease both; }
+.companion-stage .couple-interaction-annoy-4-reach .partner-janna .arm-right { animation: reaching-arm .6s ease both; }
+.companion-stage .tease-mark { opacity:0; animation: tease-spark .42s ease .28s both; }
+.companion-stats { max-width:360px; margin:22px auto 18px; opacity:1; }
+.companion-stats .stat-row { grid-template-columns:minmax(96px,1fr) minmax(50px,1.2fr) 28px; gap:8px; padding:4px 0; }
+.companion-stats .stat-row > span { width:auto; display:grid; gap:1px; }
+.companion-stats .stat-row b { color:#e7d9e4; font-size:10px; font-weight:600; }
+.companion-stats .stat-row em { color:#a99aac; font-size:8px; font-style:normal; }
+.companion-stats .stat-row > div { height:6px; background:#ffffff10; }
+.companion-stats .stat-row i { transition:width .8s cubic-bezier(.2,.75,.2,1); box-shadow:0 0 10px currentColor; }
+.companion-stats .stat-row small { color:#d5c4d6; width:auto; font-size:9px; }
+.companion-stats.stat-pulse .stat-row i { animation: stat-heartbeat .48s ease both; }
+.companion-actions button:disabled { opacity:.48; cursor:wait; transform:none; }
+@keyframes speech-pop { from{opacity:0;transform:translateY(7px) scale(.94)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes speech-away { to{opacity:0;transform:translateY(-4px) scale(.97)} }
+@keyframes snack-appear { from{opacity:0;scale:.2} to{opacity:1;scale:1} }
+@keyframes snack-present { 50%{scale:1.12} }
+@keyframes snack-notice { 45%{transform:translate(var(--px),7px) scale(1.04)} }
+@keyframes eager-blink { 45%{transform:scale(1.08)} }
+@keyframes happy-chew { 50%{transform:translateY(2px) rotate(2deg)} }
+@keyframes chew-mouth { to{transform:scaleY(.45)} }
+@keyframes satisfied-bounce { 45%{transform:translate(var(--px),5px) scale(1.04)} }
+@keyframes cheek-poke { 35%{transform:translate(118px,8px) rotate(-3deg)} 65%{transform:translate(118px,8px) rotate(-3deg)} }
+@keyframes teasing-arm { 48%,70%{transform:rotate(54deg)} }
+@keyframes cheek-recoil { 35%,65%{transform:translate(-3px,0) rotate(-8deg)} }
+@keyframes teasing-lean { 0%,100%{transform:translate(var(--px),15px)} 35%,65%{transform:translate(126px,8px) rotate(-4deg)} }
+@keyframes pout-bob { 40%{transform:translate(var(--px),19px)} }
+@keyframes tiny-stomp { 35%,65%{transform:translate(var(--px),21px) rotate(-3deg)} }
+@keyframes hands-on-hips { 55%{transform:rotate(50deg)} }
+@keyframes playful-chase-janna { 28%{transform:translate(83px,7px)} 55%{transform:translate(83px,7px)} 78%{transform:translate(42px,12px)} }
+@keyframes playful-chase-josh { 25%{transform:translate(180px,10px)} 55%{transform:translate(190px,8px)} 80%{transform:translate(155px,15px)} }
+@keyframes big-stomp { 25%,55%{transform:translate(var(--px),24px) scale(1.03)} 70%{transform:translate(var(--px),12px)} }
+@keyframes playful-retreat { 35%{transform:translate(205px,8px) rotate(5deg)} 70%{transform:translate(195px,15px)} }
+@keyframes snack-pull-away { 35%,75%{transform:translate(178px,8px) rotate(4deg)} }
+@keyframes snack-hold-away { 0%{transform:translate(var(--px),15px)} 100%{transform:translate(178px,8px) rotate(3deg)} }
+@keyframes reach-for-snack { 45%,75%{transform:translate(75px,8px)} }
+@keyframes reaching-arm { 55%,80%{transform:rotate(-55deg)} }
+@keyframes tease-spark { 20%{opacity:1;transform:scale(.6)} 60%{opacity:1;transform:scale(1.1)} 100%{opacity:0;transform:scale(.9)} }
+@keyframes stat-heartbeat { 45%{filter:brightness(1.8);box-shadow:0 0 12px #e5a9ce} }
+.companion-card.compact .companion-stage { height:260px; min-height:260px; padding-top:62px; overflow:visible; }
+.companion-card.compact .companion-stage .couple { width:100%; height:180px; }
+.companion-card.compact .speech-bubble { font-size:10px; padding:7px 8px; }
+@media(max-width:600px) {
+  .companion-room .companion-stage { height:290px; min-height:290px; padding-top:72px; }
+  .companion-room .companion-stage .couple { width:100%; height:195px; }
+  .speech-bubble { width:100%; height:100%; min-height:0; padding:5px 7px; font-size:10px; }
+  .companion-stats .stat-row { grid-template-columns:minmax(88px,1fr) minmax(42px,1fr) 25px; gap:6px; }
+  .companion-stats .stat-row b { font-size:9px; }.companion-stats .stat-row em { font-size:7px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .companion-stage *, .companion-stats .stat-row i { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
+}
 @keyframes take-hand-left { 0%, 15% { transform: rotate(32deg); } 65%, 100% { transform: rotate(0); } }
 @keyframes take-hand-right { 0%, 15% { transform: rotate(-32deg); } 65%, 100% { transform: rotate(0); } }
 @keyframes kiss-lean-left { 0%, 18% { transform: rotate(-12deg); } 65%, 88% { transform: rotate(-4deg); } 100% { transform: rotate(-4deg); } }

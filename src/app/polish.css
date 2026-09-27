@@ -1127,6 +1127,71 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .couple-playground .couple *, .couple-playground .couple { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* Our Home keepsakes: a loose scrapbook collection, not a row of cards. */
+.home-souvenirs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px clamp(8px, 2vw, 22px);
+  width: min(900px, calc(100% - 24px));
+  margin: 26px auto 48px;
+}
+.home-souvenirs .home-souvenir {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 6px;
+  min-width: 0;
+  padding: 5px 4px 8px;
+  border: 0;
+  border-bottom: 0;
+  background: transparent;
+  color: #c8b8cf;
+  font-size: 0;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+.souvenir-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: clamp(76px, 10vw, 108px);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), filter .28s ease;
+}
+.souvenir-art svg { width: min(100%, 132px); height: 100%; overflow: visible; filter: drop-shadow(2px 8px 6px #05051170); transition: transform .28s ease, filter .28s ease; }
+.souvenir-label { display: block; max-width: 17ch; color: #bcaec8; font: 500 12px/1.4 var(--display); text-align: center; text-wrap: balance; transition: color .2s ease, text-shadow .2s ease; }
+.souvenir-tickets .souvenir-art svg { transform: rotate(-2deg); }
+.souvenir-notebook .souvenir-art svg { transform: rotate(1.5deg); }
+.souvenir-jar .souvenir-art svg { transform: rotate(-1deg); }
+.souvenir-phone .souvenir-art svg { transform: rotate(3deg); }
+.souvenir-parcel .souvenir-art svg { transform: rotate(-2.5deg); }
+.souvenir-art i { position: absolute; top: 8%; right: 23%; width: 9px; height: 9px; background: #e8cf9d; clip-path: polygon(50% 0,60% 38%,100% 50%,60% 62%,50% 100%,40% 62%,0 50%,40% 38%); opacity: 0; transform: scale(.35) rotate(-20deg); transition: opacity .2s ease, transform .3s ease; }
+.home-souvenir:hover .souvenir-art,
+.home-souvenir:focus-visible .souvenir-art { transform: translateY(-5px) rotate(-1deg); filter: drop-shadow(0 0 13px #ddb5d533); }
+.home-souvenir:hover .souvenir-art svg,
+.home-souvenir:focus-visible .souvenir-art svg { filter: drop-shadow(2px 9px 9px #05051188) drop-shadow(0 0 7px #e3bad844); }
+.home-souvenir:hover .souvenir-art i,
+.home-souvenir:focus-visible .souvenir-art i { opacity: .95; transform: scale(1) rotate(0); }
+.home-souvenir:hover .souvenir-label,
+.home-souvenir:focus-visible .souvenir-label { color: #f0dce2; text-shadow: 0 0 12px #dfb8d855; }
+.destination-return-nav { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; width: max-content; max-width: calc(100% - 40px); margin: 24px 0 0 5%; }
+.destination-return-nav .return-galaxy { margin: 0; min-height: 36px; padding: 6px 11px; text-align: left; }
+.experience-home-return { display: inline-flex; align-items: center; width: max-content; max-width: 100%; min-height: 34px; box-sizing: border-box; padding: 7px 12px; border: 1px solid #bca4d044; border-radius: 9px; background: linear-gradient(135deg, #201b35e8, #30213aeb); box-shadow: inset 0 1px #fff1, 0 4px 14px #08061155, 0 0 12px #c8a8e011; color: #e6d9eb; font: 500 12px/1.4 var(--display); letter-spacing: .01em; text-decoration: none; transition: transform .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease; }
+.experience-home-return:hover, .experience-home-return:focus-visible { transform: translateY(-2px); border-color: #d9aebe99; color: #fff0e8; box-shadow: inset 0 1px #fff2, 0 6px 18px #08061166, 0 0 14px #d8accb33; outline: none; }
+@media (max-width: 700px) { .destination-return-nav { margin: 10px 0 0 20px; } }
+@media (max-width: 720px) {
+  .home-souvenirs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 8px; }
+  .home-souvenir .souvenir-label { font-size: 11px; }
+}
+@media (max-width: 560px) {
+  .home-souvenirs { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .home-souvenirs .home-souvenir { grid-column: span 2; }
+  .home-souvenirs .home-souvenir:nth-child(4) { grid-column: 2 / span 2; }
+  .home-souvenirs .home-souvenir:nth-child(5) { grid-column: 4 / span 2; }
+}
 @media (max-width: 1000px) and (min-width: 701px) {
   .galaxy-canvas {
     height: 820px;

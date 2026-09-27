@@ -26,6 +26,23 @@ import { settings } from "@/config/settings";
 import { dateLabel, pick } from "@/lib/utils";
 import { DestinationArt } from "./galaxy";
 type Navigation = { navigate: (id: string) => void };
+type SouvenirKind = "tickets" | "notebook" | "jar" | "phone" | "parcel";
+const homeSouvenirs = [
+  { id: "coupons", label: "Tickets on the desk", kind: "tickets" },
+  { id: "future", label: "Our someday notebook", kind: "notebook" },
+  { id: "jar", label: "The little love jar", kind: "jar" },
+  { id: "questions", label: "Stay up talking", kind: "phone" },
+  { id: "gifts", label: "A mysterious parcel", kind: "parcel" },
+] as const;
+
+function SouvenirArt({ kind }: { kind: SouvenirKind }) {
+  if (kind === "tickets") return <svg viewBox="0 0 120 88" aria-hidden="true"><g transform="rotate(8 66 40)"><path d="M36 19H105V29Q98 35 105 41V62H36V51Q43 45 36 39Z" fill="#b89caf" stroke="#e2cad2" strokeWidth="2"/><path d="M47 27H94M47 34H81" stroke="#604a68" strokeWidth="2" strokeDasharray="2 3"/><path d="M83 48C78 42 71 48 83 57C95 48 89 42 83 48Z" fill="#f2d2cd"/><path d="M20 28H83V38Q76 44 83 50V72H20V61Q27 55 20 49Z" fill="#f3e4d2" stroke="#fff0dc" strokeWidth="2"/><path d="M31 38H69M31 44H61" stroke="#9d7890" strokeWidth="2" strokeDasharray="2 3"/><path d="M66 57L69 62L75 63L71 67L72 73L66 70L61 73L62 67L58 63L64 62Z" fill="#d9b77a"/></g></svg>;
+  if (kind === "notebook") return <svg viewBox="0 0 120 88" aria-hidden="true"><g transform="rotate(-7 60 45)"><path d="M24 17Q26 12 32 13L94 21V73L31 65Q24 64 24 58Z" fill="#e8d8c9"/><path d="M31 13L99 20V70L31 64Q26 63 26 57V19Q26 14 31 13Z" fill="#74617e" stroke="#c6afc9" strokeWidth="2"/><path d="M37 22V60M44 28L85 33M44 37L82 41M44 46L75 49" stroke="#eadedb" strokeWidth="2" opacity=".8"/><path d="M66 24L70 70" stroke="#bca4d0" strokeWidth="4"/><path d="M61 25L66 29L71 25V59L66 64L61 59Z" fill="#d89aae"/><path d="M86 52C82 47 76 52 86 60C96 52 91 47 86 52Z" fill="#f1c4cf"/></g></svg>;
+  if (kind === "jar") return <svg viewBox="0 0 120 88" aria-hidden="true"><path d="M42 18H78V25L85 32V68Q85 76 77 76H43Q35 76 35 68V32L42 25Z" fill="#b9c5d94a" stroke="#e5d8e6" strokeWidth="2.5"/><path d="M39 20H81V30H39Z" fill="#b889a5" stroke="#e7c5d2" strokeWidth="2"/><path d="M39 27Q60 34 81 27M37 31Q60 38 83 31" fill="none" stroke="#e8c992" strokeWidth="2"/><path d="M47 47C43 42 38 47 47 54C56 47 51 42 47 47Z" fill="#f2d2dc"/><path d="M68 54C63 48 58 54 68 61C78 54 73 48 68 54Z" fill="#d7c8e6"/><path d="M52 63L67 65M44 39L51 40" stroke="#fff2e4" strokeWidth="2" strokeLinecap="round"/><path d="M60 18C54 10 48 17 60 23C72 17 66 10 60 18Z" fill="#d99ab0"/></svg>;
+  if (kind === "phone") return <svg viewBox="0 0 120 88" aria-hidden="true"><path d="M29 22Q29 16 36 16H77Q84 16 84 23V73Q84 79 77 79H36Q29 79 29 72Z" fill="#24243b" stroke="#c7b5d8" strokeWidth="3"/><rect x="35" y="25" width="43" height="43" rx="5" fill="#d9d0e5"/><path d="M41 34H67Q71 34 71 38V43H50L45 47V43H41Z" fill="#f7eee4"/><path d="M45 51H69Q72 51 72 55V60H55L50 64V60H45Z" fill="#e3a9c0"/><circle cx="73" cy="30" r="2" fill="#d89bb4"/><path d="M94 20A10 10 0 1 0 104 35A8 8 0 0 1 94 20Z" fill="#eedfbf"/><path d="M19 27L21 32L26 34L21 36L19 41L17 36L12 34L17 32Z" fill="#e4c88f"/></svg>;
+  return <svg viewBox="0 0 120 88" aria-hidden="true"><g transform="rotate(-5 60 47)"><path d="M24 30L58 14L96 29V68L60 82L24 65Z" fill="#b88978" stroke="#e4c6ad" strokeWidth="2"/><path d="M24 30L60 44L96 29M60 44V81" fill="none" stroke="#f1d8ba" strokeWidth="3"/><path d="M56 17L63 17L67 44L59 44Z" fill="#e9c992"/><path d="M28 36L35 39V55L28 52ZM85 35L92 32V49L85 52Z" fill="#d99caf"/><rect x="40" y="50" width="24" height="16" rx="2" fill="#f3e7d8"/><path d="M48 58Q52 53 56 58Q52 62 48 58Z" fill="none" stroke="#937a91" strokeWidth="1.5"/><path d="M78 62L81 67L86 68L82 72L83 77L78 74L73 77L74 72L70 68L76 67Z" fill="#f1d390"/></g></svg>;
+}
+
 export default function Experiences({
   section,
   navigate,
@@ -243,16 +260,11 @@ function OurHome({ navigate }: Navigation) {
       <p className="room-note handwritten">
         someday, no more goodbyes through a screen.
       </p>
-      <div className="world-links">
-        {[
-          ["coupons", "Tickets on the desk"],
-          ["future", "Our someday notebook"],
-          ["jar", "The little love jar"],
-          ["questions", "Stay up talking"],
-          ["gifts", "A mysterious parcel"],
-        ].map(([id, label]) => (
-          <button key={id} onClick={() => navigate(id)}>
-            {label} ↗
+      <div className="world-links home-souvenirs">
+        {homeSouvenirs.map(({ id, label, kind }) => (
+          <button key={id} className={`home-souvenir souvenir-${kind}`} type="button" onClick={() => navigate(id)} aria-label={label}>
+            <span className="souvenir-art"><SouvenirArt kind={kind} /><i aria-hidden="true" /></span>
+            <span className="souvenir-label">{label}</span>
           </button>
         ))}
       </div>

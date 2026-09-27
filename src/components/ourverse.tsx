@@ -52,6 +52,7 @@ const navigation = [
   ["capsule", "Time Capsule"],
   ["vault", "The Secret Vault"],
 ];
+const roomDestinationIds = ["coupons", "future", "jar", "questions", "gifts"];
 export default function OurVerse() {
   return (
     <MotionConfig reducedMotion="user">
@@ -77,6 +78,7 @@ function Shell() {
   } = useUniverse();
   const reduced = useReducedMotion();
   const [section, setSection] = useState("home");
+  const [roomReturn, setRoomReturn] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
   const [ending, setEnding] = useState(false);
   const [transition, setTransition] = useState<string | null>(null);
@@ -105,10 +107,12 @@ function Shell() {
     };
   }, [progress.entered]);
   const navigate = useCallback(
-    (id: string, history = true) => {
+    (id: string, history = true, restoreRoomReturn = false) => {
+      const fromRoom = roomDestinationIds.includes(id) && (section === "room" || restoreRoomReturn);
+      setRoomReturn(fromRoom ? id : null);
       setSection(id);
       setMenu(false);
-      if (history) window.history.pushState(null, "", `#${id}`);
+      if (history) window.history.pushState(fromRoom ? { ourVerseRoomReturn: id } : null, "", `#${id}`);
       update((p) =>
         p.explored.includes(id) ? p : { ...p, explored: [...p.explored, id] },
       );
@@ -116,7 +120,7 @@ function Shell() {
       if (["room", "world", "mission"].includes(id)) discover(id);
       window.scrollTo({ top: 0, behavior: "instant" });
     },
-    [update, unlock, discover],
+    [section, update, unlock, discover],
   );
   function travel(id: string) {
     if (timer.current) clearTimeout(timer.current);
@@ -140,21 +144,22 @@ function Shell() {
     if (!ready || !progress.entered) return;
     const sync = () => {
       const id = location.hash.slice(1) || "home";
+      const validId = [
+        ...navigation.map((n) => n[0]),
+        "daily",
+        "mailbox",
+        "heartbeat",
+        "hand",
+        "press",
+        "mission",
+        "patch",
+        "generator",
+      ].includes(id) ? id : "home";
+      const restoreRoomReturn = window.history.state?.ourVerseRoomReturn === validId;
       navigate(
-        [
-          ...navigation.map((n) => n[0]),
-          "daily",
-          "mailbox",
-          "heartbeat",
-          "hand",
-          "press",
-          "mission",
-          "patch",
-          "generator",
-        ].includes(id)
-          ? id
-          : "home",
+        validId,
         false,
+        restoreRoomReturn,
       );
     };
     sync();
@@ -371,9 +376,16 @@ function Shell() {
             </button>
           )}
           {section !== "home" && (
-            <button className="return-galaxy" onClick={() => travel("home")}>
-              ← Back to our galaxy
-            </button>
+            <nav className="destination-return-nav" aria-label="Return navigation">
+              <button className="return-galaxy" onClick={() => travel("home")}>
+                ← Back to our galaxy
+              </button>
+              {roomReturn === section && (
+                <a className="experience-home-return" href="#room">
+                  ← Back to Our Home
+                </a>
+              )}
+            </nav>
           )}
           <main
             ref={main}

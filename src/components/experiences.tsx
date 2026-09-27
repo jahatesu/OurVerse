@@ -25,6 +25,7 @@ import { memories } from "@/data/memories";
 import { settings } from "@/config/settings";
 import { dateLabel, pick } from "@/lib/utils";
 import { DestinationArt } from "./galaxy";
+import { RoomLife } from "./room-life";
 type Navigation = { navigate: (id: string) => void };
 type SouvenirKind = "tickets" | "notebook" | "jar" | "phone" | "parcel";
 const homeSouvenirs = [
@@ -292,9 +293,6 @@ function RoomIllustration() {
 }
 function OurHome({ navigate }: Navigation) {
   const [lampOn, setLampOn] = useState(true);
-  const [scene, setScene] = useState<
-    "sit" | "hoodie" | "sleep" | "gaming" | "hug"
-  >("sit");
   return (
     <>
       <SectionHeading
@@ -385,15 +383,7 @@ function OurHome({ navigate }: Navigation) {
             <span className="object-label">{o.name}</span>
           </button>
         ))}
-        <button
-          className="room-residents"
-          aria-label="Interact with Janna and Josh"
-          onClick={() =>
-            setScene(pick(["hoodie", "sleep", "gaming", "hug", "sit"]))
-          }
-        >
-          <Couple scene={scene} />
-        </button>
+        <RoomLife />
       </div>
       <p className="room-note handwritten">
         someday, no more goodbyes through a screen.

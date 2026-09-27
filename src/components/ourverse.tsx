@@ -52,7 +52,10 @@ const navigation = [
   ["capsule", "Time Capsule"],
   ["vault", "The Secret Vault"],
 ];
-const roomDestinationIds = ["coupons", "future", "jar", "questions", "gifts"];
+const roomDestinationIds = [
+  "coupons", "future", "jar", "questions", "gifts",
+  "sleep", "mailbox", "memories", "letters", "music", "garden", "world", "calendar", "messages", "games",
+];
 export default function OurVerse() {
   return (
     <MotionConfig reducedMotion="user">

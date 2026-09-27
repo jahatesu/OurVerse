@@ -56,6 +56,7 @@ const roomDestinationIds = [
   "coupons", "future", "jar", "questions", "gifts",
   "sleep", "mailbox", "memories", "letters", "music", "garden", "world", "calendar", "messages", "games",
 ];
+const futureDestinationIds = ["capsule", "travel", "generator"];
 export default function OurVerse() {
   return (
     <MotionConfig reducedMotion="user">
@@ -82,6 +83,7 @@ function Shell() {
   const reduced = useReducedMotion();
   const [section, setSection] = useState("home");
   const [roomReturn, setRoomReturn] = useState<string | null>(null);
+  const [futureReturn, setFutureReturn] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
   const [ending, setEnding] = useState(false);
   const [transition, setTransition] = useState<string | null>(null);
@@ -110,12 +112,14 @@ function Shell() {
     };
   }, [progress.entered]);
   const navigate = useCallback(
-    (id: string, history = true, restoreRoomReturn = false) => {
+    (id: string, history = true, restoreRoomReturn = false, restoreFutureReturn = false) => {
       const fromRoom = roomDestinationIds.includes(id) && (section === "room" || restoreRoomReturn);
+      const fromFuture = futureDestinationIds.includes(id) && (section === "future" || restoreFutureReturn);
       setRoomReturn(fromRoom ? id : null);
+      setFutureReturn(fromFuture ? id : null);
       setSection(id);
       setMenu(false);
-      if (history) window.history.pushState(fromRoom ? { ourVerseRoomReturn: id } : null, "", `#${id}`);
+      if (history) window.history.pushState(fromRoom ? { ourVerseRoomReturn: id } : fromFuture ? { ourVerseFutureReturn: id } : null, "", `#${id}`);
       update((p) =>
         p.explored.includes(id) ? p : { ...p, explored: [...p.explored, id] },
       );
@@ -159,10 +163,12 @@ function Shell() {
         "generator",
       ].includes(id) ? id : "home";
       const restoreRoomReturn = window.history.state?.ourVerseRoomReturn === validId;
+      const restoreFutureReturn = window.history.state?.ourVerseFutureReturn === validId;
       navigate(
         validId,
         false,
         restoreRoomReturn,
+        restoreFutureReturn,
       );
     };
     sync();
@@ -386,6 +392,11 @@ function Shell() {
               {roomReturn === section && (
                 <a className="experience-home-return" href="#room">
                   ← Back to Our Home
+                </a>
+              )}
+              {futureReturn === section && (
+                <a className="experience-home-return" href="#future">
+                  ← Back to Someday With You
                 </a>
               )}
             </nav>

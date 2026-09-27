@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { Couple, OurVerseCharacter } from "./characters";
 import { Modal, SectionHeading } from "./ui";
 import { useUniverse } from "./provider";
@@ -16,9 +16,7 @@ import {
   capsule,
   calendarEvents,
   patchNotes,
-  travel,
   gifts,
-  futureOptions,
   type Coupon,
 } from "@/data/expansion";
 import { memories } from "@/data/memories";
@@ -26,6 +24,7 @@ import { settings } from "@/config/settings";
 import { dateLabel, pick } from "@/lib/utils";
 import { DestinationArt } from "./galaxy";
 import { RoomLife } from "./room-life";
+import { AdventureMap } from "./adventure-map";
 type Navigation = { navigate: (id: string) => void };
 type SouvenirKind = "tickets" | "notebook" | "jar" | "phone" | "parcel";
 const homeSouvenirs = [
@@ -1687,55 +1686,224 @@ function Wish({ onClose }: { onClose: () => void }) {
     </Modal>
   );
 }
+type FutureObjectKind = "capsule" | "map" | "research";
+function FutureObjectArt({ kind }: { kind: FutureObjectKind }) {
+  if (kind === "capsule") return (
+    <svg viewBox="0 0 180 130" aria-hidden="true">
+      <ellipse cx="91" cy="111" rx="55" ry="9" fill="#080914" opacity=".35" />
+      <path d="M42 53Q45 43 58 43H122Q135 43 138 54L132 101Q90 114 48 101Z" fill="#806577" stroke="#d3b29d" strokeWidth="3" />
+      <path d="M39 48Q40 36 53 34L122 37Q137 38 140 49L136 62Q91 69 43 60Z" fill="#b18485" stroke="#ead0b7" strokeWidth="3" />
+      <path d="M58 47L61 99M119 49L116 102" stroke="#dfc19f" strokeWidth="3" opacity=".75" />
+      <path d="M88 39Q78 25 68 34Q69 45 89 51Q109 41 105 30Q97 24 88 39Z" fill="#d89caf" stroke="#f0cfca" strokeWidth="2" />
+      <path d="M71 72L108 75L105 92L73 89Z" fill="#f1e3cc" stroke="#d2b79f" strokeWidth="2" />
+      <path d="M78 78L98 80M78 83L93 85" stroke="#9a7688" strokeWidth="2" strokeLinecap="round" />
+      <path d="M128 69L131 75L138 77L132 80L130 87L127 81L121 79L127 76Z" fill="#f2dcae" />
+      <path d="M49 29C45 24 39 29 49 36C59 29 53 24 49 29Z" fill="#efc2cf" />
+    </svg>
+  );
+  if (kind === "map") return (
+    <svg viewBox="0 0 180 130" aria-hidden="true">
+      <ellipse cx="89" cy="111" rx="61" ry="8" fill="#080914" opacity=".28" />
+      <path d="M29 34L68 23L108 36L148 25V94L109 107L69 94L30 105Z" fill="#e7d9c3" stroke="#c7a994" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M68 23L69 94M108 36L109 107" fill="none" stroke="#b7948f" strokeWidth="2" />
+      <path d="M39 48Q56 40 76 52T112 62T139 46" fill="none" stroke="#bd7f91" strokeWidth="3" strokeDasharray="4 5" />
+      <path d="M47 43C42 34 31 40 47 54C63 40 52 34 47 43Z" fill="#cb8097" />
+      <path d="M120 56C115 47 104 53 120 67C136 53 125 47 120 56Z" fill="#cb8097" />
+      <circle cx="84" cy="77" r="8" fill="#d8b46f" stroke="#fff0d7" strokeWidth="2" />
+      <path d="M83 76L102 50L107 65L94 68L84 81Z" fill="#82708e" stroke="#5f506c" strokeWidth="1.5" />
+      <path d="M34 95L43 83L51 97ZM130 35L135 28L141 37Z" fill="#f4dfb7" stroke="#b89a85" strokeWidth="1.5" />
+      <path d="M145 78L148 84L155 86L149 90L147 96L144 90L138 88L144 85Z" fill="#d4b477" />
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 180 130" aria-hidden="true">
+      <ellipse cx="89" cy="112" rx="53" ry="8" fill="#080914" opacity=".3" />
+      <path d="M53 24Q53 17 61 17H120Q128 17 128 25V102H53Z" fill="#806c7d" stroke="#d6c4c4" strokeWidth="3" />
+      <path d="M61 31H120V102H61Z" fill="#efe3d0" stroke="#b89da6" strokeWidth="2" />
+      <path d="M82 18V29M99 18V29" stroke="#d5b483" strokeWidth="3" />
+      <path d="M70 78L83 68L93 71L108 48" fill="none" stroke="#a34861" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M103 49L109 45L111 53" fill="none" stroke="#a34861" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M70 83H112M70 61H112M70 39H112" stroke="#c3b1ae" strokeWidth="1.5" strokeDasharray="2 4" />
+      <path d="M74 36C70 31 64 36 74 43C84 36 78 31 74 36Z" fill="#cc879d" />
+      <path d="M46 47L49 53L56 55L50 59L48 66L45 60L39 58L45 54Z" fill="#f0dbb0" />
+      <path d="M129 82L132 88L139 90L133 94L131 100L128 94L122 92L128 89Z" fill="#f0dbb0" />
+      <path d="M128 39L144 45L141 76L128 72Z" fill="#d6a7a7" stroke="#eed4c8" strokeWidth="2" />
+      <path d="M132 49L139 52M131 57L138 60" stroke="#7d526c" strokeWidth="2" />
+    </svg>
+  );
+}
 function Future({ navigate }: Navigation) {
-  const { progress, update, discover } = useUniverse();
+  type BucketDream = {
+    id: string;
+    text: string;
+    author: "Janna" | "Josh" | null;
+    completed: boolean;
+    completedAt: string | null;
+  };
+  const storageKey = "ourverse-future-bucket-list-v1";
+  const starters: BucketDream[] = [
+    "Live together",
+    "Get married",
+    "Go to a concert together",
+    "Travel together",
+    "Adopt a pet",
+    "Go on a road trip together",
+    "Celebrate anniversary",
+    "Meet each other's parents",
+  ].map((text, index) => ({ id: `starter-${index + 1}`, text, author: null, completed: false, completedAt: null }));
+  const [bucketDreams, setBucketDreams] = useState<BucketDream[]>(starters);
+  const [storageReady, setStorageReady] = useState(false);
+  const [spreadIndex, setSpreadIndex] = useState(0);
+  const [addOpen, setAddOpen] = useState(false);
+  const [newText, setNewText] = useState("");
+  const [author, setAuthor] = useState<"Janna" | "Josh">("Janna");
+
+  useEffect(() => {
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem(storageKey) || "null");
+      if (Array.isArray(saved)) {
+        const seenIds = new Set<string>();
+        const valid = saved.filter((dream): dream is BucketDream => {
+          const isValid = !!dream && typeof dream === "object" &&
+            typeof dream.id === "string" && typeof dream.text === "string" &&
+            dream.text.trim().length > 0 && dream.text.length <= 120 &&
+            (dream.author === null || dream.author === "Janna" || dream.author === "Josh") &&
+            typeof dream.completed === "boolean" &&
+            (dream.completedAt === null || (typeof dream.completedAt === "string" && Number.isFinite(Date.parse(dream.completedAt))));
+          if (!isValid || seenIds.has(dream.id)) return false;
+          seenIds.add(dream.id);
+          return true;
+        });
+        if (valid.length || saved.length === 0) setBucketDreams(valid);
+      }
+    } catch {
+      // A malformed or unavailable saved value falls back to the starter list.
+    }
+    setStorageReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!storageReady) return;
+    try { localStorage.setItem(storageKey, JSON.stringify(bucketDreams)); } catch {}
+  }, [bucketDreams, storageReady]);
+
+  const totalSpreads = Math.max(1, Math.ceil(bucketDreams.length / 10));
+  const safeSpreadIndex = Math.min(spreadIndex, totalSpreads - 1);
+  const spreadDreams = bucketDreams.slice(safeSpreadIndex * 10, safeSpreadIndex * 10 + 10);
+  const pages = [spreadDreams.slice(0, 5), spreadDreams.slice(5, 10)];
+  const toggleDream = (dream: BucketDream) => {
+    if (dream.completed && !window.confirm("Mark this dream as not completed?")) return;
+    setBucketDreams((current) => current.map((item) => item.id === dream.id
+      ? { ...item, completed: !item.completed, completedAt: item.completed ? null : new Date().toISOString() }
+      : item));
+  };
+  const removeDream = (dream: BucketDream) => {
+    if (!window.confirm("Remove this dream from our bucket list?")) return;
+    const remaining = bucketDreams.filter((item) => item.id !== dream.id);
+    setBucketDreams(remaining);
+    setSpreadIndex((index) => Math.min(index, Math.max(0, Math.ceil(remaining.length / 10) - 1)));
+  };
+  const addDream = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const text = newText.trim();
+    if (!text || text.length > 120) return;
+    const id = typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `dream-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const next = [...bucketDreams, { id, text, author, completed: false, completedAt: null }];
+    setBucketDreams(next);
+    setSpreadIndex(Math.floor((next.length - 1) / 10));
+    setNewText("");
+    setAddOpen(false);
+  };
+  const renderDream = (dream: BucketDream) => (
+    <div className={`notebook-entry${dream.completed ? " notebook-entry-complete" : ""}`} key={dream.id}>
+      <button
+        type="button"
+        className="notebook-checkbox"
+        role="checkbox"
+        aria-checked={dream.completed}
+        aria-label={`${dream.completed ? "Mark incomplete" : "Mark complete"}: ${dream.text}`}
+        onClick={() => toggleDream(dream)}
+      >{dream.completed ? <span aria-hidden="true">✓</span> : null}</button>
+      <span className="notebook-entry-copy">
+        <span className="notebook-entry-text">{dream.text}</span>
+        {dream.author && <small className="notebook-entry-author">— {dream.author}</small>}
+        {dream.completed && dream.completedAt && <small className="notebook-entry-date">we did it · {new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(dream.completedAt))}</small>}
+      </span>
+      <button type="button" className="notebook-delete" aria-label={`Remove ${dream.text}`} onClick={() => removeDream(dream)}>×</button>
+    </div>
+  );
+
   return (
     <>
       <SectionHeading
-        eyebrow="OUR FAVORITE UNWRITTEN CHAPTER"
+        eyebrow="OUR BUCKET LIST"
         title="Someday, with you."
-        description="Little dreams waiting to become memories."
+        description="little promises, big dreams, and everything we want to do someday."
       />
-      <div className="future-path">
-        <Couple scene="walk" />
-        {dreams.map((d) => (
-          <label
-            key={d.id}
-            className={`dream ${progress.dreams[d.id] ? "dream-complete" : ""}`}
-          >
-            <input
-              type="checkbox"
-              checked={!!progress.dreams[d.id]}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                update((p) => {
-                  const next = { ...p.dreams };
-                  if (checked) next[d.id] = new Date().toISOString();
-                  else delete next[d.id];
-                  return { ...p, dreams: next };
-                });
-                if (checked) discover("future-dream");
-              }}
-            />
-            <span>
-              <strong>{d.title}</strong>
-              <small>
-                {progress.dreams[d.id]
-                  ? `A memory now · ${dateLabel(progress.dreams[d.id])}`
-                  : d.description}
-              </small>
-            </span>
-            <span className="handwritten">{d.category}</span>
-          </label>
-        ))}
-      </div>
-      <div className="world-links">
+      <section className="future-notebook" aria-label="Janna and Josh's shared bucket-list notebook">
+        <span className="notebook-tape" aria-hidden="true" />
+        <span className="notebook-paperclip" aria-hidden="true" />
+        <div className="notebook-spread notebook-page-arrive" key={safeSpreadIndex}>
+          <section className="notebook-page notebook-page-left" aria-label="Notebook left page">
+            <div className="notebook-page-heading">
+              <span>for the someday version of us</span>
+              <small>{String(safeSpreadIndex * 2 + 1).padStart(2, "0")}</small>
+            </div>
+            <div className={`notebook-entries${pages[0].length >= 4 ? " notebook-entries-full" : ""}`}>
+              {pages[0].map(renderDream)}
+            </div>
+            <div className="notebook-couple-doodle" aria-label="Janna and Josh">
+              <svg viewBox="0 0 80 70" aria-hidden="true"><path d="M40 60C31 51 8 38 11 22C14 7 32 10 40 24C49 9 68 8 70 23C72 39 51 53 40 60Z" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /><path d="M20 20Q24 15 29 20M52 52Q59 47 62 41" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+              <span>J + J</span>
+            </div>
+            <span className="notebook-margin-note">keep this one ♡</span>
+          </section>
+          <section className="notebook-page notebook-page-right" aria-label="Notebook right page">
+            <div className="notebook-page-heading">
+              <span>little plans, just ours</span>
+              <small>{String(safeSpreadIndex * 2 + 2).padStart(2, "0")}</small>
+            </div>
+            <div className={`notebook-entries${pages[1].length >= 4 ? " notebook-entries-full" : ""}`}>
+              {pages[1].map(renderDream)}
+            </div>
+            <div className="notebook-flower" aria-hidden="true">
+              <svg viewBox="0 0 70 80"><path d="M35 42Q28 58 34 75M34 63Q22 54 15 60Q22 71 34 67M35 57Q47 47 55 53Q49 64 35 62" fill="none" stroke="#71806c" strokeWidth="2" strokeLinecap="round"/><path d="M35 37C27 31 29 23 35 24C41 23 43 31 35 37ZM35 37C28 42 20 39 22 33C23 27 31 29 35 37ZM35 37C42 29 50 27 51 33C53 39 44 42 35 37Z" fill="#d78f9f" stroke="#bd7588" strokeWidth="1.5"/><circle cx="35" cy="36" r="4" fill="#e3c486"/></svg>
+            </div>
+            <div className="notebook-counts"><span>dreams written · {bucketDreams.length}</span><span>dreams lived · {bucketDreams.filter((dream) => dream.completed).length}</span></div>
+          </section>
+          <span className="notebook-spine" aria-hidden="true" />
+        </div>
+        <div className="notebook-lower-tools">
+          <button type="button" className="notebook-add-mock" aria-expanded={addOpen} onClick={() => setAddOpen((open) => !open)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5L5.5 14L16.7 2.8Q18 1.5 19.3 2.8L21.2 4.7Q22.5 6 21.2 7.3L10 18.5L4 18.5Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M14.8 4.8L19.2 9.2M4 18.5L9 17" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>+ write a new dream</button>
+          <nav className="notebook-pagination" aria-label="Notebook pages">
+            <button type="button" aria-label="Previous spread" disabled={safeSpreadIndex === 0} onClick={() => setSpreadIndex((index) => Math.max(0, index - 1))}>‹ previous</button>
+            <small>{String(safeSpreadIndex + 1).padStart(2, "0")} / {String(totalSpreads).padStart(2, "0")}</small>
+            <button type="button" aria-label="Next spread" disabled={safeSpreadIndex >= totalSpreads - 1} onClick={() => setSpreadIndex((index) => Math.min(totalSpreads - 1, index + 1))}>next ›</button>
+          </nav>
+        </div>
+        {addOpen && <form className="notebook-write-form" onSubmit={addDream}>
+          <label htmlFor="future-dream-text">what should we do someday?</label>
+          <textarea id="future-dream-text" value={newText} onChange={(event) => setNewText(event.target.value)} maxLength={120} required rows={2} />
+          <fieldset>
+            <legend>written by:</legend>
+            {(["Janna", "Josh"] as const).map((name) => <label key={name}><input type="radio" name="dream-author" value={name} checked={author === name} onChange={() => setAuthor(name)} />{name}</label>)}
+          </fieldset>
+          <span className="notebook-form-hint">{newText.trim().length}/120</span>
+          <button type="submit" disabled={!newText.trim()}>add to our list ♡</button>
+        </form>}
+      </section>
+      <div className="world-links future-destinations">
         {[
           ["capsule", "Our time capsule"],
           ["travel", "Our adventure map"],
           ["generator", "An extremely scientific future"],
         ].map(([id, label]) => (
-          <button key={id} onClick={() => navigate(id)}>
+          <button className="future-destination" key={id} onClick={() => navigate(id)} aria-label={label}>
+            <span className="future-destination-art">
+              <FutureObjectArt kind={id === "capsule" ? "capsule" : id === "travel" ? "map" : "research"} />
+            </span>
             {label} ↗
           </button>
         ))}
@@ -1759,84 +1927,109 @@ function useNow() {
     : now;
 }
 function Capsule() {
-  const now = useNow();
-  const [open, setOpen] = useState(false);
-  const { discover } = useUniverse();
-  const left = Date.parse(capsule.opens) - now;
+  const opensAt = Date.parse("2036-09-27T00:00:00+08:00");
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const tick = () => setNow(Date.now());
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const countdown = (() => {
+    if (now === null || now >= opensAt) return [0, 0, 0, 0, 0];
+    const zoneOffset = 8 * 60 * 60 * 1000;
+    const localNow = new Date(now + zoneOffset);
+    const localTarget = new Date(opensAt + zoneOffset);
+    let years = localTarget.getUTCFullYear() - localNow.getUTCFullYear();
+    let anniversary = new Date(localNow);
+    anniversary.setUTCFullYear(localNow.getUTCFullYear() + years);
+    if (anniversary.getTime() > localTarget.getTime()) {
+      years -= 1;
+      anniversary = new Date(localNow);
+      anniversary.setUTCFullYear(localNow.getUTCFullYear() + years);
+    }
+    let remaining = Math.max(0, localTarget.getTime() - anniversary.getTime());
+    const days = Math.floor(remaining / 86_400_000);
+    remaining %= 86_400_000;
+    const hours = Math.floor(remaining / 3_600_000);
+    remaining %= 3_600_000;
+    const minutes = Math.floor(remaining / 60_000);
+    const seconds = Math.floor((remaining % 60_000) / 1000);
+    return [years, days, hours, minutes, seconds];
+  })();
+
   return (
-    <section className="quiet-experience">
+    <section className="quiet-experience capsule-experience">
       <SectionHeading
         eyebrow="WORDS WAITING FOR FUTURE US"
         title="Our Time Capsule"
-        description={`Written ${dateLabel(capsule.written)} · Opens ${dateLabel(capsule.opens)}`}
+        description="Written September 27, 2026 · Opens September 27, 2036"
       />
-      <button
-        className={`capsule ${open ? "capsule-open" : ""}`}
-        disabled={left > 0}
-        onClick={() => {
-          setOpen(true);
-          discover("capsule");
-        }}
-        aria-label="Open time capsule"
-      >
-        {open ? "♡" : "✧"}
-      </button>
-      {left > 0 ? (
-        <p className="emotional-line">
-          {Math.ceil(left / 86400000)} days until this little someday.
-          <small>
-            {Math.floor(left / 3600000) % 24}h {Math.floor(left / 60000) % 60}m{" "}
-            {Math.floor(left / 1000) % 60}s
-          </small>
-        </p>
-      ) : open ? (
-        <p className="paper-message">{capsule.letter}</p>
-      ) : (
-        <p>It’s time. Open it together.</p>
-      )}
+      <p className="capsule-introduction">
+        <strong>A little piece of us, sealed away for ten years.</strong>
+        <span>Inside are words we wrote to our future selves, photographs of who we were, and a voice from a version of us that will someday feel far away. This capsule stays closed until 2036—waiting quietly to remind us what our love, our lives, and our dreams looked like ten years ago.</span>
+      </p>
+
+      <div className="capsule-story">
+        <div className="memory-capsule-art" role="img" aria-label="A sealed keepsake box with a letter, two Polaroid photographs, and a small cassette tucked inside, marked 2026 to 2036">
+          <svg viewBox="0 0 460 300" aria-hidden="true">
+            <defs>
+              <linearGradient id="capsule-box" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#b99a83"/><stop offset=".48" stopColor="#8c6c72"/><stop offset="1" stopColor="#5b4c66"/></linearGradient>
+              <linearGradient id="capsule-lid" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#d5b89c"/><stop offset="1" stopColor="#92777b"/></linearGradient>
+              <linearGradient id="capsule-ribbon" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#d99cad"/><stop offset="1" stopColor="#a86f89"/></linearGradient>
+              <filter id="capsule-shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+            </defs>
+            <ellipse cx="232" cy="264" rx="148" ry="17" fill="#050713" opacity=".42" filter="url(#capsule-shadow)"/>
+            <g className="capsule-memory-photos">
+              <g transform="rotate(-13 155 92)"><rect x="108" y="35" width="78" height="102" rx="3" fill="#f0e4d6" stroke="#fff3e3" strokeWidth="2"/><rect x="116" y="43" width="62" height="66" fill="#93849a"/><path d="M119 99L136 78L147 88L159 66L175 99Z" fill="#d5b4b4"/><path d="M138 63c-5-8-14-2 0 9c14-11 5-17 0-9Z" fill="#f4d9d8"/><path d="M119 119H160" stroke="#bd9b96" strokeWidth="2" strokeLinecap="round"/></g>
+              <g transform="rotate(10 286 79)"><rect x="255" y="23" width="70" height="91" rx="3" fill="#f3e9d9" stroke="#fff4e7" strokeWidth="2"/><rect x="262" y="30" width="56" height="58" fill="#798399"/><circle cx="282" cy="53" r="10" fill="#d9b0b2"/><path d="M264 83L279 67L290 77L302 59L316 83Z" fill="#d9c5ae"/><path d="M268 99H302" stroke="#b79891" strokeWidth="2" strokeLinecap="round"/></g>
+            </g>
+            <g className="capsule-memory-letter" transform="rotate(4 223 94)"><path d="M185 55L260 61L254 143L180 137Z" fill="#f5ebd9" stroke="#d3bba4" strokeWidth="2"/><path d="M185 55L221 94L260 61M221 94L180 137M221 94L254 143" fill="none" stroke="#d2b39d" strokeWidth="1.5"/><path d="M198 111L237 114M198 119L230 122" stroke="#a47c8d" strokeWidth="2" strokeLinecap="round" opacity=".65"/><path d="M213 77c-5-8-14-2 0 9c14-11 5-17 0-9Z" fill="#c9879b"/></g>
+            <g className="capsule-memory-tape" transform="rotate(-6 314 132)"><rect x="278" y="105" width="82" height="54" rx="7" fill="#6f5365" stroke="#d5b58f" strokeWidth="2"/><rect x="287" y="113" width="64" height="37" rx="4" fill="#d8c7b2"/><circle cx="300" cy="131" r="9" fill="#6f5365" stroke="#b79091" strokeWidth="2"/><circle cx="338" cy="131" r="9" fill="#6f5365" stroke="#b79091" strokeWidth="2"/><path d="M309 130L315 136L322 126L329 132" fill="none" stroke="#a87086" strokeWidth="2" strokeLinecap="round"/><text x="319" y="110" textAnchor="middle" fill="#f1e2d0" fontSize="7" letterSpacing="1">VOICE · 2026</text></g>
+            <path d="M92 132Q99 116 121 116H342Q365 116 375 136L361 231Q235 254 106 231Z" fill="url(#capsule-box)" stroke="#e0c9a8" strokeWidth="3"/>
+            <path d="M99 128Q101 105 124 102L345 111Q366 112 372 133L366 153Q235 169 96 148Z" fill="url(#capsule-lid)" stroke="#f0d9b7" strokeWidth="3"/>
+            <path d="M119 121Q233 138 354 128" fill="none" stroke="#f1dec2" strokeWidth="2" opacity=".6"/>
+            <path d="M218 111L230 115L225 241L211 238Z" fill="url(#capsule-ribbon)" opacity=".96"/>
+            <path d="M211 116Q191 94 180 108Q179 124 215 132Q248 119 239 103Q226 93 211 116Z" fill="url(#capsule-ribbon)" stroke="#e9bdc4" strokeWidth="2"/>
+            <path d="M219 127Q246 126 250 143L229 157L218 139Z" fill="#b97891" stroke="#e8bfc6" strokeWidth="1.5"/>
+            <circle cx="219" cy="147" r="14" fill="#d8b98d" stroke="#f0dfc2" strokeWidth="2"/>
+            <path d="M219 141c-4-6-10-1 0 6c10-7 4-12 0-6Z" fill="#8b5d76"/>
+            <path d="M126 176L188 181M250 184L337 178" stroke="#ebd8c3" strokeWidth="1.5" opacity=".55"/>
+            <text x="232" y="207" textAnchor="middle" fill="#f1e3cf" fontSize="12" letterSpacing="3" fontFamily="Georgia,serif">J + J</text>
+            <text x="232" y="224" textAnchor="middle" fill="#ead4bd" fontSize="8" letterSpacing="2" fontFamily="Georgia,serif">2026  ·  2036</text>
+            <path d="M78 71L82 79L91 81L83 85L81 94L77 86L69 83L77 80Z" fill="#e4d2b0" opacity=".8"/>
+            <path d="M383 91L386 97L393 99L387 102L385 109L382 103L376 101L382 98Z" fill="#c8b3d5" opacity=".75"/>
+          </svg>
+          <span className="capsule-seal-label">SEALED · 2026</span>
+        </div>
+
+        <div className="capsule-contents" aria-label="What is waiting inside">
+          <p>INSIDE, WAITING FOR US</p>
+          <div><span className="capsule-content-mark capsule-letter-mark" aria-hidden="true" /><span>Letter to our future selves</span></div>
+          <div><span className="capsule-content-mark capsule-photo-mark" aria-hidden="true" /><span>Photographs of us</span></div>
+          <div><span className="capsule-content-mark capsule-voice-mark" aria-hidden="true" /> <span>A voice from 2026</span></div>
+          <small>OPEN IN 2036</small>
+        </div>
+      </div>
+
+      <div className="capsule-countdown-wrap" aria-live="off">
+        <p>Until we meet these versions of ourselves again.</p>
+        <div className="capsule-countdown" aria-label="Time remaining until September 27, 2036">
+          {["YEARS", "DAYS", "HOURS", "MINUTES", "SECONDS"].map((label, index) => (
+            <div className="capsule-countdown-unit" key={label}>
+              <strong>{now === null ? "—" : String(countdown[index]).padStart(2, "0")}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+        <small>Some memories are worth waiting for.</small>
+      </div>
     </section>
   );
 }
 function Adventure() {
-  const [pin, setPin] = useState("");
-  return (
-    <>
-      <SectionHeading
-        eyebrow="THE WORLD IS BIG. OUR LIST IS LONG."
-        title="Our adventure map"
-        description="Where we are, and all the places we might be."
-      />
-      <div className="adventure-map">
-        <svg viewBox="0 0 800 440" aria-hidden="true">
-          <path
-            d="M60 70L150 37L260 72L288 142L230 180L180 149L132 197L82 126ZM223 210L300 235L318 309L270 396L239 340ZM376 84L448 57L500 110L450 152L392 131ZM421 168L495 145L540 238L473 343L431 285ZM504 58L680 44L744 130L686 183L624 167L586 245L550 150ZM653 310L727 286L776 342L711 381Z"
-            fill="#687a87"
-            opacity=".35"
-          />
-          <path
-            d="M182 158Q404 8 631 255"
-            stroke="#e6bdba"
-            fill="none"
-            strokeDasharray="5 9"
-          />
-        </svg>
-        {travel.map((p) => (
-          <button
-            key={p.name}
-            className={`travel-pin ${p.future ? "future-pin" : ""}`}
-            style={{ left: `${p.x}%`, top: `${p.y}%` }}
-            onClick={() => setPin(p.name)}
-            aria-label={p.name}
-          >
-            ✦<span>{p.name}</span>
-          </button>
-        ))}
-      </div>
-      <p className="emotional-line" aria-live="polite">
-        {pin || "A little closer, one adventure at a time."}
-      </p>
-    </>
-  );
+  return <AdventureMap />;
 }
 function Gifts() {
   const now = useNow();
@@ -1874,35 +2067,166 @@ function Gifts() {
   );
 }
 function Generator() {
-  const [result, setResult] = useState<Record<string, string>>({});
+  type Finding = { category: string; finding: string };
+  type Report = {
+    reportNumber: string;
+    house: string;
+    location: string;
+    kids: { count: number; detail: string };
+    pets: string;
+    cooking: string;
+    cleaning: string;
+    paying: string;
+    bankAccount: { amountUsd: number; detail: string };
+    bedTerritory: { jannaPercent: number; joshPercent: number; detail: string };
+    kisses: { amount: string; detail: string };
+    bonusFindings: Finding[];
+    reaction: { janna: string; josh: string };
+  };
+  const [result, setResult] = useState<Report | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [statusIndex, setStatusIndex] = useState(0);
+  const [recent, setRecent] = useState<string[]>([]);
+  const statusLines = [
+    "calculating domestic chaos...",
+    "consulting highly reputable stars...",
+    "estimating blanket ownership...",
+    "checking future bank statements...",
+    "counting hypothetical children...",
+    "running kissing simulations...",
+    "peer review rejected. continuing anyway...",
+    "checking fridge politics...",
+  ];
+
+  useEffect(() => {
+    if (!loading) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(
+      () => setStatusIndex((index) => (index + 1) % statusLines.length),
+      850,
+    );
+    return () => window.clearInterval(timer);
+  }, [loading, statusLines.length]);
+
+  async function consult() {
+    if (loading) return;
+    setLoading(true);
+    setError(false);
+    setStatusIndex(Math.floor(Math.random() * statusLines.length));
+    const startedAt = Date.now();
+    try {
+      const response = await fetch("/api/future-generator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recent }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.report) throw new Error("Report unavailable");
+      await new Promise((resolve) =>
+        window.setTimeout(resolve, Math.max(0, 2400 - (Date.now() - startedAt))),
+      );
+      setResult(data.report as Report);
+      setRecent((items) =>
+        [
+          `${data.report.house}; ${data.report.location}; ${data.report.bonusFindings?.map((item: Finding) => item.category).join(", ")}`,
+          ...items,
+        ].slice(0, 4),
+      );
+    } catch {
+      await new Promise((resolve) =>
+        window.setTimeout(resolve, Math.max(0, 1700 - (Date.now() - startedAt))),
+      );
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const currency = (amount: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(amount);
+
   return (
-    <section className="quiet-experience">
+    <section className="quiet-experience future-generator">
       <SectionHeading
         eyebrow="PLAYFUL NONSENSE. ABSOLUTELY NOT A PREDICTION."
         title="Our extremely scientific future"
-        description="The universe has run the numbers. They are suspicious."
+        description="The universe has run the numbers. The methodology is under investigation."
       />
-      <dl className="future-result">
-        {Object.entries(result).map(([k, v]) => (
-          <div key={k}>
-            <dt>{k}</dt>
-            <dd>{v}</dd>
+      <div className="future-o-matic" aria-label="Future-O-Matic celestial research machine">
+        <div className="future-o-matic-dial dial-left"><span>J + J</span><i>∞</i></div>
+        <div className="future-o-matic-core">
+          <span className="machine-kicker">OURVERSE FUTURE RESEARCH DIVISION</span>
+          <svg viewBox="0 0 260 150" role="img" aria-label="A whimsical celestial prediction machine">
+            <path d="M45 117Q36 99 48 79L58 53Q64 35 83 35H177Q196 35 202 53L212 79Q224 99 215 117Z" fill="#332746" stroke="#d7bf91" strokeWidth="2" />
+            <path d="M70 53Q130 24 190 53M61 105Q130 128 199 105" fill="none" stroke="#bc91b5" strokeWidth="1.5" strokeDasharray="3 6" />
+            <circle cx="130" cy="78" r="31" fill="#17182d" stroke="#e3c994" strokeWidth="2" />
+            <circle cx="130" cy="78" r="22" fill="#716081" opacity=".7" />
+            <path d="M130 58C122 47 110 61 130 78C150 61 138 47 130 58Z" fill="#e8b9cb" />
+            <path d="M130 89V99M117 106H143" stroke="#e8d7bb" strokeWidth="2" strokeLinecap="round" />
+            <circle cx="74" cy="77" r="5" fill="#d8a9be" /><circle cx="186" cy="77" r="5" fill="#d8a9be" />
+            <path d="M73 78L63 86M187 78L197 86" stroke="#dfc992" strokeWidth="2" />
+            <path d="M31 37L35 47L45 51L35 55L31 65L27 55L17 51L27 47Z" fill="#e8d8b6" />
+            <path d="M225 37L228 45L236 48L228 51L225 59L222 51L214 48L222 45Z" fill="#c7afd5" />
+            <text x="130" y="20" textAnchor="middle" fill="#e7d6df" fontSize="10" letterSpacing="3">FUTURE-O-MATIC</text>
+          </svg>
+          <span className="machine-equation">J + J = ??? <b>♡² × ∞</b></span>
+        </div>
+        <div className="future-o-matic-dial dial-right"><span>DATA</span><i>12%</i></div>
+      </div>
+
+      <div className="generator-action-zone">
+        <button className="primary-button" disabled={loading} onClick={consult}>
+          {loading ? "CONSULTING..." : result || error ? "CONSULT AGAIN" : "CONSULT THE UNIVERSE"}
+        </button>
+        {loading && <p className="generator-calculation" aria-live="polite">{statusLines[statusIndex]}</p>}
+        {!loading && (result || error) && <p className="generator-footnote">The universe reserves the right to contradict itself.</p>}
+      </div>
+
+      {error && !loading && (
+        <div className="generator-error" role="status">
+          <h2>Scientific equipment malfunction.</h2>
+          <p>The universe appears to be withholding its findings. Try consulting it again.</p>
+        </div>
+      )}
+
+      {result && !loading && !error && (
+        <article className="future-research-report" aria-live="polite">
+          <header className="research-report-header">
+            <div><span>OURVERSE FUTURE RESEARCH DIVISION</span><span>CASE FILE: J + J</span></div>
+            <h2>Future Report <b>#{result.reportNumber}</b></h2>
+            <p>After extensive calculations, questionable methodology, and absolutely no peer review, the universe has reached the following conclusions.</p>
+          </header>
+          <div className="report-science-scribble" aria-hidden="true"><span>J + J = ∞</span><span>compatibility coefficient: suspicious</span><span>peer review: rejected</span></div>
+          <div className="report-findings">
+            <section className="finding-wide"><h3>Our House</h3><p>{result.house}</p></section>
+            <section className="finding-wide"><h3>Where We End Up</h3><p>{result.location}</p></section>
+            <section className="finding-highlight"><h3>How Many Kids</h3><strong>{result.kids.count}</strong><p>{result.kids.detail}</p></section>
+            <section><h3>Pet Situation</h3><p>{result.pets}</p></section>
+            <section><h3>Who Cooks</h3><p>{result.cooking}</p></section>
+            <section><h3>Who Cleans</h3><p>{result.cleaning}</p></section>
+            <section><h3>Who Pays</h3><p>{result.paying}</p></section>
+            <section className="finding-highlight"><h3>Our Bank Account</h3><strong>{currency(result.bankAccount.amountUsd)}</strong><p>{result.bankAccount.detail}</p><small>fictional USD. scientifically unverified.</small></section>
+            <section className="finding-highlight"><h3>Bed Territory</h3><strong>{result.bedTerritory.jannaPercent}% / {result.bedTerritory.joshPercent}%</strong><p>Janna · Josh</p><p>{result.bedTerritory.detail}</p></section>
+            <section className="finding-highlight"><h3>Kisses</h3><strong>{result.kisses.amount}</strong><p>{result.kisses.detail}</p></section>
+            {result.bonusFindings.map((item, index) => <section className="bonus-finding" key={`${item.category}-${index}`}><span>Bonus Finding {index + 1}</span><h3>{item.category}</h3><p>{item.finding}</p></section>)}
           </div>
-        ))}
-      </dl>
-      <button
-        className="primary-button"
-        onClick={() =>
-          setResult(
-            Object.fromEntries(
-              Object.entries(futureOptions).map(([k, v]) => [k, pick(v)]),
-            ),
-          )
-        }
-      >
-        {Object.keys(result).length ? "Generate again" : "Consult the universe"}
-      </button>
-      <Couple scene="hoodie" />
+          <footer className="report-reaction"><span>Subject reactions · inconclusive</span><p>The subjects were consulted. Their testimony is now attached to the visual record.</p></footer>
+          <div className="report-stamp" aria-hidden="true">QUESTIONABLE<br />SCIENCE</div>
+        </article>
+      )}
+
+      <div className={`generator-couple-space ${result || error ? "has-report" : ""}`}>
+        <Couple
+          scene="sit"
+          dialogueJanna={!loading && !error ? result?.reaction.janna : undefined}
+          dialogueJosh={!loading && !error ? result?.reaction.josh : undefined}
+        />
+      </div>
     </section>
   );
 }

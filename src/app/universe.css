@@ -2079,7 +2079,155 @@ label {
   border-radius: 5px;
   margin: 10px 0;
 }
-.paper-calendar {
+.messages-archive {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 960px);
+  margin: 0 auto;
+  padding: 0 22px 74px;
+}
+.messages-archive::before {
+  position: absolute;
+  z-index: -1;
+  inset: 80px -8vw 0;
+  content: "";
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%, #88698520 0, #71577c0b 43%, transparent 72%);
+}
+.messages-archive .section-heading { margin-bottom: 17px; }
+.messages-archive .section-heading .eyebrow { letter-spacing: .22em; }
+.archive-mark {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 23px;
+  color: #d7c5d99c;
+  font: 8px/1.4 var(--mono, monospace);
+  letter-spacing: .16em;
+  text-align: center;
+}
+.archive-mark span { padding: 0 4px; color: #e3c791a6; }
+.conversation-chat-window {
+  position: relative;
+  width: min(100%, 680px);
+  margin: 0 auto;
+  padding: 0 30px 27px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #d3c4df1b;
+  border-radius: 14px;
+  background: linear-gradient(155deg, #161725f5, #11121ff8 52%, #151522f7);
+  box-shadow: 0 24px 70px #09081355, inset 0 1px #fff1, 0 0 50px #8d648e0b;
+}
+.imessage-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 112px;
+  margin: 0 -30px;
+  padding: 16px 16px 12px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #242535e8, #1c1d2cf0 78%, #191a28cc);
+  box-shadow: 0 8px 22px #090a1640;
+}
+.imessage-header::after { position: absolute; right: 0; bottom: 0; left: 0; height: 1px; content: ""; background: linear-gradient(90deg, transparent, #d9c9df22 16%, #d9c9df22 84%, transparent); }
+.contact-avatar { display: grid; place-items: center; width: 39px; height: 39px; margin-bottom: 5px; border: 1px solid #d8cddc2b; border-radius: 50%; background: linear-gradient(145deg, #7b7489, #464658); box-shadow: inset 0 1px #fff3, 0 2px 8px #05050c55; }
+.contact-avatar svg { width: 22px; height: 22px; fill: #d9d4dfad; stroke: #d9d4dfad; stroke-width: 1.5; stroke-linecap: round; }
+.contact-name { color: #f0edf3; font: 600 13px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .01em; }
+.contact-chevron { height: 13px; color: #aaa5b7; font: 17px/10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.imessage-date { margin: 17px 0 22px; color: #9393a3; font: 11px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .01em; text-align: center; }
+.imessage-thread { display: flex; flex-direction: column; gap: 12px; }
+.imessage-row { display: flex; width: 100%; align-items: flex-end; }
+.imessage-row.incoming { justify-content: flex-start; }
+.imessage-row.outgoing { flex-direction: column; align-items: flex-end; }
+.imessage-row.same-as-previous { margin-top: -9px; }
+.imessage-bubble {
+  position: relative;
+  width: fit-content;
+  max-width: min(76%, 440px);
+  padding: 9px 14px 10px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff0b;
+  color: #f3f1f5;
+  box-shadow: inset 0 1px #ffffff0a, 0 2px 5px #05050d30;
+}
+.josh-bubble { border-radius: 18px 18px 18px 5px; background: linear-gradient(150deg, #555665, #414351); }
+.janna-bubble { border-radius: 18px 18px 5px 18px; background: linear-gradient(150deg, #a35472, #85445f); }
+.incoming.same-as-previous .imessage-bubble { border-top-left-radius: 7px; }
+.incoming.same-as-next .imessage-bubble { border-bottom-left-radius: 7px; }
+.outgoing.same-as-previous .imessage-bubble { border-top-right-radius: 7px; }
+.outgoing.same-as-next .imessage-bubble { border-bottom-right-radius: 7px; }
+.imessage-bubble p { margin: 0; color: inherit; font: 15px/1.42 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; overflow-wrap: anywhere; }
+.imessage-photo {
+  display: grid;
+  place-items: center;
+  width: 196px;
+  height: 148px;
+  max-width: min(76%, 360px);
+  box-sizing: border-box;
+  border: 1px solid #f2dbe22e;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #a58e9c, #676778 54%, #4d5465);
+  box-shadow: inset 0 1px #fff3, 0 2px 7px #05050d44;
+}
+.imessage-row.outgoing .imessage-photo { border-radius: 16px 16px 5px 16px; }
+.imessage-row.outgoing.same-as-previous .imessage-photo { border-top-right-radius: 7px; }
+.imessage-row.outgoing.same-as-next .imessage-photo { border-bottom-right-radius: 7px; }
+.imessage-photo svg { width: 25px; height: 25px; fill: none; stroke: #f3e9ef8c; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.imessage-photo.is-placeholder { gap: 8px; align-content: center; color: #f3dfe7b5; }
+.imessage-photo.is-placeholder span { font: italic 10px/1.3 var(--display, Georgia, serif); }
+.imessage-photo.is-loaded { display: block; width: fit-content; height: auto; max-width: min(76%, 360px); border: 0; background: transparent; box-shadow: none; }
+.imessage-photo.is-loaded img { display: block; width: auto; height: auto; max-width: 100%; max-height: 320px; border: 1px solid #f2dbe22e; border-radius: 16px 16px 5px 16px; object-fit: contain; box-shadow: 0 2px 7px #05050d44; }
+.first-message-annotation { display: block; max-width: 100%; margin: 5px 4px 0 0; color: #d8bd9ea8; font: italic 11px/1.35 var(--display, Georgia, serif); letter-spacing: .01em; }
+.imessage-row.is-unrevealed { opacity: 0; transform: translateY(6px) scale(.985); pointer-events: none; }
+.imessage-row.is-revealed { animation: imessage-message-arrive 210ms ease-out both; }
+.imessage-typing { display: flex; align-items: center; gap: 4px; min-width: 45px; height: 31px; padding: 0 12px; border: 1px solid #ffffff0b; box-sizing: border-box; box-shadow: inset 0 1px #ffffff0a; }
+.imessage-typing.josh-bubble { border-radius: 17px 17px 17px 5px; }
+.imessage-typing.janna-bubble { border-radius: 17px 17px 5px 17px; }
+.imessage-typing i { width: 4px; height: 4px; border-radius: 50%; background: #f2edf3a8; animation: imessage-dot 720ms ease-in-out infinite; }
+.imessage-typing i:nth-child(2) { animation-delay: 100ms; }
+.imessage-typing i:nth-child(3) { animation-delay: 200ms; }
+.conversation-ending { min-height: 83px; margin: 34px auto 8px; color: #e9dce3; opacity: 0; transform: translateY(7px); transition: opacity 600ms ease, transform 600ms ease; }
+.conversation-ending.is-visible { opacity: 1; transform: translateY(0); }
+.conversation-ending > span { display: block; color: #e2c98f; font: 15px/1 Georgia, serif; }
+.conversation-ending p { margin: 10px 0 0; font: italic 21px/1.4 var(--display, Georgia, serif); letter-spacing: .01em; }
+.archive-replay { display: block; min-height: 46px; margin: 0 auto; padding: 10px 16px; border: 1px solid #ddc7953d; color: #e6d5ba; background: #2420374d; font: 10px/1.4 var(--mono, monospace); letter-spacing: .13em; cursor: pointer; transition: color 180ms ease, border-color 180ms ease, background 180ms ease; }
+.archive-replay:hover { border-color: #ddc79582; color: #fff0cf; background: #30273d80; }
+.archive-replay:focus-visible { outline: 2px solid #e5cb92; outline-offset: 4px; }
+@keyframes imessage-message-arrive { from { opacity: 0; transform: translateY(6px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes imessage-dot { 0%, 60%, 100% { opacity: .38; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+@media (max-width: 700px) {
+  .messages-archive { padding: 0 10px 56px; }
+  .archive-mark { margin-bottom: 18px; font-size: 7px; letter-spacing: .12em; }
+  .conversation-chat-window { width: 100%; padding: 0 17px 22px; border-radius: 12px; }
+  .imessage-header { min-height: 103px; margin: 0 -17px; padding-top: 13px; }
+  .contact-avatar { width: 36px; height: 36px; }
+  .imessage-date { margin: 15px 0 19px; font-size: 10px; }
+  .imessage-thread { gap: 11px; }
+  .imessage-row.same-as-previous { margin-top: -8px; }
+  .imessage-bubble { max-width: 78%; padding: 8px 12px 9px; }
+  .imessage-bubble p { font-size: 14px; }
+  .imessage-photo { width: 176px; height: 132px; }
+  .imessage-photo.is-loaded { width: fit-content; height: auto; max-width: 78%; }
+  .imessage-photo.is-loaded img { max-height: 300px; }
+  .first-message-annotation { margin-top: 4px; font-size: 10px; }
+  .conversation-ending p { font-size: 19px; }
+  .archive-replay { width: min(100%, 340px); padding-inline: 10px; font-size: 9px; }
+}
+@media (max-width: 370px) {
+  .messages-archive { padding-right: 7px; padding-left: 7px; }
+  .conversation-chat-window { padding-right: 13px; padding-left: 13px; }
+  .imessage-header { margin-right: -13px; margin-left: -13px; }
+  .imessage-bubble { max-width: 82%; }
+  .imessage-photo { width: min(168px, 74%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .imessage-row.is-revealed { animation: none; }
+  .imessage-typing i { animation: none; }
+  .conversation-ending { transition: none; }
+  .archive-replay { transition: none; }
+}.paper-calendar {
   max-width: 650px;
   background: #e9ddcb;
   color: #57455b;
@@ -5318,4 +5466,61 @@ label {
 }
 @media (prefers-reduced-motion: reduce) {
   .capsule-memory-photos { animation: none; }
+}
+
+/* Love Jar Phase 4 rare paper treatments */
+.jar-special-aside { position: absolute; z-index: 12; top: 82px; left: 50%; color: #ecd9bd; font: italic 15px Georgia, serif; letter-spacing: .3px; text-shadow: 0 2px 12px #120d1c; transform: translateX(-50%); animation: jar-note-content-arrive 180ms ease-out both; }
+.jar-note[data-chaos-type="jackpot"],.jar-note-jackpot { z-index: 2; color: #ac8145; border-color: #c6a565; background: linear-gradient(145deg, #f6ebc9, #d5bc83); box-shadow: 0 0 12px #f2d38d44, 0 3px 5px #25182455, inset 0 1px #fff9; }
+.jar-note[data-chaos-type="jackpot"]::after { background: linear-gradient(225deg, #cfb06e 0 49%, #f8edcf 51%); }
+.jar-note[data-chaos-type="loveLetter"],.jar-note-envelope { z-index: 2; color: #9b6575; border: 1px solid #d2b8a7; border-radius: 4px; background: linear-gradient(145deg, #f5e6dc, #e1c3c2); }
+.jar-note[data-chaos-type="loveLetter"]::after { content: "♡"; top: 50%; right: 50%; display: grid; place-items: center; width: 12px; height: 12px; border: 1px solid #bd8794; border-radius: 50%; color: #a86278; background: #f0d8d4; font: 9px/1 Georgia, serif; transform: translate(50%,-50%); }
+.jar-note-jackpot.is-selected { animation: jar-gold-paper-glimmer 780ms ease-in-out both; }
+.jar-desk-scene.has-double-notes { height: 740px; }
+.jar-desk-scene.has-double-notes .jar-desk-surface { height: 450px; }
+.jar-desk-scene.has-double-notes .love-jar { left: 18%; }
+.jar-double-static { pointer-events: none; }
+.jar-double-static .chaos-choice,.jar-double-static .chaos-action { pointer-events: auto; }
+.jar-special-action { position: relative; z-index: 3; align-self: center; margin: 6px 0; padding: 7px 11px; border: 1px solid #b08c59a8; border-radius: 2px; color: #80623e; background: #f4e6c8a6; font: 10px/1.4 Georgia, serif; letter-spacing: 1.2px; cursor: pointer; pointer-events: auto; transition: transform .2s ease, background .2s ease; }
+.jar-special-action:hover { transform: translateY(-1px) rotate(-1deg); background: #fff1d9; }
+.jar-special-action:focus-visible { outline: 2px solid #a58b65; outline-offset: 3px; }
+.jar-jackpot-copy .chaos-category-heading small,.jar-jackpot-copy .chaos-category-heading > span { color: #a17c43; }
+.jar-jackpot-copy h3 { margin: 11px 0 4px; color: #84643d; font: 700 13px/1.35 Arial, sans-serif; letter-spacing: 1.5px; text-align: center; }
+.jar-jackpot-copy p { margin: 5px 0 10px; color: #56474d; font: italic 17px/1.4 Georgia, serif; text-align: center; }
+.jar-claim-stamp { position: absolute; z-index: 4; top: 32px; right: 25px; display: grid; place-items: center; width: 70px; height: 34px; border: 2px solid #9a5e48; color: #9a5e48; font: 700 11px/1 Arial, sans-serif; letter-spacing: 1.5px; transform: rotate(-12deg) scale(.4); animation: jar-claimed-stamp 420ms cubic-bezier(.18,.9,.3,1.25) forwards; }
+.jar-jackpot-sparks { position: absolute; z-index: 11; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+.jar-jackpot-sparks i { position: absolute; color: #e7cc8a; font: 13px/1 Georgia, serif; font-style: normal; text-shadow: 0 0 8px #f6dda866; animation: jar-small-gold-spark 780ms ease-out both; }
+.jar-jackpot-sparks i:nth-child(1) { --sx: -38px; --sy: -26px; }
+.jar-jackpot-sparks i:nth-child(2) { --sx: -17px; --sy: -44px; animation-delay: 70ms; }
+.jar-jackpot-sparks i:nth-child(3) { --sx: 24px; --sy: -35px; animation-delay: 130ms; }
+.jar-jackpot-sparks i:nth-child(4) { --sx: 43px; --sy: -9px; animation-delay: 40ms; }
+.jar-jackpot-sparks i:nth-child(5) { --sx: 21px; --sy: 31px; animation-delay: 110ms; }
+.jar-jackpot-sparks i:nth-child(6) { --sx: -32px; --sy: 26px; animation-delay: 170ms; }
+.jar-flight-note.is-jackpot-paper { border-color: #d2b779; color: #7e684c; background: radial-gradient(ellipse at 18% 13%, #fff5db88, transparent 48%), repeating-linear-gradient(0deg, transparent 0 5px, #a48b5b1c 6px, transparent 7px 10px), linear-gradient(138deg, #f5eccf 0%, #e8ddbd 58%, #e3d4bd 100%); box-shadow: 0 12px 24px #100b1c55, 0 0 19px #e5c67b33, inset 0 1px #fff9; }
+.jar-flight-note.is-jackpot-paper::before { background: linear-gradient(225deg, #d0b56e 0 48%, #f1e6c7 52%); border-color: #b79d6388; }
+.jar-flight-note.is-jackpot-paper.is-open::after { background: linear-gradient(90deg, transparent 49.7%, #a58e5a1c 50%, transparent 50.4%), linear-gradient(0deg, transparent 49.7%, #a58e5a18 50%, transparent 50.4%); }
+.jar-flight-note.is-letter-envelope { display: grid; place-items: center; overflow: visible; border-color: #d5b8ab; border-radius: 5px; clip-path: none; color: #875e69; background: linear-gradient(145deg, #f1dfd5, #dcbfc1); box-shadow: 0 12px 20px #100b1c55, inset 0 1px #fff9; pointer-events: auto; }
+.jar-flight-note.is-letter-envelope::before { z-index: 2; inset: 0 0 auto; width: 100%; height: 58%; border: 0; background: linear-gradient(160deg, #f4e5da, #e6ccca); clip-path: polygon(0 0,100% 0,50% 100%); box-shadow: 0 2px 4px #5d495022; }
+.jar-flight-note.is-letter-envelope::after { inset: 50% auto auto 50%; display: grid; place-items: center; width: 19px; height: 19px; border: 1px solid #c08c94; border-radius: 50%; color: #a96276; background: #f1d9d6; content: "♡"; font: 13px/1 Georgia, serif; transform: translate(-50%,-50%); }
+.jar-flight-note.is-letter-envelope.is-letter-opening::before { animation: jar-envelope-flap 560ms cubic-bezier(.25,.72,.25,1) both; }
+.jar-letter-slide { position: absolute; z-index: 3; left: 19%; bottom: 12%; display: grid; place-items: start center; width: 62%; height: 65%; padding-top: 7px; box-sizing: border-box; border: 1px solid #d8c2aa; color: #9b7480; background: linear-gradient(145deg,#fff4df,#f0dfd4); box-shadow: 0 2px 4px #4c344422; font: italic 9px Georgia,serif; animation: jar-letter-slide-out 560ms cubic-bezier(.2,.7,.25,1) both; }
+.jar-envelope-controls { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 5px 0; box-sizing: border-box; pointer-events: none; }
+.jar-envelope-controls .jar-special-action { margin: 0; padding: 4px 9px; font-size: 9px; }
+.jar-envelope-monogram { color: #835f6a; font: italic 12px Georgia, serif; }
+.jar-flight-note.is-letter-envelope .jar-fold-symbol { opacity: 0; }
+.jar-letter-copy { min-height: var(--jar-open-height); }
+.jar-letter-copy p { color: #735765 !important; text-align: center; }
+.jar-letter-copy .jar-special-action { align-self: center; }
+.jar-kept-mark { align-self: center; color: #9a6d7b; font: italic 15px Georgia, serif; transform: rotate(-5deg); }
+@keyframes jar-gold-paper-glimmer { 0%,100% { filter: brightness(1); } 45% { filter: brightness(1.13) drop-shadow(0 0 5px #f3d98d99); } }
+@keyframes jar-claimed-stamp { 0% { opacity: 0; transform: rotate(-12deg) scale(.4); } 72% { opacity: 1; transform: rotate(-12deg) scale(1.08); } 100% { opacity: 1; transform: rotate(-12deg) scale(1); } }
+@keyframes jar-small-gold-spark { 0% { opacity: 0; transform: translate(0,0) scale(.5); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--sx),var(--sy)) scale(.8); } }
+@keyframes jar-envelope-flap { 0% { transform: rotateX(0deg); } 55% { transform: perspective(250px) rotateX(-155deg); } 100% { transform: perspective(250px) rotateX(-172deg); } }
+@keyframes jar-letter-slide-out { 0% { opacity: 0; transform: translateY(13px) scale(.88); } 45% { opacity: 1; } 100% { opacity: 1; transform: translateY(-4px) scale(1); } }
+@media (max-width: 700px) {
+  .jar-desk-scene.has-double-notes { height: 1080px; }
+  .jar-desk-scene.has-double-notes .jar-desk-surface { height: 830px; }
+  .jar-desk-scene.has-double-notes .love-jar { left: 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jar-note-jackpot.is-selected,.jar-flight-note.is-letter-envelope.is-letter-opening::before,.jar-letter-slide,.jar-claim-stamp,.jar-jackpot-sparks i { animation-duration: 1ms; }
 }

@@ -1,4 +1,59 @@
 export type ChaosType = "blame" | "wouldRather" | "court" | "battle" | "doNow" | "mystery" | "emergency" | "wildcard";
+export type RareDrawType = "jackpot" | "double" | "loveLetter";
+
+export const RARE_DRAW_WEIGHTS = { normal: 90, jackpot: 5, double: 3, loveLetter: 2 } as const;
+
+export type JackpotReward = { id: string; title: string; message: string };
+
+export const JACKPOT_REWARDS: JackpotReward[] = [
+  { id: "one-yes", title: "ONE YES", message: "One reasonable request. The answer is yes. ♡" },
+  { id: "date-night", title: "YOU CONTROL DATE NIGHT", message: "You choose what we're doing. No complaining from the other person." },
+  { id: "movie-dictator", title: "MOVIE DICTATOR", message: "You choose the movie. The other person loses voting rights." },
+  { id: "free-favor", title: "ONE FREE FAVOR", message: "Cash this in whenever you need one little favor." },
+  { id: "your-choice", title: "YOUR CHOICE", message: "You decide what we do next." },
+  { id: "question-immunity", title: "QUESTION IMMUNITY", message: "Ask one question. The other person has to answer honestly." },
+  { id: "princess-treatment", title: "PRINCESS TREATMENT", message: "Janna gets princess treatment. Josh has officially been notified." },
+  { id: "josh-choice", title: "JOSH'S CHOICE", message: "Josh chooses what we do next. Use this power responsibly." },
+  { id: "extra-attention", title: "EXTRA ATTENTION", message: "Redeem for an unreasonable amount of attention." },
+  { id: "late-night-pass", title: "LATE NIGHT PASS", message: "Stay up a little longer together. Tomorrow's problem." },
+  { id: "photo-request", title: "PHOTO REQUEST", message: "Request one photo. Keep it reasonable. ♡" },
+  { id: "song-control", title: "SONG CONTROL", message: "You choose what we're listening to next." },
+  { id: "no-argument", title: "NO ARGUMENT PASS", message: "For one tiny harmless decision, you automatically win." },
+  { id: "dessert-authority", title: "DESSERT AUTHORITY", message: "You choose dessert. This decision is final." },
+  { id: "compliment-emergency", title: "COMPLIMENT ON DEMAND", message: "Request one sincere compliment. Immediate delivery required." },
+];
+
+export const LOVE_LETTERS = [
+  { id: "letter-01", message: "Out of everything in this jar, I'd still pick you." },
+  { id: "letter-02", message: "No game this time. I just love you." },
+  { id: "letter-03", message: "You are still my favorite notification." },
+  { id: "letter-04", message: "Okay, enough chaos. I love you." },
+  { id: "letter-05", message: "I hope future us still laughs at stupid things together." },
+  { id: "letter-06", message: "I really like doing life with you." },
+  { id: "letter-07", message: "You're my favorite person to bother." },
+  { id: "letter-08", message: "Just checking: still obsessed with you." },
+  { id: "letter-09", message: "I'd choose you again. Even when you're annoying." },
+  { id: "letter-10", message: "Thanks for being my person." },
+  { id: "letter-11", message: "Somehow talking to you still makes my day better." },
+  { id: "letter-12", message: "If you're reading this, I probably miss you." },
+  { id: "letter-13", message: "You're very lucky I like you this much." },
+  { id: "letter-14", message: "No dare. No question. Just come here. ♡" },
+  { id: "letter-15", message: "You're still the best part of my day." },
+  { id: "letter-16", message: "I like you an unreasonable amount." },
+  { id: "letter-17", message: "Thanks for making ordinary days more fun." },
+  { id: "letter-18", message: "My favorite place to be is wherever we're talking." },
+];
+
+export function pickUnseen<T extends { id: string }>(pool: T[], used: Set<string>): T {
+  let available = pool.filter((item) => !used.has(item.id));
+  if (available.length === 0) {
+    used.clear();
+    available = pool;
+  }
+  const selected = available[Math.floor(Math.random() * available.length)];
+  used.add(selected.id);
+  return selected;
+}
 
 export type ChaosEntry =
   | { id: string; type: "blame"; prompt: string }
@@ -105,14 +160,14 @@ export const CHAOS_ENTRIES: ChaosEntry[] = [
 
 export const CHAOS_REACTIONS = ["the court has spoken.", "noted for future arguments.", "evidence collected.", "no appeals.", "interesting choice.", "relationship data collected.", "Josh will remember this.", "Janna has questions.", "officially on the record."];
 
-export function pickChaosEntry(used: Set<string>): ChaosEntry {
+export function pickChaosEntry(used: Set<string>, excludedTypes: ChaosType[] = []): ChaosEntry {
   const categoryTypes = Object.keys(CHAOS_CATEGORY_META) as ChaosType[];
   const available = (type: ChaosType) => CHAOS_ENTRIES.filter((entry) => entry.type === type && !used.has(entry.id));
   const weightedTypes = categoryTypes.flatMap((type) => Array.from({ length: CHAOS_CATEGORY_META[type].weight }, () => type));
-  let weightedAvailable = weightedTypes.filter((type) => available(type).length > 0);
+  let weightedAvailable = weightedTypes.filter((type) => !excludedTypes.includes(type) && available(type).length > 0);
   if (weightedAvailable.length === 0) {
     used.clear();
-    weightedAvailable = weightedTypes;
+    weightedAvailable = weightedTypes.filter((type) => !excludedTypes.includes(type));
   }
   const type = weightedAvailable[Math.floor(Math.random() * weightedAvailable.length)];
   const pool = available(type);

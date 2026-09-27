@@ -7,51 +7,6 @@ export const dailyMessages = [
   "I miss you in all the quiet spaces between things.",
   "One day, goodnight won’t have to mean hanging up.",
 ];
-export const conversations: {
-  title: string;
-  messages: {
-    sender: "Janna" | "Josh";
-    text: string;
-    timestamp: string;
-    reaction?: string;
-    image?: string;
-  }[];
-}[] = [
-  {
-    title: "Five more minutes · an imagined little conversation",
-    messages: [
-      { sender: "Janna", text: "You should sleep.", timestamp: "11:41 PM" },
-      {
-        sender: "Josh",
-        text: "Five more minutes?",
-        timestamp: "11:42 PM",
-        reaction: "♡",
-      },
-      {
-        sender: "Janna",
-        text: "Okay. But only because you’re my favorite.",
-        timestamp: "11:42 PM",
-      },
-    ],
-  },
-  {
-    title: "A sky to share · an imagined little conversation",
-    messages: [
-      {
-        sender: "Janna",
-        text: "Look at the moon tonight.",
-        timestamp: "8:10 PM",
-        image: "/memories/moon.svg",
-      },
-      {
-        sender: "Josh",
-        text: "Same moon. Same us.",
-        timestamp: "8:12 PM",
-        reaction: "♡",
-      },
-    ],
-  },
-];
 export interface Coupon {
   id: string;
   title: string;

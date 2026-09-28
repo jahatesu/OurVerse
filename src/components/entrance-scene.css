@@ -1,0 +1,479 @@
+.entrance-world {
+  --entrance-x: 0;
+  --entrance-y: 0;
+  position: fixed;
+  inset: 0;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  color: #f3e5df;
+  background:
+    radial-gradient(ellipse at 16% 20%, #584a7d 0%, #3a315f 17%, transparent 42%),
+    radial-gradient(ellipse at 82% 17%, #5b365e 0%, #3d315e 24%, transparent 49%),
+    radial-gradient(ellipse at 56% 62%, #493d6c 0%, #28264c 39%, transparent 67%),
+    linear-gradient(152deg, #141832 0%, #202041 30%, #32264b 56%, #191b38 100%);
+  text-align: center;
+}
+
+.entrance-world::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 30%, transparent 0 15%, #18162b22 64%),
+    repeating-linear-gradient(115deg, transparent 0 31px, #f0d4e002 32px, transparent 34px);
+  mix-blend-mode: screen;
+}
+
+.entrance-depth-back { translate: calc(var(--entrance-x) * -4px) calc(var(--entrance-y) * -3px); }
+.entrance-depth-mid { translate: calc(var(--entrance-x) * -9px) calc(var(--entrance-y) * -6px); }
+.entrance-depth-front { translate: calc(var(--entrance-x) * -15px) calc(var(--entrance-y) * -9px); }
+
+.entrance-nebula {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(54px);
+  opacity: .45;
+  will-change: transform;
+}
+
+.entrance-nebula-one {
+  width: 90vw;
+  height: 28vw;
+  left: 2%;
+  top: 24%;
+  background: linear-gradient(97deg, transparent, #885d9488 28%, #bf789259 53%, #6674a36b 75%, transparent);
+  transform: rotate(-14deg);
+  animation: entrance-nebula-drift 38s ease-in-out infinite alternate;
+}
+
+.entrance-nebula-two {
+  width: 70vw;
+  height: 25vw;
+  right: -12%;
+  top: -5%;
+  background: radial-gradient(ellipse, #a86f9b63, #65578b42 48%, transparent 72%);
+  animation: entrance-nebula-breathe 29s ease-in-out infinite alternate;
+}
+
+.entrance-sky-art {
+  position: absolute;
+  z-index: 1;
+  inset: -2%;
+  width: 104%;
+  height: 104%;
+  pointer-events: none;
+  overflow: visible;
+  transition: scale 1.05s ease, opacity 1.05s ease;
+}
+
+.entrance-orbits { opacity: .16; stroke-width: 1.4; stroke-dasharray: 2 7; }
+.entrance-star-dot { fill: #f1dfeb; opacity: .34; animation: entrance-twinkle 7s ease-in-out infinite alternate; }
+.entrance-four-star { opacity: .76; animation: entrance-four-star 6.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.entrance-moon-planet { animation: entrance-celestial-float 24s ease-in-out infinite; transform-origin: 235px 190px; }
+.entrance-ringed-planet { animation: entrance-planet-float 29s ease-in-out infinite; transform-origin: 1343px 194px; }
+.entrance-crescent { animation: entrance-crescent-float 19s ease-in-out infinite; }
+.entrance-distant-planet { animation: entrance-distant-orbit 32s ease-in-out infinite alternate; }
+.entrance-distant-moon { animation: entrance-distant-orbit 27s ease-in-out -8s infinite alternate-reverse; }
+
+.entrance-shooting-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.entrance-shooting-stars i {
+  position: absolute;
+  width: 110px;
+  height: 1px;
+  left: 18%;
+  top: 19%;
+  opacity: 0;
+  transform: rotate(-27deg);
+  background: linear-gradient(90deg, transparent, #f7e5e3);
+  box-shadow: 45px 0 8px #ead3e08c;
+  animation: entrance-shoot 13s ease-in infinite;
+}
+
+.entrance-shooting-stars i:nth-child(2) { left: 67%; top: 29%; animation-delay: -5.7s; animation-duration: 17s; scale: .7; }
+.entrance-shooting-stars i:nth-child(3) { left: 43%; top: 9%; animation-delay: -10.5s; animation-duration: 21s; scale: .5; }
+
+.entrance-tree {
+  position: absolute;
+  z-index: 8;
+  top: -9%;
+  left: -5%;
+  width: min(44vw, 680px);
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(18px 22px 25px #10132d69);
+}
+
+.entrance-tree-sway { transform-origin: 40px 20px; animation: entrance-tree-sway 14s ease-in-out infinite alternate; }
+.entrance-foliage-cluster { animation: entrance-leaf-breathe 9s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+.entrance-tree-flower { animation: entrance-flower-sway 7s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+.entrance-ornament { animation: entrance-ornament-sway 6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: top; }
+
+.entrance-cloud-sea {
+  position: absolute;
+  z-index: 3;
+  inset: auto 0 0;
+  height: 43%;
+  pointer-events: none;
+}
+
+.entrance-clouds {
+  position: absolute;
+  left: -5%;
+  width: 110%;
+  height: auto;
+  overflow: visible;
+  will-change: transform;
+}
+
+.entrance-clouds-back { bottom: 22%; opacity: .57; filter: blur(.7px) saturate(.82); animation: entrance-cloud-drift-back 58s ease-in-out infinite alternate; }
+.entrance-clouds-mid { bottom: 3%; filter: drop-shadow(0 10px 13px #302c5066); animation: entrance-cloud-drift-mid 46s ease-in-out infinite alternate-reverse; }
+.entrance-clouds-front { bottom: -25%; filter: drop-shadow(0 -4px 12px #f0bec31f); animation: entrance-cloud-drift-front 37s ease-in-out infinite alternate; }
+
+.entrance-cliff {
+  position: absolute;
+  z-index: 9;
+  left: -3.5%;
+  bottom: -8%;
+  width: min(53vw, 790px);
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(18px 25px 30px #11132975);
+  transition: scale 1.05s ease, filter 1.05s ease;
+}
+
+.entrance-couple-idle { transform-origin: 370px 270px; animation: entrance-breathe 8.5s ease-in-out infinite; }
+.entrance-janna { animation: entrance-janna-lean 19s ease-in-out infinite; transform-origin: 352px 268px; }
+.entrance-josh-head { animation: entrance-josh-idle 17s ease-in-out -5s infinite; transform-origin: 397px 184px; }
+.entrance-hair-wisp { animation: entrance-hair-breeze 5.5s ease-in-out infinite alternate; transform-origin: 309px 172px; }
+.entrance-cat-tail { animation: entrance-cat-tail 16s ease-in-out infinite; transform-origin: 220px 277px; }
+.entrance-lantern-flame { animation: entrance-flame 1.75s ease-in-out infinite alternate; transform-origin: 484px 261px; }
+.entrance-lantern-aura { animation: entrance-glow-breathe 2.3s ease-in-out infinite alternate; }
+.entrance-warm-mote, .entrance-door-mote { fill: #ffd99c; opacity: 0; animation: entrance-mote 6s ease-out infinite; }
+.entrance-cliff-flower, .entrance-door-flower { animation: entrance-flower-sway 5.8s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom; }
+.entrance-cliff-flower { filter: drop-shadow(0 0 2px #dfa6754d); }
+.entrance-door-flower { filter: drop-shadow(0 0 2px #e5a67a47); }
+
+.entrance-door-island {
+  position: absolute;
+  z-index: 7;
+  right: -1.5%;
+  bottom: 4%;
+  width: min(39vw, 570px);
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(-12px 28px 26px #11132c80);
+  transition: scale 1.05s ease, filter 1.05s ease;
+}
+
+.entrance-island-float { animation: entrance-island-float 9s ease-in-out infinite; transform-origin: center; }
+.entrance-rock-fragments { animation: entrance-fragments-float 7s ease-in-out -2s infinite alternate; }
+.entrance-door-glow { transition: fill .8s ease, filter .8s ease, opacity .8s ease; animation: entrance-doorway-breathe 8s ease-in-out infinite alternate; }
+.entrance-door-spill { transition: opacity .8s ease, scale .8s ease; transform-box: fill-box; transform-origin: center; animation: entrance-door-pulse 7s ease-in-out infinite alternate; }
+.entrance-door-haze { animation: entrance-door-haze 8.5s ease-in-out -2s infinite alternate; transform-box: fill-box; transform-origin: center; }
+.entrance-door-lantern { animation: entrance-door-lantern 2.8s ease-in-out infinite alternate; transform-origin: 381px 145px; }
+
+.entrance-copy {
+  position: absolute;
+  z-index: 12;
+  top: clamp(92px, 14vh, 145px);
+  left: 50%;
+  width: min(610px, 48vw);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  text-shadow: 0 3px 22px #17162ee0;
+}
+
+.entrance-eyebrow {
+  font: 500 clamp(8px, .68vw, 10px)/1.5 var(--body, sans-serif);
+  letter-spacing: .34em;
+  color: #f0dfd3;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+
+.entrance-copy h1 {
+  margin: 0;
+  font: 400 clamp(72px, 8.4vw, 132px)/.98 var(--display, Georgia, serif);
+  letter-spacing: .075em;
+  text-indent: .075em;
+  background: linear-gradient(102deg, #f2e4ee 6%, #cdb8df 43%, #efc8d1 72%, #f4ded1 96%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 18px #16152c8f);
+}
+
+.entrance-names {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0 18px;
+  color: #e4c7d1;
+  font: 500 clamp(9px, .76vw, 12px)/1.4 var(--body, sans-serif);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.entrance-names i {
+  display: block;
+  width: clamp(38px, 4vw, 64px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d9b6ca99);
+}
+
+.entrance-names i:last-child { transform: scaleX(-1); }
+.entrance-names span { color: #e8b5c0; font-size: 1.25em; letter-spacing: 0; }
+
+.entrance-copy > p {
+  margin: 0;
+  color: #f0dfe0;
+  font: italic 400 clamp(18px, 1.65vw, 25px)/1.55 var(--display, Georgia, serif);
+  text-wrap: balance;
+}
+
+.entrance-invitation {
+  position: relative;
+  margin-top: clamp(38px, 4.6vh, 46px);
+  pointer-events: auto;
+}
+
+.entrance-button {
+  position: relative;
+  z-index: 2;
+  min-width: 226px;
+  min-height: 55px;
+  border: 1px solid #f7ded5a8;
+  border-radius: 8px;
+  padding: 15px 28px;
+  color: #2e2940;
+  background: linear-gradient(116deg, #ead1d8, #cfbbde 55%, #efcfc9);
+  box-shadow: 0 12px 35px #11142b73, inset 0 1px #fff8, 0 0 0 1px #d7b8d02c;
+  font: 600 11px/1.2 var(--body, sans-serif);
+  letter-spacing: .105em;
+  cursor: pointer;
+  transition: transform .45s ease, box-shadow .45s ease, filter .45s ease;
+}
+
+.entrance-button span { color: #a76c84; margin-left: 4px; }
+.entrance-button b { display: inline-block; margin-left: 8px; font-size: 15px; font-weight: 400; transition: translate .45s ease; }
+.entrance-button:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.09); box-shadow: 0 16px 42px #11142b8f, inset 0 1px #fff, 0 0 30px #e4b9d057; }
+.entrance-button:hover:not(:disabled) b { translate: 4px 0; }
+.entrance-button:focus-visible { outline: 2px solid #fff2e8; outline-offset: 6px; box-shadow: 0 0 0 7px #bb92bc4d, 0 15px 40px #11142b8f; }
+.entrance-button:disabled { cursor: wait; }
+
+.entrance-button-flower {
+  position: absolute;
+  z-index: 3;
+  left: -13px;
+  bottom: -10px;
+  color: #efb8c8;
+  font-size: 18px;
+  rotate: -18deg;
+  text-shadow: 0 0 12px #ffd5d2;
+}
+
+.entrance-button-sparkles i {
+  position: absolute;
+  z-index: 3;
+  right: -20px;
+  top: -15px;
+  color: #ffe0c4;
+  font-style: normal;
+  opacity: 0;
+  text-shadow: 0 0 9px #ffdec0;
+  animation: entrance-button-sparkle 3.7s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.entrance-button-sparkles i:nth-child(2) { right: -32px; top: 17px; animation-delay: -1.2s; font-size: 19px; }
+.entrance-button-sparkles i:nth-child(3) { right: -11px; top: 52px; animation-delay: -2.1s; font-size: 9px; }
+
+.entrance-light-trail {
+  position: absolute;
+  z-index: 11;
+  width: min(27vw, 410px);
+  height: 2px;
+  left: 61%;
+  top: 59%;
+  pointer-events: none;
+  opacity: 0;
+  transform: rotate(8deg);
+  background: none;
+  transition: opacity .7s ease;
+}
+
+.entrance-light-trail i {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffe6bd;
+  animation: entrance-trail-mote 2.8s ease-in-out infinite;
+}
+
+.entrance-light-trail i:nth-child(2) { animation-delay: -.7s; }
+.entrance-light-trail i:nth-child(3) { animation-delay: -1.4s; }
+.entrance-light-trail i:nth-child(4) { animation-delay: -2.1s; }
+
+.entrance-world:has(.entrance-button:is(:hover, :focus-visible)) .entrance-door-glow {
+  fill: #ffd596;
+  filter: drop-shadow(0 0 18px #ffca8c);
+}
+
+.entrance-world:has(.entrance-button:is(:hover, :focus-visible)) .entrance-door-spill { opacity: .9; scale: 1.16; }
+.entrance-world:has(.entrance-button:is(:hover, :focus-visible)) .entrance-light-trail { opacity: .3; }
+.entrance-world:has(.entrance-button:is(:hover, :focus-visible)) .entrance-button-sparkles i { opacity: 1; animation-play-state: running; }
+.entrance-world:has(.entrance-button:is(:hover, :focus-visible)) .entrance-door-mote { animation-duration: 3.8s; filter: drop-shadow(0 0 4px #ffdda4); }
+.entrance-world:has(.entrance-button:is(:hover, :focus-visible)) .entrance-door-flower { filter: drop-shadow(0 0 3px #e6a987); }
+
+.entrance-vignette {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 140px 35px #11142b8c, inset 0 -90px 120px #11132961;
+  background: linear-gradient(90deg, #11142b29, transparent 19% 82%, #11142b33);
+}
+
+.entrance-world.is-entering .entrance-door-glow { fill: #fff0b2; filter: drop-shadow(0 0 32px #ffd295); }
+.entrance-world.is-entering .entrance-door-spill { opacity: 1; scale: 1.4; }
+.entrance-world.is-entering .entrance-light-trail { opacity: 1; }
+.entrance-world.is-entering .entrance-sky-art { scale: 1.025; opacity: .92; }
+.entrance-world.is-entering .entrance-cliff { scale: 1.035; filter: drop-shadow(20px 28px 32px #1113298c) brightness(1.06); }
+.entrance-world.is-entering .entrance-door-island { scale: 1.085; filter: drop-shadow(-12px 28px 30px #11132c8f) brightness(1.14); }
+.entrance-world.is-entering .entrance-star-dot { animation: entrance-entry-star .85s ease-in-out infinite alternate; }
+.entrance-world.is-entering .entrance-copy { animation: entrance-copy-depart .82s ease-in forwards; }
+.entrance-world.is-entering::after {
+  content: "";
+  position: absolute;
+  z-index: 19;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 79% 54%, #ffdfad, #c89db97d 18%, transparent 49%);
+  opacity: 0;
+  animation: entrance-open .84s ease-in forwards;
+}
+
+@keyframes entrance-nebula-drift { to { transform: rotate(-10deg) translate3d(3vw, -1vw, 0) scale(1.04); } }
+@keyframes entrance-nebula-breathe { to { transform: translate3d(-2vw, 1.5vw, 0) scale(1.08); opacity: .6; } }
+@keyframes entrance-twinkle { 0%, 100% { opacity: .18; } 45% { opacity: .82; } 62% { opacity: .3; } }
+@keyframes entrance-four-star { 0%, 100% { opacity: .34; scale: .78; } 46% { opacity: 1; scale: 1.1; } }
+@keyframes entrance-celestial-float { 50% { transform: translateY(4px) rotate(.45deg); } }
+@keyframes entrance-planet-float { 50% { transform: translateY(-5px) rotate(.65deg); } }
+@keyframes entrance-crescent-float { 50% { transform: translateY(3px) rotate(-1.5deg); } }
+@keyframes entrance-distant-orbit { to { transform: translate(23px, -9px); } }
+@keyframes entrance-shoot { 0%, 75% { opacity: 0; translate: -80px -45px; } 78% { opacity: .8; } 86%, 100% { opacity: 0; translate: 210px 110px; } }
+@keyframes entrance-tree-sway { to { transform: rotate(.7deg) translateY(2px); } }
+@keyframes entrance-leaf-breathe { to { transform: scale(1.025) rotate(.6deg); } }
+@keyframes entrance-flower-sway { to { transform: rotate(5deg) translateY(-1px); } }
+@keyframes entrance-ornament-sway { to { transform: rotate(3deg); } }
+@keyframes entrance-cloud-drift-back { to { transform: translateX(2.2%); } }
+@keyframes entrance-cloud-drift-mid { to { transform: translateX(-2.6%); } }
+@keyframes entrance-cloud-drift-front { to { transform: translateX(3%); } }
+@keyframes entrance-breathe { 50% { transform: translateY(-2px) scaleY(1.006); } }
+@keyframes entrance-janna-lean { 0%, 68%, 100% { transform: rotate(0); } 76%, 90% { transform: rotate(1.8deg) translateX(2px); } }
+@keyframes entrance-josh-idle { 0%, 72%, 100% { transform: rotate(0); } 79%, 87% { transform: rotate(-1deg) translateY(1px); } }
+@keyframes entrance-hair-breeze { to { transform: rotate(-4deg) translateX(-2px); } }
+@keyframes entrance-cat-tail { 0%, 78%, 100% { transform: rotate(0); } 84% { transform: rotate(-13deg); } 90% { transform: rotate(6deg); } }
+@keyframes entrance-flame { to { transform: scale(.88, 1.12) rotate(2deg); opacity: .86; } }
+@keyframes entrance-glow-breathe { to { opacity: .72; transform: scale(1.07); transform-origin: 485px 246px; } }
+@keyframes entrance-mote { 0% { opacity: 0; transform: translateY(8px); } 18% { opacity: .85; } 76%, 100% { opacity: 0; transform: translate(8px, -48px); } }
+@keyframes entrance-island-float { 50% { transform: translateY(-7px) rotate(.25deg); } }
+@keyframes entrance-fragments-float { to { transform: translateY(7px); } }
+@keyframes entrance-door-pulse { to { opacity: .72; transform: scale(1.05); } }
+@keyframes entrance-doorway-breathe { to { opacity: .94; } }
+@keyframes entrance-door-haze { to { opacity: .34; transform: scale(1.04) translateY(-2px); } }
+@keyframes entrance-door-lantern { to { opacity: .8; transform: scale(.96); } }
+@keyframes entrance-button-sparkle { 0%, 100% { opacity: 0; scale: .75; } 45%, 70% { opacity: .95; scale: 1.1; } }
+@keyframes entrance-trail-mote { 0% { opacity: 0; left: 0; } 22% { opacity: 1; } 100% { opacity: 0; left: 100%; } }
+@keyframes entrance-entry-star { to { opacity: 1; filter: drop-shadow(0 0 3px #ffe4dd); } }
+@keyframes entrance-copy-depart { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 55% { opacity: .82; } 100% { opacity: 0; transform: translateX(-50%) scale(1.045); filter: blur(5px); } }
+@keyframes entrance-open { 0% { opacity: 0; transform: scale(.8); } 60% { opacity: .8; } 100% { opacity: 0; transform: scale(1.45); } }
+
+@media (max-width: 1100px) {
+  .entrance-tree { width: 48vw; top: -6%; left: -9%; }
+  .entrance-cliff { width: 57vw; left: -7%; bottom: -4%; }
+  .entrance-door-island { width: 43vw; right: -5%; bottom: 5%; }
+  .entrance-copy { width: 54vw; top: clamp(86px, 12vh, 120px); }
+  .entrance-copy h1 { font-size: clamp(68px, 9vw, 100px); }
+  .entrance-light-trail { left: 62%; top: 56%; }
+}
+
+@media (max-width: 700px) {
+  .entrance-world {
+    background:
+      radial-gradient(ellipse at 20% 19%, #594a7c 0%, transparent 37%),
+      radial-gradient(ellipse at 87% 38%, #57365d 0%, transparent 45%),
+      linear-gradient(152deg, #151832, #292146 52%, #1c1c39);
+  }
+  .entrance-depth-back { translate: calc(var(--entrance-x) * -2px) calc(var(--entrance-y) * -2px); }
+  .entrance-depth-mid { translate: calc(var(--entrance-x) * -4px) calc(var(--entrance-y) * -3px); }
+  .entrance-depth-front { translate: calc(var(--entrance-x) * -6px) calc(var(--entrance-y) * -4px); }
+  .entrance-sky-art { width: 175%; height: 112%; left: -39%; top: -4%; }
+  .entrance-orbits { opacity: .1; }
+  .entrance-ringed-planet { transform: translate(-65px, 90px) scale(.92); }
+  .entrance-distant-planet, .entrance-distant-moon { display: none; }
+  .entrance-tree { width: min(76vw, 430px); top: -4%; left: -28%; opacity: .9; }
+  .entrance-ornament:nth-of-type(2) { display: none; }
+  .entrance-cloud-sea { height: 34%; }
+  .entrance-clouds { width: 160%; left: -30%; }
+  .entrance-clouds-back { bottom: 31%; }
+  .entrance-clouds-mid { bottom: 5%; }
+  .entrance-clouds-front { bottom: -24%; }
+  .entrance-cliff { width: min(92vw, 470px); left: -23%; bottom: -1%; }
+  .entrance-door-island { width: min(60vw, 320px); right: -14%; bottom: 10%; }
+  .entrance-copy { top: 8.5%; width: 92vw; }
+  .entrance-eyebrow { font-size: 7px; letter-spacing: .23em; margin-bottom: 9px; }
+  .entrance-copy h1 { font-size: clamp(53px, 16.5vw, 76px); letter-spacing: .045em; text-indent: .045em; }
+  .entrance-names { margin: 9px 0 13px; font-size: 9px; gap: 8px; }
+  .entrance-names i { width: 28px; }
+  .entrance-copy > p { font-size: clamp(16px, 4.4vw, 20px); line-height: 1.45; }
+  .entrance-invitation { margin-top: 32px; }
+  .entrance-button { min-width: 212px; min-height: 51px; padding: 13px 21px; }
+  .entrance-light-trail { display: none; }
+  .entrance-vignette { box-shadow: inset 0 0 80px 15px #11142b73, inset 0 -65px 80px #11132961; }
+  .entrance-shooting-stars i:nth-child(3) { display: none; }
+}
+
+@media (max-width: 700px) and (max-height: 720px) {
+  .entrance-copy { top: 5.5%; }
+  .entrance-copy h1 { font-size: clamp(49px, 15vw, 66px); }
+  .entrance-names { margin-bottom: 9px; }
+  .entrance-copy > p { font-size: 15px; }
+  .entrance-invitation { margin-top: 24px; }
+  .entrance-button { min-height: 46px; padding-block: 11px; }
+  .entrance-cliff { width: min(82vw, 420px); left: -20%; bottom: -7%; }
+  .entrance-door-island { width: min(54vw, 285px); bottom: 5%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entrance-world *, .entrance-world *::before, .entrance-world *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+  .entrance-depth-back, .entrance-depth-mid, .entrance-depth-front { translate: 0 0; }
+  .entrance-star-dot { opacity: .42; }
+  .entrance-shooting-stars { display: none; }
+  .entrance-world.is-entering .entrance-copy { opacity: 0; }
+}

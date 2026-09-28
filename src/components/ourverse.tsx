@@ -15,6 +15,7 @@ import { CompanionRoom } from "./companion";
 import { Couple } from "./characters";
 import { CornerCompanion } from "./corner-companion";
 import { HomeEdgeFooter } from "./home-edge-footer";
+import { EntranceScene } from "./entrance-scene";
 import { World } from "./world";
 import { Vault, Ending } from "./secrets";
 import { Modal } from "./ui";
@@ -231,7 +232,7 @@ function Shell() {
         unlock("welcome");
         setEntering(false);
       },
-      reduced ? 0 : 1200,
+      reduced ? 0 : 850,
     );
   }
   const content =
@@ -316,28 +317,7 @@ function Shell() {
       {!ready ? (
         <div className="app-loading">Finding our little universe… ✧</div>
       ) : !progress.entered ? (
-        <div className={`intro cinematic-intro ${entering ? "departing" : ""}`}>
-          <div className="intro-orbit" />
-          <div className="intro-moon" />
-          <span className="eyebrow">A LITTLE PLACE OUTSIDE OF EVERYTHING</span>
-          <h1>OURVERSE</h1>
-          <span className="intro-names">Janna ♡ Josh</span>
-          <p>
-            somewhere between your world and mine,
-            <br />
-            we made our own.
-          </p>
-          <button
-            className="primary-button"
-            onClick={enter}
-            disabled={entering}
-          >
-            Enter OurVerse ♡
-          </button>
-          <span className="intro-footer">
-            ONE SKY. TWO HEARTS. OUR OWN LITTLE INFINITY.
-          </span>
-        </div>
+        <EntranceScene entering={entering} reducedMotion={reduced} onEnter={enter} />
       ) : (
         <div
           className={`app-shell universe-shell ${section === "sleep" ? "sleep-mode" : ""}`}

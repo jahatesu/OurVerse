@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { LivingUniverse } from "./living-universe";
 import { useUniverse } from "./provider";
-import { dailyMessages } from "@/data/expansion";
 import { settings } from "@/config/settings";
 import "./galaxy.css";
 export { CelestialArt as DestinationArt } from "./celestial-art";
@@ -36,11 +35,9 @@ export function Constellation({ full = false, illuminated }: { full?: boolean; i
 }
 
 export function Galaxy({ navigate }: { navigate: (id: string) => void }) {
-  const [now] = useState(() => new Date());
   const [activeRing, setActiveRing] = useState(0);
   const [paused, setPaused] = useState(false);
   const { discover, notify } = useUniverse();
-  const day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
   return (
     <div className={`galaxy solar-galaxy living-galaxy ${paused ? "orbits-paused" : ""}`}>
       <header className="galaxy-title solar-title">
@@ -53,14 +50,6 @@ export function Galaxy({ navigate }: { navigate: (id: string) => void }) {
       </div>
       <LivingUniverse worlds={destinations} navigate={navigate} paused={paused} activeRing={activeRing} onSecret={() => { discover("secret-object"); notify("YOU WEREN’T SUPPOSED TO FIND THAT. ♡"); navigate("vault"); }} />
       <div className="solar-navigation-note"><span>nine little worlds. one gravitational pull.</span><button onClick={() => setPaused(!paused)} aria-pressed={paused}>{paused ? "Resume orbits" : "Pause orbits"}</button></div>
-      <footer className="galaxy-bottom solar-footer">
-        <Constellation />
-        <button className="daily-note" onClick={() => navigate("daily")}>
-          <span className="eyebrow">A NOTE IN YOUR ORBIT · {now.toLocaleDateString("en", { month: "short", day: "numeric" })}</span>
-          <p>{dailyMessages[day % dailyMessages.length]}</p>
-          <span className="solar-note-signature">with love, Janna ↗</span>
-        </button>
-      </footer>
     </div>
   );
 }

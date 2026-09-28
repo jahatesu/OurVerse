@@ -103,12 +103,12 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     </Context.Provider>
   );
 }
-function usePlayer() {
+export function usePlayer() {
   const player = useContext(Context);
   if (!player) throw new Error("MusicProvider missing");
   return player;
 }
-function Controls({ small = false }: { small?: boolean }) {
+export function Controls({ small = false }: { small?: boolean }) {
   const player = usePlayer();
   return (
     <div className={`player-controls ${small ? "small" : ""}`}>

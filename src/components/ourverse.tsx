@@ -14,6 +14,7 @@ import { MemoryRoom, Story, Letters, Love } from "./collections";
 import { CompanionRoom } from "./companion";
 import { Couple } from "./characters";
 import { CornerCompanion } from "./corner-companion";
+import { HomeEdgeFooter } from "./home-edge-footer";
 import { World } from "./world";
 import { Vault, Ending } from "./secrets";
 import { Modal } from "./ui";
@@ -424,6 +425,7 @@ function Shell() {
               <Constellation />
             </div>
           )}
+          {section === "home" ? <HomeEdgeFooter navigate={travel} onDev={() => setDev(true)} /> : <>
           <FloatingPlayer navigate={() => travel("music")} />
           <footer className="universe-footer infinity-footer">
             <div className="infinity-atmosphere" aria-hidden="true">
@@ -469,6 +471,7 @@ function Shell() {
               </button>
             )}
           </footer>
+          </>}
           {section !== "companion" && (
             <CornerCompanion destination={section} onVisit={() => travel("companion")} />
           )}

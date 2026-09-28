@@ -194,6 +194,15 @@ export function CornerCompanion({ onVisit, destination }: { onVisit: () => void;
   const resting = life.rest === "seated" || life.rest === "asleep";
 
   return (
+    <>
+    <svg className="corner-home-perch" viewBox="0 0 100 36" fill="none" stroke="#373049" strokeWidth="1.7" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 13Q26 6 50 9Q75 5 93 13L88 24L67 29L51 33L29 28L12 23Z" fill="#50425f" />
+      <path d="M12 17L29 28L47 31L39 20M67 29L78 18L88 16L88 24Z" fill="#685573" stroke="none" />
+      <path d="M7 12Q26 5 50 8Q77 5 93 12Q90 21 63 22Q25 25 7 15Z" fill="#b5a4c7" />
+      <path d="M15 13Q39 8 62 11Q78 9 87 13" stroke="#d5c4dd" strokeWidth="1.2" />
+      <ellipse cx="48" cy="15" rx="23" ry="3.5" fill="#51445e" opacity=".22" stroke="none" />
+      <path d="M85 7L86 4L87 7L90 8L87 9L86 12L85 9L82 8Z" fill="#e3cba6" stroke="none" />
+    </svg>
     <motion.div ref={host} className="corner-companion-host" style={{ x: life.x }} data-travel={life.travel} onBlur={(e) => {
       if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setMenuOpen(false);
     }}>
@@ -251,5 +260,6 @@ export function CornerCompanion({ onVisit, destination }: { onVisit: () => void;
     </AnimatePresence>
     <span className="sr-only" role="status" aria-live="polite">{reaction && reaction !== "greet" ? reactionLine : ""}</span>
     </motion.div>
+    </>
   );
 }

@@ -90,7 +90,8 @@
   .universe-shell .living-companion > .corner-speech { left: 3px; max-width: 165px; font-size: 13px; padding: 9px 12px; }
   .living-companion .corner-gift-heart { width: 9px; height: 9px; left: 30px; top: 34px; }
 }
-.corner-companion-host { position: fixed; left: 18px; bottom: max(16px, env(safe-area-inset-bottom)); width: 70px; height: 94px; z-index: 26; pointer-events: none; }
+.corner-companion-host { position: fixed; left: max(18px, calc(env(safe-area-inset-left) + 8px)); bottom: max(16px, env(safe-area-inset-bottom)); width: 70px; height: 94px; z-index: 26; pointer-events: none; }
+.corner-home-perch { position: fixed; left: max(8px, env(safe-area-inset-left)); bottom: calc(max(16px, env(safe-area-inset-bottom)) - 8px); width: 90px; height: 32.4px; z-index: 25; pointer-events: none; }
 .corner-companion-host > .living-companion { pointer-events: auto; }
 .corner-quick-actions {
   position: absolute;
@@ -164,7 +165,8 @@
 @keyframes corner-poke-arm { 0%, 100% { transform: rotate(0); } 16% { transform: rotate(-65deg); } 40%, 70% { transform: rotate(-30deg); } }
 @keyframes corner-affection-rise { 0% { opacity: 0; transform: translate(0, 4px) scale(.5); } 22% { opacity: .8; transform: translate(0, 0) scale(1); } 100% { opacity: 0; transform: translate(var(--heart-drift), -35px) scale(.6); } }
 @media (max-width: 700px) {
-  .corner-companion-host { left: 8px; bottom: max(78px, calc(env(safe-area-inset-bottom) + 58px)); width: 48px; height: 64px; }
+  .corner-companion-host { left: max(8px, calc(env(safe-area-inset-left) + 8px)); bottom: max(78px, calc(env(safe-area-inset-bottom) + 58px)); width: 48px; height: 64px; }
+  .corner-home-perch { left: max(0px, env(safe-area-inset-left)); bottom: calc(max(78px, calc(env(safe-area-inset-bottom) + 58px)) - 6px); width: 64px; height: 23.04px; }
   .corner-quick-actions { left: calc(100% + 8px); width: 128px; max-height: calc(100dvh - 175px); }
   .corner-quick-actions button { min-height: 44px; }
   .living-companion .corner-snack { width: 12px; height: 12px; left: 33px; top: 39px; }

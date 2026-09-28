@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { OurVerseCharacter } from "./characters";
 import type { Expression, Pose } from "@/config/characters";
 import { pick } from "@/lib/utils";
+import { projectRoom, roomDepth, ROOM_WIDTH, ROOM_HEIGHT, ROOM_FURNITURE_DEPTH } from "./room-projection";
 
 type Activity = "resting" | "reading" | "studying" | "coding" | "gaming" | "sleeping" | "window" | "talking" | "watching";
 type Surface = "floor" | "sofa" | "bed" | "desk";
@@ -23,42 +24,37 @@ type PlanActor = Omit<Actor, "character" | "phase"> & { approach: Point };
 type Exchange = { janna: string; josh: string };
 type Plan = { janna: PlanActor; josh: PlanActor; duration: [number, number]; exchanges?: Exchange[] };
 
-// The room SVG is 1000×600. Its floor begins at y≈426–455 and extends to y=600.
-// Furniture extents are taken from RoomIllustration's transformed SVG groups.
+// All anchors and movement points are world coordinates on the shared diamond floor.
 const FLOOR_EXCLUSIONS = [
-  { left: 25, right: 325, top: 344, bottom: 545 }, // bed + footboard
-  { left: 405, right: 637, top: 424, bottom: 550 }, // sofa
-  { left: 756, right: 980, top: 342, bottom: 489 }, // desk, legs, and chair
-  { left: 658, right: 727, top: 366, bottom: 471 }, // plant
+  { left: .6, right: 3.05, top: 2.68, bottom: 6 },
+  { left: 4.38, right: 7.06, top: 3.78, bottom: 5.05 },
+  { left: 4, right: 7.42, top: .45, bottom: 1.85 },
+  { left: 5.34, right: 6.37, top: 2.23, bottom: 3.1 },
+  { left: 6.95, right: 7.58, top: 2.28, bottom: 2.87 },
 ];
 const WALKABLE_FLOOR: Record<FloorName, Point> = {
-  bedside: { x: 370, y: 565 },
-  sofaFront: { x: 510, y: 565 },
-  center: { x: 660, y: 565 },
-  windowFront: { x: 740, y: 548 },
-  deskFront: { x: 868, y: 565 },
-  shelfFront: { x: 375, y: 550 },
+  bedside: { x: 3.4, y: 6.5 },
+  sofaFront: { x: 5.9, y: 6.3 },
+  center: { x: 3.9, y: 6.8 },
+  windowFront: { x: 6.65, y: 3.25 },
+  deskFront: { x: 6.65, y: 3.2 },
+  shelfFront: { x: 3.5, y: 2.15 },
 };
 const ACTIVITY_ANCHORS = {
-  sofaLeft: { x: 468, y: 516 },
-  sofaRight: { x: 565, y: 516 },
-  bedLeft: { x: 104, y: 435 },
-  bedRight: { x: 207, y: 435 },
+  sofaLeft: { x: 5.15, y: 4.48 },
+  sofaRight: { x: 6.15, y: 4.48 },
+  bedLeft: { x: 1.32, y: 3.2 },
+  bedRight: { x: 2.31, y: 3.2 },
 } satisfies Record<string, Point>;
-// The chair seat is x=839.6–898.6, y=425–444 after its parent
-// translate(140 0) scale(.88 1) transform. The seated hips are at (70, 144)
-// in the 140×180 character viewBox; this ground anchor puts that point at the
-// transformed seat center (869.1, 434.5) for both characters.
-const DESK_CHAIR_SEATED: Point = { x: 869, y: 463 };
+const DESK_CHAIR_SEATED: Point = { x: 5.85, y: 2.7 };
 
-const floorTopAt = (x: number) => x <= 114 ? 455 - (29 * x) / 114 : 426 + (8 * (x - 114)) / 886;
 const isWalkableFloorPoint = ({ x, y }: Point) =>
-  y >= floorTopAt(x) + 10 &&
+  x > 0 && x < 8 && y > 0 && y < 8 &&
   !FLOOR_EXCLUSIONS.some((zone) => x >= zone.left && x <= zone.right && y >= zone.top && y <= zone.bottom);
 const invalidWaypoint = Object.entries(WALKABLE_FLOOR).find(([, point]) => !isWalkableFloorPoint(point));
 if (invalidWaypoint) throw new Error(`Room-life waypoint ${invalidWaypoint[0]} is outside the walkable floor.`);
 
-// Every movement waypoint is intentionally kept in the open foreground floor lane.
+// Floor activities use clear world-space positions around the furniture.
 const floorPoint = (name: FloorName) => WALKABLE_FLOOR[name];
 const floorActivity = (name: FloorName, activity: Activity, pose: Pose = "idle", expression: Expression = "happy", facing: -1 | 1 = 1, speech?: string): PlanActor => {
   const point = floorPoint(name);
@@ -66,7 +62,7 @@ const floorActivity = (name: FloorName, activity: Activity, pose: Pose = "idle",
 };
 const sofaActivity = (seat: "sofaLeft" | "sofaRight", activity: Activity, pose: Pose = "sit", expression: Expression = "happy", facing: -1 | 1 = 1, speech?: string): PlanActor => {
   const point = ACTIVITY_ANCHORS[seat];
-  return { ...point, approach: { x: point.x, y: floorPoint("sofaFront").y }, activity, pose, expression, facing, surface: "sofa", speech };
+  return { ...point, approach: floorPoint("sofaFront"), activity, pose, expression, facing, surface: "sofa", speech };
 };
 const bedActivity = (side: "bedLeft" | "bedRight"): PlanActor => ({
   ...ACTIVITY_ANCHORS[side], approach: floorPoint("bedside"), activity: "sleeping", pose: "sleep", expression: "sleepy", facing: 1, surface: "bed",
@@ -89,7 +85,7 @@ const plans: Plan[] = [
     { janna: "what should we do?", josh: "whatever you want" },
   ] },
   { janna: sofaActivity("sofaLeft", "gaming", "gaming"), josh: deskActivity("gaming", "gaming"), duration: [22000, 36000] },
-  { janna: floorActivity("center", "talking", "idle", "happy", 1), josh: { ...floorActivity("center", "talking", "idle", "happy", -1), x: 745, approach: { x: 745, y: 565 } }, duration: [18000, 30000], exchanges: [
+  { janna: floorActivity("center", "talking", "idle", "happy", 1), josh: { ...floorActivity("center", "talking", "idle", "happy", -1), x: 5.85, y: 6.85, approach: { x: 5.85, y: 6.85 } }, duration: [18000, 30000], exchanges: [
     { janna: "are you hungry?", josh: "kinda" },
     { janna: "Josh", josh: "what?" },
     { janna: "what do you wanna do?", josh: "come sit" },
@@ -102,7 +98,7 @@ const plans: Plan[] = [
     { janna: "i'm comfy", josh: "goodnight, baby" },
   ] },
   { janna: sofaActivity("sofaLeft", "resting"), josh: deskActivity("studying", "sit"), duration: [21000, 35000] },
-  { janna: { ...floorActivity("windowFront", "watching", "idle", "happy", -1), x: 742, approach: { x: 742, y: 565 } }, josh: deskActivity("gaming", "gaming"), duration: [16000, 26000], exchanges: [
+  { janna: floorActivity("windowFront", "watching", "idle", "happy", -1), josh: deskActivity("gaming", "gaming"), duration: [16000, 26000], exchanges: [
     { janna: "are you winning?", josh: "...maybe" },
     { janna: "what are you playing?", josh: "come watch" },
     { janna: "one more game?", josh: "obviously" },
@@ -155,7 +151,18 @@ function randomizedSpeech(actor: Actor, previous: string) {
   const choices = lines.filter((line) => line !== previous);
   return choices.length ? pick(choices) : lines[0] || "";
 }
-const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
+const distance = (a: Point, b: Point) => {
+  const from = projectRoom(a.x, a.y), to = projectRoom(b.x, b.y);
+  return Math.hypot(from.x - to.x, from.y - to.y);
+};
+const exitPoint = (actor: Actor): Point => actor.surface === "bed" ? floorPoint("bedside") : actor.surface === "sofa" ? floorPoint("sofaFront") : actor.surface === "desk" ? floorPoint("deskFront") : { x: actor.x, y: actor.y };
+// Clear side corridors connect through the open front of the floor.
+function floorRoute(from: Point, to: Point): Point[] {
+  const fromLane = from.x > 5.6 ? 7.78 : 4.32;
+  const toLane = to.x > 5.6 ? 7.78 : 4.32;
+  const points = [{ x: fromLane, y: from.y }, { x: fromLane, y: 7.5 }, { x: toLane, y: 7.5 }, { x: toLane, y: to.y }, to];
+  return points.filter((point, index) => distance(index ? points[index - 1] : from, point) > 2);
+}
 
 export function RoomLife() {
   const [actors, setActors] = useState(initialActors);
@@ -232,10 +239,8 @@ export function RoomLife() {
     const nextCycle = () => {
       const plan = choosePlan();
       const current = actorsRef.current;
-      const exits = current.map((actor) => actor.surface === "bed" ? floorPoint("bedside") : { x: actor.x, y: 565 });
-      const leaving = current.map((actor) => actor.surface === "bed"
-        ? { ...actor, ...floorPoint("bedside"), surface: "floor" as const, pose: reducedMotion ? "idle" as const : actor.pose, phase: "leaving" as const, speech: undefined }
-        : { ...actor, y: 565, surface: "floor" as const, pose: reducedMotion ? "idle" as const : "walk" as const, phase: "leaving" as const, speech: undefined });
+      const exits = current.map(exitPoint);
+      const leaving = current.map((actor, index) => ({ ...actor, ...exits[index], surface: "floor" as const, pose: reducedMotion ? "idle" as const : "walk" as const, phase: "leaving" as const, speech: undefined }));
       publish(leaving);
       const exitDelay = reducedMotion ? 100 : 850;
       later(() => {
@@ -248,15 +253,18 @@ export function RoomLife() {
           speech: undefined,
         }));
         publish(lane);
-        const routed: Actor[] = lane.map((actor) => {
-          const target = plan[actor.character].approach;
-          const facing: -1 | 1 = target.x < actor.x ? -1 : 1;
-          return { ...actor, ...target, facing };
-        });
-        const routeDistance = Math.max(...lane.map((actor) => distance(actor, plan[actor.character].approach)));
-        const routeTime = reducedMotion ? 100 : Math.max(2300, Math.min(2800, 1800 + routeDistance * 2));
-        later(() => beginActivity(plan), routeTime);
-        publish(routed);
+        const routes = lane.map((actor) => floorRoute(actor, plan[actor.character].approach));
+        const advance = (step: number) => {
+          if (step >= Math.max(...routes.map((route) => route.length))) { beginActivity(plan); return; }
+          publish((items) => items.map((actor, index) => {
+            const target = routes[index][step];
+            if (!target) return actor;
+            const facing: -1 | 1 = projectRoom(target.x, target.y).x < projectRoom(actor.x, actor.y).x ? -1 : 1;
+            return { ...actor, ...target, facing };
+          }));
+          later(() => advance(step + 1), reducedMotion ? 100 : 1050);
+        };
+        advance(0);
       }, exitDelay);
     };
     later(nextCycle, 9000 + Math.random() * 7000);
@@ -267,18 +275,17 @@ export function RoomLife() {
     };
   }, [reducedMotion]);
 
-  const sofaOccupied = actors.some((actor) => actor.surface === "sofa");
-  const bedOccupied = actors.some((actor) => actor.surface === "bed");
-  const deskOccupied = actors.some((actor) => actor.surface === "desk");
-
   return (
     <>
       <div className="room-life-layer" role="group" aria-label="Janna and Josh spending a quiet day at home">
         {actors.map((actor) => {
+          const elevation = actor.surface === "bed" ? .98 : actor.surface === "sofa" ? .39 : actor.surface === "desk" ? .35 : 0;
+          const point = projectRoom(actor.x, actor.y, elevation);
+          const actorDepth = actor.surface === "bed" ? ROOM_FURNITURE_DEPTH.bed + 2 : actor.surface === "sofa" ? ROOM_FURNITURE_DEPTH.couch + 2 : actor.surface === "desk" ? ROOM_FURNITURE_DEPTH.chair + 2 : roomDepth(actor.x, actor.y);
           const style = {
-            left: `${actor.x / 10}%`,
-            top: `${actor.y / 6}%`,
-            zIndex: Math.round(actor.y / 25),
+            left: `${point.x / ROOM_WIDTH * 100}%`,
+            top: `${point.y / ROOM_HEIGHT * 100}%`,
+            zIndex: actorDepth,
             "--room-facing": actor.facing,
           } as CSSProperties;
           const sleeping = actor.surface === "bed";
@@ -289,24 +296,12 @@ export function RoomLife() {
               style={style}
             >
               {actor.speech && <span className="room-life-bubble" role="status">{actor.speech}</span>}
-              {sleeping && actor.character === "josh" && (
-                <svg className="room-life-sleep-body" viewBox="0 0 260 180" aria-hidden="true">
-                  <path d="M119 103Q132 91 148 103L169 118Q204 117 239 136L245 158Q207 171 165 156L126 145Q112 132 119 103Z" fill="#41404f" stroke="#242333" strokeWidth="5" strokeLinejoin="round" />
-                  <path d="M134 111Q151 118 168 139" fill="none" stroke="#d5b5aa" strokeWidth="10" strokeLinecap="round" />
-                  <ellipse cx="171" cy="141" rx="8" ry="5" fill="#e4b9ab" />
-                </svg>
-              )}
               <OurVerseCharacter character={actor.character} pose={actor.pose} expression={actor.expression} sleepHeadOnly={sleeping} />
               {(actor.activity === "reading" || actor.activity === "studying") && <svg className="room-life-book" viewBox="0 0 34 25" aria-hidden="true"><path d="M2 4Q10 1 17 6V23Q10 18 2 21ZM32 4Q24 1 17 6V23Q24 18 32 21Z" fill="#ead9c8" stroke="#96748a" strokeWidth="1.5"/><path d="M17 7V21M6 8Q11 7 14 10M20 10Q25 7 29 8" fill="none" stroke="#ba91a2" strokeWidth="1"/></svg>}
             </div>
           );
         })}
       </div>
-      <svg className="room-life-foreground" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-        {sofaOccupied && <svg x="405" y="424" width="232" height="110" viewBox="364 432 393 120" preserveAspectRatio="none"><path d="M390 518Q559 535 730 518V536Q559 552 390 536Z" fill="#674d62" stroke="#b68f9e" strokeWidth="3"/><path d="M410 535V549M708 535V549" stroke="#5a414e" strokeWidth="11"/></svg>}
-        {bedOccupied && <g transform="translate(-18 0) scale(.9 1)"><path d="M61 418Q119 399 181 419L215 442Q270 399 370 424V486H61Z" fill="#8e7fa9" stroke="#c5a4b0" strokeWidth="3"/><path d="M71 437Q137 421 199 441M226 439Q292 419 357 440" fill="none" stroke="#d9bcca" strokeOpacity=".48" strokeWidth="3"/></g>}
-        {deskOccupied && <path d="M756 368H980" fill="none" stroke="#c3a08a" strokeWidth="2"/>}
-      </svg>
     </>
   );
 }

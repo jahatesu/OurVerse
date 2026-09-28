@@ -286,268 +286,162 @@ body::after {
 @keyframes evening-stroll { 0% { translate: -28px 0; } 100% { translate: 28px 0; } }
 @keyframes slow-dance { 0%, 100% { transform: translate(-10px, 0) rotate(-4deg); } 25% { transform: translate(0, -4px) rotate(0) scaleX(.94); } 50% { transform: translate(10px, 0) rotate(4deg); } 75% { transform: translate(0, -4px) rotate(0) scaleX(.94); } }
 
-/* Our Home is one illustrated dollhouse room; its hotspots sit directly on its furniture. */
-.world-room .cozy-room {
+/* The room is an axonometric scene. Every layer shares one canvas and world depth. */
+.world-room .room-viewport {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #9d7b9466 transparent;
+}
+.world-room .cozy-room.iso-room {
   position: relative;
   isolation: isolate;
-  width: min(1000px, 100%);
+  width: 100%;
   height: auto;
+  max-width: none;
   min-height: 0;
-  aspect-ratio: 5 / 3;
-  margin: 0 auto;
-  overflow: hidden;
-  border: 8px solid #765e63;
-  border-radius: 18px 18px 8px 8px;
-  background: #302d46;
-  box-shadow: inset 0 0 0 2px #d5b8a42c, 0 28px 62px #07071188, 0 7px 0 #302737;
+  aspect-ratio: 1000 / 740;
+  margin: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
-.world-room .cozy-room::after {
-  inset: 0;
-  border: 1px solid #e6cbb02a;
-  border-radius: inherit;
-  background: linear-gradient(130deg, #fff2df08, transparent 38% 70%, #08091414);
+.world-room .cozy-room.iso-room::before,
+.world-room .cozy-room.iso-room::after { content: none; }
+.world-room:has(.iso-room) .section-heading { padding-block: 2px 0; margin-bottom: 0; }
+.world-room:has(.iso-room) .section-heading::before { height: 12px; margin-bottom: 12px; }
+.world-room:has(.iso-room) .section-heading h1 { font-size: clamp(42px, 4.5vw, 66px); }
+.world-room .iso-room-layer { position: absolute; inset: 0; pointer-events: none; }
+.world-room .iso-room-svg { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.world-room .iso-room-interactable {
+  pointer-events: visiblePainted;
+  cursor: pointer;
+  outline: none;
+  transition: translate .18s ease, filter .18s ease;
 }
-.room-illustration { position: absolute; inset: 0; display: block; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-.scene-window, .scene-frame, .scene-bookshelf, .scene-calendar, .scene-bed, .scene-bedside,
-.scene-sofa, .scene-coffee-table, .scene-laptop, .scene-console, .scene-plant,
-.scene-mailbox, .scene-radio, .scene-desk-chair {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: translate .2s ease, scale .2s ease, filter .2s ease;
-}
-.cozy-room:has(.object-window:hover, .object-window:focus-visible) .scene-window,
-.cozy-room:has(.object-frame:hover, .object-frame:focus-visible) .scene-frame,
-.cozy-room:has(.object-books:hover, .object-books:focus-visible) .scene-bookshelf,
-.cozy-room:has(.object-calendar:hover, .object-calendar:focus-visible) .scene-calendar,
-.cozy-room:has(.object-bed:hover, .object-bed:focus-visible) .scene-bed,
-.cozy-room:has(.object-laptop:hover, .object-laptop:focus-visible) .scene-laptop,
-.cozy-room:has(.object-console:hover, .object-console:focus-visible) .scene-console,
-.cozy-room:has(.object-plant:hover, .object-plant:focus-visible) .scene-plant,
-.cozy-room:has(.object-mailbox:hover, .object-mailbox:focus-visible) .scene-mailbox,
-.cozy-room:has(.object-radio:hover, .object-radio:focus-visible) .scene-radio {
-  translate: 0 -2px;
-  scale: 1.012;
-  filter: drop-shadow(0 0 8px #e5c5dc55) brightness(1.08);
-}
-.room-lamp-glow { transition: opacity .3s ease; }
-.cozy-room:has(.room-lamp.lamp-off) .room-lamp-glow { opacity: 0; }
-.room-life-layer {
+.world-room .iso-room-touch-target { pointer-events: all; }
+.world-room .iso-room-interactable:hover,
+.world-room .iso-room-interactable:focus-visible { translate: 0 -3px; filter: brightness(1.08) drop-shadow(0 0 5px #f4d4aa55); }
+.world-room .iso-room-interactable:focus-visible { filter: brightness(1.12) drop-shadow(0 0 5px #f4d4aabb); }
+.world-room .iso-room-label {
   position: absolute;
-  inset: 0;
-  z-index: 4;
+  width: max-content;
+  max-width: 180px;
+  padding: 5px 10px;
+  border: 1px solid #d7b4c34a;
+  border-radius: 10px;
+  background: #211b32ee;
+  color: #f3e2d4;
+  font: 500 10px/1.35 var(--display);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  text-align: center;
+  box-shadow: 0 5px 15px #08081266;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, calc(-100% - 26px));
+  transition: opacity .16s ease, visibility .16s ease;
   pointer-events: none;
 }
-.room-life-person {
+.world-room .iso-room-discovery:has(.iso-room-interactable:hover, .iso-room-interactable:focus-visible) .iso-room-label { opacity: 1; visibility: visible; }
+/* Contents participate directly in the furniture's depth stack. No sprite overlay. */
+.world-room .room-life-layer { display: contents; pointer-events: none; }
+.world-room .room-life-person {
   position: absolute;
   display: block;
-  width: 7.2%;
-  max-width: 74px;
-  min-width: 38px;
+  width: 6.5%;
   aspect-ratio: 140 / 180;
   overflow: visible;
   pointer-events: none;
-  transform: translate(-50%, -100%);
-  transition: left 2.6s cubic-bezier(.2,.74,.25,1), top 2.6s cubic-bezier(.2,.74,.25,1), opacity .35s ease;
-  filter: drop-shadow(0 5px 4px #1713244a);
+  transform: translate(-50%, -95%);
+  transition: left 1s linear, top 1s linear, z-index 1s linear, opacity .35s ease;
 }
-.room-life-person.room-life-phase-leaving,
-.room-life-person.room-life-phase-entering.room-life-bed { opacity: 0; }
-.room-life-person.room-life-phase-leaving { transition-duration: .8s; }
-.room-life-person.room-life-phase-entering { transition-duration: 1.2s; }
-.room-life-person > .character {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  pointer-events: none;
-  transform: scaleX(var(--room-facing, 1));
-}
-.room-life-person.room-life-desk { width: 11%; max-width: 110px; }
-.room-life-person .character-head { animation-duration: 5.8s; }
-.room-life-person > .pose-walk { animation: room-walk-bob .48s ease-in-out infinite alternate; }
-.room-life-person .pose-sit .character-head { animation: room-soft-look 6s ease-in-out infinite; }
-.room-life-person .pose-gaming .arm { animation: room-game-tap 1.2s ease-in-out infinite alternate; }
-.room-life-desk .character-shadow { opacity: .04; }
-.room-life-book { position: absolute; width: 29%; height: auto; right: -1%; bottom: 20%; filter: drop-shadow(0 2px 2px #17132466); }
-.room-life-sleeping .sleep-head-only .character-shadow,
-.room-life-sleeping .sleep-head-only .character-legs,
-.room-life-sleeping .sleep-head-only .character-body,
-.room-life-sleeping .sleep-head-only .character-details,
-.room-life-sleeping .sleep-head-only .arm,
-.room-life-sleeping .sleep-head-only .game-controller { display: none; }
-.room-life-sleeping .sleep-head-only .character-head {
-  transform: translateY(27px) scale(.82);
-  transform-origin: 70px 75px;
-  animation: sleeping-breath 4.5s ease-in-out infinite;
-}
-.room-life-sleep-body {
+.world-room .room-life-person::before {
+  content: "";
   position: absolute;
-  z-index: 0;
-  left: -45%;
-  top: 0;
-  width: 190%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
+  bottom: 2%;
+  left: 12%;
+  width: 76%;
+  height: 9%;
+  border-radius: 50%;
+  background: #19142666;
+  filter: blur(2px);
 }
-.room-life-sleep-body + .character { position: relative; z-index: 1; }
-.room-life-janna.room-life-pose-hug > .character,
-.room-life-janna.room-life-pose-kiss > .character { translate: 7px 0; }
-.room-life-josh.room-life-pose-hug > .character,
-.room-life-josh.room-life-pose-kiss > .character { translate: -7px 0; }
-.room-life-janna.room-life-pose-kiss .character-head { transform: rotate(8deg); transform-origin: 70px 100px; }
-.room-life-josh.room-life-pose-kiss .character-head { transform: rotate(-8deg); transform-origin: 70px 100px; }
-.room-life-bubble {
+.world-room .room-life-person.room-life-bed { width: 6.1%; transform: translate(-50%, -50%); }
+.world-room .room-life-bed::before,
+.world-room .room-life-sofa::before,
+.world-room .room-life-desk::before { display: none; }
+.world-room .room-life-person.room-life-phase-leaving,
+.world-room .room-life-person.room-life-phase-entering.room-life-bed { opacity: 0; }
+.world-room .room-life-person.room-life-phase-leaving { transition-duration: .8s; }
+.world-room .room-life-person.room-life-phase-entering { transition-duration: 1.2s; }
+.world-room .room-life-person > .character { display: block; width: 100%; height: auto; overflow: visible; pointer-events: none; transform: scaleX(var(--room-facing, 1)); }
+.world-room .room-life-person .character-shadow { display: none; }
+.world-room .room-life-person .character-head { animation-duration: 5.8s; }
+.world-room .room-life-person > .pose-walk { animation: room-walk-bob .48s ease-in-out infinite alternate; }
+.world-room .room-life-person .pose-sit .character-head { animation: room-soft-look 6s ease-in-out infinite; }
+.world-room .room-life-person .pose-gaming .arm { animation: room-game-tap 1.2s ease-in-out infinite alternate; }
+.world-room .room-life-book { position: absolute; width: 29%; height: auto; right: -1%; bottom: 20%; filter: drop-shadow(0 2px 2px #17132466); }
+.world-room .room-life-sleeping .character-back-hair,
+.world-room .room-life-sleeping .character-legs,
+.world-room .room-life-sleeping .character-body,
+.world-room .room-life-sleeping .character-details,
+.world-room .room-life-sleeping .arm,
+.world-room .room-life-sleeping .game-controller { display: none; }
+.world-room .room-life-sleeping .character-head { transform: rotate(-22deg); transform-origin: 70px 75px; animation: sleeping-breath 4.5s ease-in-out infinite; }
+.world-room .room-life-janna.room-life-pose-hug > .character,
+.world-room .room-life-janna.room-life-pose-kiss > .character { translate: 7px 0; }
+.world-room .room-life-josh.room-life-pose-hug > .character,
+.world-room .room-life-josh.room-life-pose-kiss > .character { translate: -7px 0; }
+.world-room .room-life-janna.room-life-pose-kiss .character-head { transform: rotate(8deg); transform-origin: 70px 100px; }
+.world-room .room-life-josh.room-life-pose-kiss .character-head { transform: rotate(-8deg); transform-origin: 70px 100px; }
+.world-room .room-life-bubble {
   position: absolute;
   z-index: 2;
   left: 50%;
   bottom: 86%;
   width: max-content;
-  max-width: clamp(108px, 16vw, 155px);
+  max-width: 150px;
   padding: 7px 10px;
   border: 1px solid #e3c6d59c;
   border-radius: 12px 12px 12px 4px;
   background: #211c31ed;
   box-shadow: 0 6px 18px #08071248;
   color: #fff2e4;
-  font: 500 clamp(10px, 1.2vw, 13px)/1.35 var(--display);
+  font: 500 12px/1.35 var(--display);
   text-align: center;
   white-space: normal;
   pointer-events: none;
   animation: room-bubble-in .32s ease both;
 }
-.room-life-bubble::after {
-  content: "";
-  position: absolute;
-  left: 12px;
-  bottom: -6px;
-  width: 10px;
-  height: 10px;
-  background: #211c31ed;
-  border-right: 1px solid #e3c6d59c;
-  border-bottom: 1px solid #e3c6d59c;
-  transform: skewY(28deg) rotate(22deg);
-}
-.room-life-josh .room-life-bubble { border-radius: 12px 12px 4px 12px; }
-.room-life-josh .room-life-bubble::after { left: auto; right: 12px; transform: skewY(-28deg) rotate(-22deg); }
-.room-life-layer:has(.room-life-janna .room-life-bubble):has(.room-life-josh .room-life-bubble) .room-life-janna .room-life-bubble { bottom: 110%; }
-.room-life-foreground {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
+.world-room .room-life-bubble::after { content: ""; position: absolute; left: 12px; bottom: -6px; width: 10px; height: 10px; background: #211c31ed; border-right: 1px solid #e3c6d59c; border-bottom: 1px solid #e3c6d59c; transform: skewY(28deg) rotate(22deg); }
+.world-room .room-life-josh .room-life-bubble { border-radius: 12px 12px 4px 12px; }
+.world-room .room-life-josh .room-life-bubble::after { left: auto; right: 12px; transform: skewY(-28deg) rotate(-22deg); }
+.world-room .room-life-layer:has(.room-life-janna .room-life-bubble):has(.room-life-josh .room-life-bubble) .room-life-janna .room-life-bubble { bottom: 110%; }
 @keyframes room-walk-bob { from { translate: 0 0; } to { translate: 0 -2px; } }
 @keyframes room-soft-look { 0%, 42%, 100% { transform: rotate(0); } 48%, 55% { transform: rotate(2deg); } }
 @keyframes room-game-tap { from { translate: 0 0; } to { translate: 0 1px; } }
 @keyframes room-bubble-in { from { opacity: 0; translate: 0 5px; scale: .96; } to { opacity: 1; translate: 0 0; scale: 1; } }
-.world-room .room-object {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  min-width: 40px;
-  min-height: 40px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  box-shadow: none;
-  transform: translate(-50%, -50%);
-  font-size: 0;
-  z-index: 2;
-  transition: transform .22s ease, filter .22s ease;
-}
-.world-room .room-object::before {
-  content: "";
-  position: absolute;
-  inset: -12%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, #e9c9e52a, #d9bbdd0c 48%, transparent 72%);
-  opacity: 0;
-  transform: scale(.88);
-  pointer-events: none;
-  transition: opacity .22s ease, transform .22s ease;
-}
-.world-room .room-object:hover,
-.world-room .room-object:focus-visible { z-index: 6; transform: translate(-50%, calc(-50% - 3px)) scale(1.025); filter: drop-shadow(0 0 7px #e5c5dc22); }
-.world-room .room-object:hover::before,
-.world-room .room-object:focus-visible::before { opacity: 1; transform: scale(1); }
-.world-room .room-object:focus-visible { outline: 2px solid #ead09f; outline-offset: 2px; }
-.world-room .object-drawing { opacity: 0; pointer-events: none; }
-.world-room .object-label {
-  position: absolute;
-  top: auto;
-  right: auto;
-  bottom: calc(100% + 5px);
-  left: 50%;
-  width: max-content;
-  max-width: 130px;
-  padding: 4px 9px;
-  border: 1px solid #d2b9d357;
-  border-radius: 12px;
-  background: #1c1a2deF;
-  color: #f1e6d8;
-  font: 500 11px/1.35 var(--display);
-  letter-spacing: .01em;
-  text-align: center;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transform: translate(-50%, 3px);
-  box-shadow: 0 5px 15px #0c0b1688;
-  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
-  z-index: 8;
-}
-.world-room .room-object:hover .object-label,
-.world-room .room-object:focus-visible .object-label { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
-.world-room .object-bed { left: 17.5%; top: 74%; width: 30%; height: 35%; z-index: 2; }
-.world-room .object-frame { left: 21%; top: 30%; width: 13%; height: 23%; }
-.world-room .object-books { left: 50%; top: 31%; width: 21%; height: 29%; }
-.world-room .object-window { left: 74%; top: 31%; width: 19%; height: 34%; }
-.world-room .object-calendar { left: 87%; top: 26%; width: 11%; height: 22%; }
-.world-room .object-laptop { left: 87%; top: 55%; width: 14%; height: 16%; }
-.world-room .object-console { left: 94%; top: 59%; width: 9%; height: 14%; }
-.world-room .object-radio { left: 58%; top: 40%; width: 8%; height: 11%; }
-.world-room .object-mailbox { left: 9%; top: 58%; width: 9%; height: 19%; }
-.world-room .object-plant { left: 69%; top: 70%; width: 11%; height: 25%; }
-.world-room .object-plant .object-drawing { opacity: 0; }
-.world-room .room-lamp {
-  left: 36.8%; top: 62%; width: 8%; height: 15%; min-width: 44px; min-height: 44px; z-index: 3;
-  padding: 0; border: 0; border-radius: 50%; background: transparent;
-  transform: translate(-50%, -50%); scale: 1;
-  transition: transform .2s ease, background .2s ease;
-}
-.world-room .room-lamp i,
-.world-room .room-lamp span { display: none; }
-.world-room .room-lamp::before { content: ""; position: absolute; inset: -55%; border-radius: 50%; background: radial-gradient(ellipse, #f2d29330, transparent 70%); pointer-events: none; opacity: .7; }
-.world-room .room-lamp.lamp-off::before { display: block; opacity: 0; }
-.world-room .room-lamp:hover,
-.world-room .room-lamp:focus-visible { transform: translate(-50%, -53%) scale(1.04); }
-.world-room .room-lamp:focus-visible { outline: 2px solid #ead09f; outline-offset: 3px; }
 @media (max-width: 700px) {
-  .world-room .cozy-room { width: calc(100% + 10px); margin-inline: -5px; min-height: 0; aspect-ratio: 5 / 3; border-width: 5px; border-radius: 13px 13px 6px 6px; }
-  .world-room .object-label { max-width: 100px; padding: 3px 7px; font-size: 10px; }
+  .world-room .room-viewport { width: calc(100% + 48px); margin-inline: -24px; }
+  .world-room .cozy-room.iso-room { min-width: 760px; }
+  .world-room .iso-room-label { max-width: 155px; font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .room-life-person { transition-duration: .12s; }
-  .room-life-person > .pose-walk,
-  .room-life-person .pose-sit .character-head,
-  .room-life-person .pose-gaming .arm,
-  .room-life-sleeping .sleep-head-only .character-head,
-  .room-life-bubble { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-  .room-life-person .character-head,
-  .room-life-person .character-eyes { animation: none; }
-  .world-room .room-object,
-  .world-room .room-object::before,
-  .world-room .object-label,
-  .world-room .room-lamp,
-  .room-lamp-glow { transition: none !important; }
+  .world-room .room-life-person { transition-duration: .1s; }
+  .world-room .room-life-person > .pose-walk,
+  .world-room .room-life-person .character-head,
+  .world-room .room-life-person .character-eyes,
+  .world-room .room-life-person .arm,
+  .world-room .room-life-bubble { animation: none !important; }
+  .world-room .iso-room-interactable,
+  .world-room .iso-room-label { transition: none; }
 }
-
 @media (min-width: 1050px) {
   .world-room .section-heading, .world-memories .section-heading, .world-letters .section-heading, .world-games .section-heading { text-align: left; margin: 0 0 55px; max-width: 760px; }
   .world-room .section-heading::before, .world-memories .section-heading::before, .world-letters .section-heading::before, .world-games .section-heading::before { margin-left: 0; }

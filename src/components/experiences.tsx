@@ -23,10 +23,9 @@ import { settings } from "@/config/settings";
 import { dateLabel, pick } from "@/lib/utils";
 import { CHAOS_CATEGORY_META, CHAOS_PAPER_SLOTS, CHAOS_REACTIONS, JACKPOT_REWARDS, LOVE_LETTERS, RARE_DRAW_WEIGHTS, pickChaosEntry, pickUnseen, type ChaosEntry, type JackpotReward } from "@/data/chaos-jar";
 import { DestinationArt } from "./galaxy";
-import { RoomLife } from "./room-life";
+import { RoomDiorama } from "./room-diorama";
 import { AdventureMap } from "./adventure-map";
 type Navigation = { navigate: (id: string) => void };
-type SouvenirKind = "tickets" | "notebook" | "jar" | "phone" | "parcel";
 const homeSouvenirs = [
   { id: "coupons", label: "Tickets on the desk", kind: "tickets" },
   { id: "future", label: "Our someday notebook", kind: "notebook" },
@@ -34,14 +33,6 @@ const homeSouvenirs = [
   { id: "questions", label: "Stay up talking", kind: "phone" },
   { id: "gifts", label: "A mysterious parcel", kind: "parcel" },
 ] as const;
-
-function SouvenirArt({ kind }: { kind: SouvenirKind }) {
-  if (kind === "tickets") return <svg viewBox="0 0 120 88" aria-hidden="true"><g transform="rotate(8 66 40)"><path d="M36 19H105V29Q98 35 105 41V62H36V51Q43 45 36 39Z" fill="#b89caf" stroke="#e2cad2" strokeWidth="2"/><path d="M47 27H94M47 34H81" stroke="#604a68" strokeWidth="2" strokeDasharray="2 3"/><path d="M83 48C78 42 71 48 83 57C95 48 89 42 83 48Z" fill="#f2d2cd"/><path d="M20 28H83V38Q76 44 83 50V72H20V61Q27 55 20 49Z" fill="#f3e4d2" stroke="#fff0dc" strokeWidth="2"/><path d="M31 38H69M31 44H61" stroke="#9d7890" strokeWidth="2" strokeDasharray="2 3"/><path d="M66 57L69 62L75 63L71 67L72 73L66 70L61 73L62 67L58 63L64 62Z" fill="#d9b77a"/></g></svg>;
-  if (kind === "notebook") return <svg viewBox="0 0 120 88" aria-hidden="true"><g transform="rotate(-7 60 45)"><path d="M24 17Q26 12 32 13L94 21V73L31 65Q24 64 24 58Z" fill="#e8d8c9"/><path d="M31 13L99 20V70L31 64Q26 63 26 57V19Q26 14 31 13Z" fill="#74617e" stroke="#c6afc9" strokeWidth="2"/><path d="M37 22V60M44 28L85 33M44 37L82 41M44 46L75 49" stroke="#eadedb" strokeWidth="2" opacity=".8"/><path d="M66 24L70 70" stroke="#bca4d0" strokeWidth="4"/><path d="M61 25L66 29L71 25V59L66 64L61 59Z" fill="#d89aae"/><path d="M86 52C82 47 76 52 86 60C96 52 91 47 86 52Z" fill="#f1c4cf"/></g></svg>;
-  if (kind === "jar") return <svg viewBox="0 0 120 88" aria-hidden="true"><path d="M42 18H78V25L85 32V68Q85 76 77 76H43Q35 76 35 68V32L42 25Z" fill="#b9c5d94a" stroke="#e5d8e6" strokeWidth="2.5"/><path d="M39 20H81V30H39Z" fill="#b889a5" stroke="#e7c5d2" strokeWidth="2"/><path d="M39 27Q60 34 81 27M37 31Q60 38 83 31" fill="none" stroke="#e8c992" strokeWidth="2"/><path d="M47 47C43 42 38 47 47 54C56 47 51 42 47 47Z" fill="#f2d2dc"/><path d="M68 54C63 48 58 54 68 61C78 54 73 48 68 54Z" fill="#d7c8e6"/><path d="M52 63L67 65M44 39L51 40" stroke="#fff2e4" strokeWidth="2" strokeLinecap="round"/><path d="M60 18C54 10 48 17 60 23C72 17 66 10 60 18Z" fill="#d99ab0"/></svg>;
-  if (kind === "phone") return <svg viewBox="0 0 120 88" aria-hidden="true"><path d="M29 22Q29 16 36 16H77Q84 16 84 23V73Q84 79 77 79H36Q29 79 29 72Z" fill="#24243b" stroke="#c7b5d8" strokeWidth="3"/><rect x="35" y="25" width="43" height="43" rx="5" fill="#d9d0e5"/><path d="M41 34H67Q71 34 71 38V43H50L45 47V43H41Z" fill="#f7eee4"/><path d="M45 51H69Q72 51 72 55V60H55L50 64V60H45Z" fill="#e3a9c0"/><circle cx="73" cy="30" r="2" fill="#d89bb4"/><path d="M94 20A10 10 0 1 0 104 35A8 8 0 0 1 94 20Z" fill="#eedfbf"/><path d="M19 27L21 32L26 34L21 36L19 41L17 36L12 34L17 32Z" fill="#e4c88f"/></svg>;
-  return <svg viewBox="0 0 120 88" aria-hidden="true"><g transform="rotate(-5 60 47)"><path d="M24 30L58 14L96 29V68L60 82L24 65Z" fill="#b88978" stroke="#e4c6ad" strokeWidth="2"/><path d="M24 30L60 44L96 29M60 44V81" fill="none" stroke="#f1d8ba" strokeWidth="3"/><path d="M56 17L63 17L67 44L59 44Z" fill="#e9c992"/><path d="M28 36L35 39V55L28 52ZM85 35L92 32V49L85 52Z" fill="#d99caf"/><rect x="40" y="50" width="24" height="16" rx="2" fill="#f3e7d8"/><path d="M48 58Q52 53 56 58Q52 62 48 58Z" fill="none" stroke="#937a91" strokeWidth="1.5"/><path d="M78 62L81 67L86 68L82 72L83 77L78 74L73 77L74 72L70 68L76 67Z" fill="#f1d390"/></g></svg>;
-}
 
 export default function Experiences({
   section,
@@ -95,201 +86,18 @@ export default function Experiences({
   }
 }
 const roomObjects = [
-  { id: "sleep", name: "Bed", kind: "bed", x: 17.5, y: 74 },
-  { id: "messages", name: "Laptop", kind: "laptop", x: 87, y: 55 },
-  { id: "memories", name: "Photo frame", kind: "frame", x: 21, y: 30 },
-  { id: "letters", name: "Bookshelf", kind: "books", x: 50, y: 31 },
-  { id: "games", name: "Game console", kind: "console", x: 94, y: 59 },
-  { id: "world", name: "Window", kind: "window", x: 74, y: 31 },
-  { id: "calendar", name: "Calendar", kind: "calendar", x: 87, y: 27 },
-  { id: "music", name: "Music player", kind: "radio", x: 58, y: 40 },
-  { id: "mailbox", name: "Mailbox", kind: "mailbox", x: 9, y: 58 },
-  { id: "garden", name: "Plant", kind: "plant", x: 69, y: 70 },
+  { id: "sleep", name: "Bed", kind: "bed" },
+  { id: "messages", name: "Laptop", kind: "laptop" },
+  { id: "memories", name: "Photo frame", kind: "frame" },
+  { id: "letters", name: "Bookshelf", kind: "books" },
+  { id: "games", name: "Game console", kind: "console" },
+  { id: "world", name: "Window", kind: "window" },
+  { id: "calendar", name: "Calendar", kind: "calendar" },
+  { id: "music", name: "Music player", kind: "radio" },
+  { id: "mailbox", name: "Mailbox", kind: "mailbox" },
+  { id: "garden", name: "Plant", kind: "plant" },
 ];
-function RoomIllustration() {
-  return (
-    <svg className="room-illustration" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="room-back-wall" x2="0" y2="1"><stop stopColor="#45415d"/><stop offset="1" stopColor="#302e47"/></linearGradient>
-        <linearGradient id="room-side-wall" x2="1" y2="1"><stop stopColor="#29283f"/><stop offset="1" stopColor="#38324b"/></linearGradient>
-        <linearGradient id="room-floor-wood" x2="0" y2="1"><stop stopColor="#755e60"/><stop offset="1" stopColor="#463b4c"/></linearGradient>
-        <linearGradient id="room-window-glow" x2="0" y2="1"><stop stopColor="#a9b8df" stopOpacity=".46"/><stop offset="1" stopColor="#a9b8df" stopOpacity="0"/></linearGradient>
-        <linearGradient id="room-quilt" x2="1" y2="1"><stop stopColor="#a68ca8"/><stop offset="1" stopColor="#725e80"/></linearGradient>
-        <linearGradient id="room-sofa" x2="0" y2="1"><stop stopColor="#a77e91"/><stop offset="1" stopColor="#73596f"/></linearGradient>
-        <filter id="room-soft-shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur stdDeviation="7"/></filter>
-      </defs>
-      {/* A little cutaway shell: side return, back wall, baseboard, then grounded floor. */}
-      <path d="M0 22L114 57V410L0 455Z" fill="url(#room-side-wall)"/>
-      <path d="M114 57L971 57L1000 420L114 410Z" fill="url(#room-back-wall)"/>
-      <path d="M114 57L971 57V75L114 75Z" fill="#625872" opacity=".5"/>
-      <path d="M115 75V407M967 75L995 416" stroke="#c7b7c533" strokeWidth="2"/>
-      <path d="M114 386L1000 397V434L114 426Z" fill="#9a7e7b"/>
-      <path d="M114 394L1000 405" stroke="#d2b5a7" strokeOpacity=".45" strokeWidth="4"/>
-      <path d="M0 455L114 426L1000 434V600H0Z" fill="url(#room-floor-wood)"/>
-      <path d="M0 455L114 426L1000 434" fill="none" stroke="#c2a28d" strokeWidth="7" opacity=".72"/>
-      <g stroke="#d9bdad" strokeOpacity=".13" strokeWidth="2">
-        <path d="M0 495L1000 475M0 550L1000 528M142 428L83 600M330 430L315 600M548 431L570 600M765 433L827 600M930 434L1000 581"/>
-        <path d="M0 522H1000M0 577H1000"/>
-      </g>
-      <path d="M138 100Q310 75 470 99T802 98T962 94M132 366Q355 350 540 367T960 364" fill="none" stroke="#cbb7cb" strokeOpacity=".12" strokeWidth="2"/>
 
-      {/* Moonlit window: the cool light spills softly onto the room. */}
-      <g className="scene-window">
-      <path d="M638 91H823V296H638Z" fill="url(#room-window-glow)" opacity=".8"/>
-      <rect x="661" y="107" width="145" height="161" rx="7" fill="#252e49" stroke="#c3aec0" strokeWidth="11"/>
-      <rect x="673" y="119" width="121" height="137" rx="2" fill="#1e2943"/>
-      <path d="M674 221L706 184L735 221L759 196L793 230V256H674Z" fill="#45516b"/>
-      <path d="M674 240Q709 218 743 238T793 231V256H674Z" fill="#39445e"/>
-      <path d="M752 136A19 19 0 1 0 773 164A16 16 0 0 1 752 136Z" fill="#ecdfc0"/>
-      <g fill="#f0e7d5"><circle cx="703" cy="143" r="2"/><circle cx="780" cy="185" r="1.7"/><circle cx="723" cy="171" r="1.3"/><path d="M743 128l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></g>
-      <path d="M734 109V268M673 200H793" stroke="#c2b0c1" strokeWidth="7"/>
-      <path d="M650 91Q635 180 652 290L674 276V108ZM816 91Q834 174 814 289L795 275V108Z" fill="#8b647d" stroke="#b98ea0" strokeWidth="3"/>
-      <path d="M650 92Q662 104 674 108M816 92Q804 104 795 108" fill="none" stroke="#ddbdc3" strokeWidth="5"/>
-      </g>
-
-      {/* Wall memories, calendar, and a varied little bookshelf. */}
-      <g className="scene-frame">
-      <rect x="150" y="125" width="112" height="104" rx="4" fill="#a88473" stroke="#e0c3a3" strokeWidth="5"/>
-      <rect x="159" y="134" width="94" height="85" fill="#273149"/>
-      <circle cx="216" cy="158" r="14" fill="#eadab9"/>
-      <path d="M160 200L188 168L210 197L228 178L252 201V219H160Z" fill="#58647b"/>
-      <path d="M196 190C182 178 176 196 196 207C215 196 210 178 196 190Z" fill="#d79eaf"/>
-      </g>
-      <path d="M286 166H367V229H286Z" fill="#332e46" stroke="#bda5b2" strokeWidth="3"/>
-      <path d="M286 166L326 144L367 166" fill="#9a7182" stroke="#d4b7bd" strokeWidth="3"/>
-      <text x="326" y="204" textAnchor="middle" fill="#f0e2cd" fontSize="21" fontFamily="serif">J + J</text>
-      <g className="scene-bookshelf">
-      <path d="M420 166H604V263H420Z" fill="#4c3d4a" stroke="#a27c70" strokeWidth="8"/>
-      <path d="M422 155H603V166H422Z" fill="#9b766d" stroke="#d2b49a" strokeWidth="3"/>
-      <path d="M435 153V124H457V153ZM461 153V114H482V153ZM488 153V132H505V153Z" fill="#a66f7d" stroke="#d4b5aa" strokeWidth="2"/>
-      <path d="M511 153V119H534V153ZM539 153V129H559V153Z" fill="#72748e" stroke="#c9b8bc" strokeWidth="2"/>
-      <path d="M432 142H454M465 134H479M515 132H530M543 141H556" stroke="#ead3bd" strokeWidth="2" opacity=".7"/>
-      <path d="M570 152Q579 133 588 151V156H570Z" fill="#67806e"/>
-      <rect x="566" y="153" width="26" height="8" rx="3" fill="#b98577"/>
-      <path d="M420 166V263H604V166M420 215H604" fill="none" stroke="#a27c70" strokeWidth="8"/>
-      <path d="M435 207V178H449V207ZM453 207V183H468V207ZM473 207V173H489V207Z" fill="#927080"/>
-      <path d="M496 207H535V197H496ZM501 194H541V184H501Z" fill="#d2b398"/>
-      <circle cx="558" cy="193" r="10" fill="#d9b675"/><path d="M550 207Q558 197 566 207V212H550Z" fill="#ce9caf"/>
-      <path d="M438 258V228H455V258ZM459 258V235H479V258ZM483 258V224H497V258Z" fill="#77758d"/>
-      <path d="M507 258H552V249H507ZM513 246H556V237H513Z" fill="#b68a79"/>
-      </g>
-      <g className="scene-calendar">
-      <path d="M833 111H912V203H833Z" fill="#efe0cd" stroke="#a97e88" strokeWidth="5"/>
-      <path d="M833 133H912" stroke="#c99aa0" strokeWidth="10"/>
-      <text x="872" y="167" textAnchor="middle" fill="#66546b" fontSize="25" fontFamily="serif">21</text>
-      <path d="M848 181H860M866 181H878M884 181H896" stroke="#ab91a0" strokeWidth="3"/>
-      </g>
-
-      {/* Bedside grouping: substantial frame, layered bedding, pillows, lamp and keepsakes. */}
-      <g className="scene-bed" transform="translate(-18 0) scale(.9 1)">
-      <ellipse cx="245" cy="522" rx="196" ry="28" fill="#171528" opacity=".4" filter="url(#room-soft-shadow)"/>
-      <path d="M48 358Q49 344 64 344H365Q380 344 380 360V504H48Z" fill="#644958" stroke="#ba9589" strokeWidth="5"/>
-      <path d="M58 366H370V494H58Z" fill="#c2a5a0"/>
-      <path d="M65 379Q70 365 91 369L181 382V423L68 421Z" fill="#f1e2d5" stroke="#d9c5bc" strokeWidth="3"/>
-      <path d="M190 378Q200 364 219 369L300 382V423L194 421Z" fill="#e8d9d2" stroke="#d9c5bc" strokeWidth="3"/>
-      <path d="M61 418Q119 399 181 419L215 442Q270 399 370 424V486H61Z" fill="url(#room-quilt)" stroke="#c5a4b0" strokeWidth="3"/>
-      <path d="M71 437Q137 421 199 441M226 439Q292 419 357 440M72 463Q148 447 205 465M223 466Q291 446 358 463" fill="none" stroke="#d9bcca" strokeOpacity=".48" strokeWidth="3"/>
-      <path d="M204 432L224 441L215 470L197 461Z" fill="#e0c9bc"/>
-      <rect x="43" y="497" width="340" height="22" rx="5" fill="#9b736f"/>
-      <path d="M58 518V545M366 518V545" stroke="#674a52" strokeWidth="12"/>
-      </g>
-      {/* Bedside table and warm lamp. */}
-      <g className="scene-bedside" transform="translate(25 0) scale(.8 1)">
-      <ellipse cx="427" cy="491" rx="51" ry="11" fill="#211a2c" opacity=".3"/>
-      <path d="M390 408H466V481H390Z" fill="#82615d" stroke="#c2a087" strokeWidth="4"/>
-      <path d="M384 401H472V414H384Z" fill="#bd987c"/>
-      <path d="M398 432H458V464H398Z" fill="#74565a" stroke="#b48c7d" strokeWidth="2"/>
-      <circle cx="428" cy="448" r="3" fill="#e8d0a5"/>
-      <path d="M417 400V365M439 400V365" stroke="#d2b78d" strokeWidth="4"/>
-      <path d="M405 367Q428 331 451 367Z" fill="#e4c89b" stroke="#f1ddb7" strokeWidth="3"/>
-      <ellipse className="room-lamp-glow" cx="428" cy="376" rx="47" ry="62" fill="#e8c98c" opacity=".16"/>
-      <path d="M404 395H452" stroke="#a37d72" strokeWidth="5"/>
-      <path d="M405 397H451V407H405Z" fill="#d6b58d"/>
-      <rect x="386" y="383" width="17" height="15" rx="2" fill="#d9c6a8"/><path d="M389 388H400M389 392H398" stroke="#a38483"/>
-      </g>
-
-      {/* Central rug and loveseat create a clear, welcoming sitting zone. */}
-      <g transform="translate(163 155) scale(.65 .77)">
-      <path d="M360 511Q538 467 725 499Q808 515 801 553Q784 584 580 583Q386 582 349 552Q339 535 360 511Z" fill="#171526" opacity=".52"/>
-      <path d="M363 486Q536 445 724 477Q791 489 783 533Q768 564 580 565Q395 564 359 535Q344 514 363 486Z" fill="#5b506a" stroke="#b59caf" strokeWidth="5"/>
-      <path d="M383 496Q541 466 708 491Q754 499 750 527Q734 545 579 546Q420 547 384 524Z" fill="#665a74" stroke="#d0b8c5" strokeWidth="2"/>
-      </g>
-      <svg className="scene-sofa" x="405" y="424" width="232" height="110" viewBox="364 432 393 120" preserveAspectRatio="none" overflow="visible">
-      <path d="M420 458Q422 435 448 432H671Q695 436 696 459V492Q560 468 420 495Z" fill="#8c6d83" stroke="#c69cac" strokeWidth="4"/>
-      <path d="M375 494Q364 465 385 448Q403 433 436 445L460 464V520L390 530Q368 520 375 494ZM745 492Q757 462 737 447Q716 434 687 445L666 466V521L730 531Q750 520 745 492Z" fill="url(#room-sofa)" stroke="#c69cac" strokeWidth="4"/>
-      <path d="M450 470Q478 451 514 468L510 512Q478 527 447 509ZM526 466Q562 454 593 469L594 510Q560 526 524 511ZM608 467Q640 454 670 472L661 514Q630 524 602 511Z" fill="#c8a8b3" stroke="#e0c3c8" strokeWidth="2"/>
-      <path d="M468 480Q478 476 488 480M548 478Q558 474 568 479M626 480Q636 476 646 480" fill="none" stroke="#f0d8d7" strokeOpacity=".65" strokeWidth="3"/>
-      <path d="M390 518Q559 535 730 518V536Q559 552 390 536Z" fill="#674d62" stroke="#b68f9e" strokeWidth="3"/>
-      <path d="M410 535V549M708 535V549" stroke="#5a414e" strokeWidth="11"/>
-      </svg>
-      {/* Low coffee table in front of the loveseat, grounded on the rug. */}
-      <g className="scene-coffee-table" transform="translate(96 265) scale(.8 .55)">
-      <ellipse cx="558" cy="561" rx="77" ry="13" fill="#171426" opacity=".33"/>
-      <path d="M497 527L505 565M612 527L606 565" stroke="#674d50" strokeWidth="8"/>
-      <path d="M477 518Q558 495 640 518Q649 524 640 533Q558 553 477 533Q467 526 477 518Z" fill="#a17b70" stroke="#d4aa91" strokeWidth="4"/>
-      <path d="M492 520Q558 504 625 520" fill="none" stroke="#e1c0a0" strokeWidth="3" opacity=".7"/>
-      <path d="M523 543Q535 537 547 543V563H523Z" fill="#e1cdb9" stroke="#f3e3d0" strokeWidth="2"/>
-      <path d="M547 547Q555 545 553 554Q551 559 547 555" fill="none" stroke="#eee0cf" strokeWidth="2"/>
-      <path d="M526 547H544" stroke="#aa8990" strokeWidth="2"/>
-      <path d="M581 542C575 535 568 543 581 552C594 543 587 535 581 542Z" fill="#dca4b6"/>
-      </g>
-
-      {/* Desk and hobby corner: monitor, console, books, headphones, and a little task lamp. */}
-      <g transform="translate(140 0) scale(.88 1)">
-      <ellipse cx="827" cy="496" rx="128" ry="19" fill="#181626" opacity=".35"/>
-      <path d="M700 342H955V368H700Z" fill="#bd9579" stroke="#e1b99a" strokeWidth="4"/>
-      <path d="M716 368V483M937 368V483" stroke="#8d6864" strokeWidth="17"/>
-      <path d="M716 405H779V481H716Z" fill="#8e6c66" stroke="#bd947d" strokeWidth="3"/>
-      <path d="M727 424H768V461H727Z" fill="#76585d"/><circle cx="748" cy="442" r="3" fill="#d9b684"/>
-      <g className="scene-laptop">
-      <rect x="783" y="313" width="89" height="29" rx="5" fill="#302d46" stroke="#b8a9bd" strokeWidth="4"/>
-      <path d="M792 320H863V336H792Z" fill="#8498b4" opacity=".85"/>
-      <path d="M819 342L836 342L846 352H811Z" fill="#958c9d"/>
-      <path d="M789 353H865V361H789Z" fill="#dfd2d0"/>
-      </g>
-      <g className="scene-console">
-      <rect x="887" y="341" width="39" height="21" rx="5" fill="#6f6077" stroke="#d6c0c7" strokeWidth="3"/>
-      <circle cx="898" cy="351" r="2" fill="#ecd9ad"/><circle cx="906" cy="351" r="2" fill="#ecd9ad"/><circle cx="914" cy="351" r="2" fill="#ecd9ad"/>
-      </g>
-      <path d="M879 341Q901 307 923 341" fill="none" stroke="#d2b6c2" strokeWidth="5"/><path d="M882 342V353M920 342V353" stroke="#c9aec0" strokeWidth="6"/>
-      <path d="M922 338V300M939 338V300" stroke="#c8aa8d" strokeWidth="4"/><path d="M910 302Q931 274 951 302Z" fill="#e4c696" stroke="#f2dfb4" strokeWidth="3"/><ellipse cx="931" cy="315" rx="35" ry="43" fill="#e1bd7c" opacity=".08"/>
-      <path d="M706 336H736V310H706Z" fill="#ede0cd"/><path d="M709 317H732M709 323H729M709 329H726" stroke="#ae8f95" strokeWidth="2"/>
-      <path d="M736 337V320H749V337ZM751 337V314H765V337ZM768 337V323H779V337Z" fill="#907080" stroke="#d2b4a7" strokeWidth="2"/>
-      <path d="M841 335L851 319L862 335Z" fill="#6f8978"/><rect x="842" y="335" width="20" height="5" rx="2" fill="#b77f75"/>
-      <path d="M688 485H966" stroke="#4c3d4a" strokeWidth="9"/>
-      <path d="M684 489H968" stroke="#c3a08a" strokeWidth="3"/>
-      </g>
-
-      {/* Plant by the moonlit window; little entry mailbox is built into the side wall. */}
-      <g className="scene-plant" transform="translate(48 0)">
-      <path d="M610 411H665L657 471H618Z" fill="#a46f73" stroke="#d5a797" strokeWidth="3"/>
-      <path d="M637 410Q620 380 603 387Q610 408 636 417M640 408Q640 369 661 366Q668 391 643 417M633 410Q616 399 616 374Q639 381 640 410M644 409Q655 386 679 390Q672 413 645 420" fill="#708b76" stroke="#a4b38b" strokeWidth="2"/>
-      </g>
-      <g className="scene-mailbox">
-      <path d="M72 330Q92 312 112 330V380H72Z" fill="#795569" stroke="#c09baa" strokeWidth="3"/>
-      <path d="M69 328Q92 308 115 328V338H69Z" fill="#bb8798"/>
-      <path d="M78 347H106V370H78Z" fill="#4a3d57" stroke="#d4b3b7" strokeWidth="2"/>
-      <path d="M83 353H101M83 358H98" stroke="#e4cad0" strokeWidth="2"/>
-      <path d="M92 339V349" stroke="#e5c99b" strokeWidth="3"/>
-      </g>
-      {/* A tiny music player tucked into the lower bookcase shelf. */}
-      <g className="scene-radio">
-      <rect x="559" y="229" width="42" height="26" rx="4" fill="#3b354d" stroke="#c4a5a0" strokeWidth="3"/>
-      <rect x="564" y="234" width="25" height="7" rx="2" fill="#d3b8a7"/>
-      <circle cx="592" cy="244" r="5" fill="#d6b97f"/><path d="M567 247H584" stroke="#9c8394" strokeWidth="2"/>
-      </g>
-      {/* The headphones hang neatly over the desk chair back. */}
-      <g className="scene-desk-chair" transform="translate(140 0) scale(.88 1)">
-      <path d="M793 391Q793 377 808 377H849Q863 377 863 392V428H793Z" fill="#755e76" stroke="#b38c9e" strokeWidth="4"/>
-      <path d="M800 391H856V420H800Z" fill="#94768e"/>
-      <path d="M795 425H862V444H795Z" fill="#b88d91" stroke="#d1aaa3" strokeWidth="3"/>
-      <path d="M808 444L801 481M849 444L857 481M829 444V477" stroke="#8d7478" strokeWidth="6"/>
-      <path d="M806 400Q827 365 850 400" fill="none" stroke="#d2b6c2" strokeWidth="6"/>
-      <path d="M809 397V412M847 397V412" stroke="#c9aec0" strokeWidth="8" strokeLinecap="round"/>
-      </g>
-    </svg>
-  );
-}
 function OurHome({ navigate }: Navigation) {
   const [lampOn, setLampOn] = useState(true);
   return (
@@ -299,102 +107,10 @@ function OurHome({ navigate }: Navigation) {
         title="Our Home"
         description="Janna and Josh's little home, filled with shared stories. Look around and see where each keepsake takes you."
       />
-      <div className="cozy-room">
-        <RoomIllustration />
-        <button
-          className={`room-lamp ${lampOn ? "" : "lamp-off"}`}
-          aria-label="Turn the lamp on or off"
-          aria-pressed={lampOn}
-          onClick={() => setLampOn((on) => !on)}
-        >
-          <i />
-          <span />
-        </button>
-        {roomObjects.map((o) => (
-          <button
-            key={o.id}
-            className={`room-object object-${o.kind}`}
-            style={{ left: `${o.x}%`, top: `${o.y}%` }}
-            onClick={() => navigate(o.id)}
-            aria-label={`${o.name} — ${o.id === "sleep" ? "Can’t Sleep" : o.id}`}
-          >
-            <span className="object-drawing" aria-hidden="true">
-              {o.kind === "window" ? (
-                <svg
-                  viewBox="0 0 140 140"
-                  aria-hidden="true"
-                  className="window-landscape"
-                >
-                  <circle cx="96" cy="33" r="15" fill="#e2d8bf" />
-                  <circle cx="103" cy="27" r="14" fill="#17213a" />
-                  <path
-                    d="M0 100L30 62L62 103L92 73L140 116V140H0Z"
-                    fill="#333d59"
-                  />
-                  <path
-                    d="M0 120Q34 100 70 118T140 108V140H0Z"
-                    fill="#242c45"
-                  />
-                  <g fill="#e5d4bc">
-                    <circle cx="32" cy="31" r="1" />
-                    <circle cx="60" cy="18" r="1.5" />
-                    <circle cx="118" cy="68" r="1" />
-                  </g>
-                </svg>
-              ) : o.kind === "books" ? (
-                <svg viewBox="0 0 110 80" aria-hidden="true">
-                  <path d="M3 78V25H17V78Z" fill="#9e7486" />
-                  <path d="M19 78V12H37V78Z" fill="#a8aca1" />
-                  <path d="M39 78V20H52V78Z" fill="#c1a18d" />
-                  <path d="M55 78V7H70V78Z" fill="#797b9e" />
-                  <path d="M82 78L70 24L85 21L98 75Z" fill="#ad8490" />
-                  <g stroke="#e2d1ba" strokeWidth="2" opacity=".65">
-                    <path d="M7 33H13M7 65H13M23 23H33M23 29H33M43 31H48M59 18H66M59 65H66M78 32L85 30" />
-                  </g>
-                </svg>
-              ) : o.kind === "calendar" ? (
-                "21"
-              ) : o.kind === "frame" ? (
-                <svg viewBox="0 0 80 90" aria-hidden="true">
-                  <path d="M0 0H80V90H0Z" fill="#d9c5b4" />
-                  <circle cx="57" cy="25" r="11" fill="#ede0c5" />
-                  <path d="M0 62Q25 28 53 62L80 50V90H0Z" fill="#7f8394" />
-                  <path d="M0 75Q30 53 80 75V90H0Z" fill="#555e72" />
-                  <path
-                    d="M38 51C22 40 21 61 39 69C59 57 53 41 38 51Z"
-                    fill="#e4b4bb"
-                  />
-                </svg>
-              ) : o.kind === "laptop" ? (
-                "you online? ♡"
-              ) : o.kind === "console" ? (
-                "+   • •"
-              ) : o.kind === "radio" ? (
-                "♫"
-              ) : o.kind === "mailbox" ? (
-                "✉"
-              ) : o.kind === "plant" ? (
-                <DestinationArt kind="garden" />
-              ) : (
-                ""
-              )}
-            </span>
-            <span className="object-label">{o.name}</span>
-          </button>
-        ))}
-        <RoomLife />
-      </div>
+      <RoomDiorama objects={roomObjects} keepsakes={homeSouvenirs} navigate={navigate} lampOn={lampOn} onToggleLamp={() => setLampOn((on) => !on)} />
       <p className="room-note handwritten">
         someday, no more goodbyes through a screen.
       </p>
-      <div className="world-links home-souvenirs">
-        {homeSouvenirs.map(({ id, label, kind }) => (
-          <button key={id} className={`home-souvenir souvenir-${kind}`} type="button" onClick={() => navigate(id)} aria-label={label}>
-            <span className="souvenir-art"><SouvenirArt kind={kind} /><i aria-hidden="true" /></span>
-            <span className="souvenir-label">{label}</span>
-          </button>
-        ))}
-      </div>
     </>
   );
 }

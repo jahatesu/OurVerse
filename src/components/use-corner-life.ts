@@ -43,7 +43,7 @@ export function useCornerLife({ host, destination, blocked, reduced, interrupt }
     const target = Math.max(0, Math.min(max, desired));
     if (!rect) return target;
     const obstacles = dragObstacles.current ?? Array.from(document.querySelectorAll<HTMLElement>("button, a[href], input, select, textarea, [role='button'], [role='navigation']"))
-      .filter((el) => !host.current?.contains(el))
+      .filter((el) => !host.current?.contains(el) && !el.closest(".world-home .living-world-carrier"))
       .map((el) => el.getBoundingClientRect())
       .filter((r) => r.width > 0 && r.height > 0 && r.top < rect.bottom + 8 && r.bottom > rect.top - 8);
     const clear = (value: number) => obstacles.every((r) => left + value + width + 8 <= r.left || left + value - 8 >= r.right);
@@ -74,8 +74,9 @@ export function useCornerLife({ host, destination, blocked, reduced, interrupt }
   useEffect(() => {
     const { max } = geometry();
     try {
-      const saved = Number(sessionStorage.getItem(POSITION_KEY));
-      if (Number.isFinite(saved)) { const restored = safePosition(Math.max(0, Math.min(1, saved)) * max); x.jump(restored); smoothX.jump(restored); }
+      const stored = sessionStorage.getItem(POSITION_KEY);
+      const saved = stored === null || stored.trim() === "" ? NaN : Number(stored);
+      if (Number.isFinite(saved) && saved >= 0 && saved <= 1) { const restored = safePosition(saved * max); x.jump(restored); smoothX.jump(restored); }
     } catch { /* Use the default corner. */ }
     const align = () => {
       walker.current?.stop();
@@ -196,7 +197,7 @@ export function useCornerLife({ host, destination, blocked, reduced, interrupt }
     drag.current = { id: event.pointerId, startX: event.clientX, startY: event.clientY, origin: x.get(), moved: false };
     const rect = geometry().rect;
     dragObstacles.current = rect ? Array.from(document.querySelectorAll<HTMLElement>("button, a[href], input, select, textarea, [role='button'], [role='navigation']"))
-      .filter((el) => !host.current?.contains(el)).map((el) => el.getBoundingClientRect())
+      .filter((el) => !host.current?.contains(el) && !el.closest(".world-home .living-world-carrier")).map((el) => el.getBoundingClientRect())
       .filter((r) => r.width > 0 && r.height > 0 && r.top < rect.bottom + 8 && r.bottom > rect.top - 8) : null;
     event.currentTarget.setPointerCapture(event.pointerId);
   }

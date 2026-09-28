@@ -1,0 +1,185 @@
+/* Character-only behavior and props for the approved isometric room. */
+.world-room .room-life-layer .room-life-person {
+  transition:
+    left var(--room-travel-ms, 900ms) linear,
+    top var(--room-travel-ms, 900ms) linear,
+    opacity .28s ease;
+  will-change: left, top;
+}
+
+.world-room .room-life-person.room-life-floor::before {
+  display: block;
+  bottom: 1%;
+  left: 17%;
+  width: 66%;
+  height: 7%;
+  background: #17132670;
+  filter: blur(1.7px);
+  transform: skewX(-10deg);
+}
+
+.world-room .room-life-person.room-life-phase-hidden {
+  opacity: 0;
+  transition: none !important;
+}
+
+.world-room .room-life-person.room-life-phase-arriving.room-life-sleeping { opacity: 0; }
+.world-room .room-life-person.room-life-phase-sleeping { opacity: 1; }
+.world-room .room-life-person.room-life-phase-settling > .character { animation: none; }
+
+.world-room .room-life-person.room-life-bed:not(.room-life-sleeping) {
+  width: 6.5%;
+  transform: translate(-50%, -73%);
+}
+
+.world-room .room-life-person.room-life-bed.room-life-sleeping {
+  width: 11.4%;
+  aspect-ratio: 210 / 150;
+  transform: translate(-76%, -42%);
+}
+
+.world-room .room-life-sleeper {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 2px 3px #2b20384d);
+}
+
+.world-room .room-life-sleeper-breath {
+  transform-box: fill-box;
+  transform-origin: 48% 78%;
+  animation: room-life-sleep-breath 6.8s ease-in-out infinite;
+}
+
+.world-room .room-life-sleeper-josh .room-life-sleeper-breath { animation-delay: -3.1s; }
+.world-room .room-life-sleeper.is-waking .room-life-sleeper-breath { animation: room-life-wake .75s ease-out both; }
+
+.world-room .room-life-sleep-z {
+  fill: #ead9ee;
+  font: italic 15px/1 var(--display, Georgia, serif);
+  opacity: 0;
+  animation: room-life-z 15s ease-out infinite;
+}
+
+.world-room .room-life-sleep-z-two { animation-delay: 1.2s; font-size: 11px; }
+.world-room .room-life-josh .room-life-sleep-z { animation-delay: -7s; }
+.world-room .room-life-josh .room-life-sleep-z-two { animation-delay: -5.8s; }
+
+.world-room .room-life-idle .character-head,
+.world-room .room-life-window .character-head,
+.world-room .room-life-resting .character-head {
+  animation: room-life-look 11s ease-in-out infinite;
+  transform-origin: 70px 92px;
+}
+
+.world-room .room-life-josh.room-life-idle .character-head { animation-delay: -5s; }
+.world-room .room-life-working .arm-left { animation: room-life-type-left 1.7s ease-in-out infinite alternate; }
+.world-room .room-life-working .arm-right { animation: room-life-type-right 1.45s ease-in-out -.4s infinite alternate; }
+.world-room .room-life-phone .character-head { animation: room-life-phone-look 9s ease-in-out infinite; transform-origin: 70px 95px; }
+.world-room .room-life-phone .arm-left { transform: rotate(-15deg) translate(4px, 2px); }
+.world-room .room-life-phone .arm-right { animation: room-life-phone-thumb 2.4s ease-in-out infinite; }
+.world-room .room-life-drinking .arm-right { animation: room-life-sip 6.8s ease-in-out infinite; transform-origin: 94px 111px; }
+.world-room .room-life-watering .arm-left { transform: rotate(-20deg) translate(4px, 1px); }
+.world-room .room-life-watering .arm-right { animation: room-life-pour 5.5s ease-in-out infinite; transform-origin: 94px 112px; }
+.world-room .room-life-browsing .character-head { animation: room-life-shelf-look 8s ease-in-out infinite; transform-origin: 70px 94px; }
+.world-room .room-life-stretching .arm-left { animation: room-life-stretch-left 3.6s ease-in-out both; }
+.world-room .room-life-stretching .arm-right { animation: room-life-stretch-right 3.6s ease-in-out both; }
+.world-room .room-life-yawning .arm-right { animation: room-life-yawn 4.2s ease-in-out both; transform-origin: 94px 111px; }
+.world-room .room-life-leaning.room-life-janna > .character { transform: scaleX(var(--room-facing, 1)) translateX(7px) rotate(3deg); transform-origin: 50% 86%; }
+.world-room .room-life-hugging > .character { animation: room-life-hug 6.5s ease-in-out both; }
+
+.world-room .room-life-prop {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px #1713245c);
+}
+
+.world-room .room-life-book { width: 29%; right: -1%; bottom: 20%; }
+.world-room .room-life-browsing .room-life-book { right: auto; left: -3%; bottom: 28%; animation: room-life-book-inspect 8s ease-in-out infinite; }
+.world-room .room-life-phone { width: 21%; right: auto; left: 39%; bottom: 28%; transform: rotate(-8deg); }
+.world-room .room-life-bed .room-life-phone { left: 40%; bottom: 34%; }
+.world-room .room-life-mug { width: 25%; right: 5%; bottom: 25%; animation: room-life-mug-lift 6.8s ease-in-out infinite; }
+.world-room .room-life-watering-can { width: 56%; right: -40%; bottom: 10%; transform-origin: 20% 70%; animation: room-life-can-tip 5.5s ease-in-out infinite; }
+.world-room .room-life-keyboard { width: 40%; right: -8%; bottom: 14%; }
+.world-room .room-life-working::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: -22%;
+  bottom: 31%;
+  width: 62%;
+  height: 48%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #afc8df2e, transparent 70%);
+  animation: room-life-screen-glow 5s ease-in-out infinite alternate;
+}
+
+.world-room .room-life-water-stream { animation: room-life-water 5.5s ease-in-out infinite; }
+.world-room .iso-room:has(.room-life-watering.room-life-phase-active) .iso-room-plant path {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: room-life-plant-response 5.5s ease-in-out infinite;
+}
+
+.world-room .room-life-direction-back-left > .character,
+.world-room .room-life-direction-back-right > .character { filter: saturate(.92) brightness(.94); }
+
+.world-room .room-life-bubble {
+  bottom: 92%;
+  max-width: 128px;
+  padding: 6px 9px;
+  border-color: #c7acc18f;
+  background: #f1e4ddeb;
+  box-shadow: 0 5px 14px #17122545;
+  color: #43364c;
+  font: 500 11px/1.3 var(--body, sans-serif);
+}
+
+.world-room .room-life-bubble::after {
+  background: #f1e4ddeb;
+  border-color: #c7acc18f;
+}
+
+.world-room .room-life-sofa .room-life-bubble,
+.world-room .room-life-bed .room-life-bubble { bottom: 103%; }
+
+@keyframes room-life-look {
+  0%, 66%, 100% { transform: rotate(0); }
+  72%, 81% { transform: rotate(2deg); }
+  88%, 94% { transform: rotate(-1deg); }
+}
+@keyframes room-life-phone-look { 0%, 72%, 100% { transform: rotate(0); } 79%, 91% { transform: translateY(2px) rotate(2deg); } }
+@keyframes room-life-phone-thumb { 0%, 62%, 100% { transform: rotate(0); } 69%, 78% { transform: rotate(-7deg); } }
+@keyframes room-life-type-left { to { transform: rotate(-7deg) translateY(1px); } }
+@keyframes room-life-type-right { to { transform: rotate(8deg) translateY(2px); } }
+@keyframes room-life-screen-glow { to { opacity: .55; scale: 1.08; } }
+@keyframes room-life-shelf-look { 0%, 100% { transform: rotate(-3deg); } 38%, 62% { transform: rotate(4deg) translateY(1px); } }
+@keyframes room-life-book-inspect { 0%, 100% { transform: rotate(-4deg); } 42%, 68% { transform: translate(2px, -4px) rotate(3deg); } }
+@keyframes room-life-sip { 0%, 55%, 100% { transform: rotate(0); } 64%, 78% { transform: rotate(-45deg) translate(-7px, -6px); } }
+@keyframes room-life-mug-lift { 0%, 55%, 100% { transform: translate(0, 0); } 64%, 78% { transform: translate(-6px, -21px) rotate(-8deg); } }
+@keyframes room-life-pour { 0%, 54%, 100% { transform: rotate(0); } 63%, 83% { transform: rotate(22deg); } }
+@keyframes room-life-can-tip { 0%, 54%, 100% { transform: rotate(0); } 63%, 83% { transform: rotate(13deg) translate(2px, 2px); } }
+@keyframes room-life-water { 0%, 60%, 88%, 100% { opacity: 0; stroke-dashoffset: 0; } 66%, 82% { opacity: .85; stroke-dashoffset: -8; } }
+@keyframes room-life-plant-response { 0%, 55%, 100% { transform: rotate(0); } 68% { transform: rotate(1.5deg); } 80% { transform: rotate(-1deg); } }
+@keyframes room-life-stretch-left { 0%, 16%, 88%, 100% { transform: rotate(0); } 34%, 72% { transform: rotate(150deg) translate(1px, -2px); } }
+@keyframes room-life-stretch-right { 0%, 16%, 88%, 100% { transform: rotate(0); } 34%, 72% { transform: rotate(-150deg) translate(-1px, -2px); } }
+@keyframes room-life-yawn { 0%, 18%, 86%, 100% { transform: rotate(0); } 36%, 72% { transform: rotate(-52deg) translate(-6px, -7px); } }
+@keyframes room-life-hug { 0%, 100% { translate: 0 0; } 24%, 76% { translate: calc(var(--room-facing) * 3px) 0; } }
+@keyframes room-life-sleep-breath { 0%, 100% { transform: scaleY(.99) translateY(1px); } 50% { transform: scaleY(1.015) translateY(-1px); } }
+@keyframes room-life-wake { from { transform: translateY(0) rotate(0); } to { transform: translateY(-3px) rotate(-2deg); } }
+@keyframes room-life-z { 0%, 75%, 100% { opacity: 0; transform: translate(0, 5px) scale(.85); } 80% { opacity: .58; } 94% { opacity: 0; transform: translate(5px, -12px) scale(1.06); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .world-room .room-life-person { transition-duration: .1s !important; }
+  .world-room .room-life-person *,
+  .world-room .iso-room:has(.room-life-watering) .iso-room-plant path {
+    animation: none !important;
+  }
+  .world-room .room-life-sleep-z,
+  .world-room .room-life-water-stream { display: none; }
+}

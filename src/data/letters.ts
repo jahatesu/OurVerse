@@ -1,14 +1,18 @@
 import type { Letter } from "./types";
 export const letters: Letter[] = [
   ...[
-    "you miss me",
+    "I’m mad",
+    "you’re mad",
     "you’re sad",
-    "you can’t sleep",
-    "you’re mad at me",
+    "you’re stressed",
+    "you miss me badly",
+    "we get in a fight",
+    "I’m distant",
     "you need motivation",
-    "you feel lonely",
-    "you need reassurance",
-    "you want to remember how much I love you",
+    "you need to remember how much I love you",
+    "you’re having a bad day",
+    "you’re feeling insecure",
+    "you’re jealous",
   ].map((title, i) => ({
     id: `letter-${i}`,
     title: `Open when ${title}`,
@@ -19,13 +23,13 @@ export const letters: Letter[] = [
   })),
   {
     id: "anniversary",
-    title: "Our first anniversary",
+    title: "Our First Anniversary",
     unlockDate: "2027-04-21T00:00:00+08:00",
     body: "A whole year of choosing us. Replace this sample with an anniversary letter.\n\nHere’s to our next chapter. ♡",
   },
   {
     id: "birthday",
-    title: "A birthday wish for you",
+    title: "A Birthday Wish for You",
     occasion: "birthday",
     body: "Happy birthday, my favorite human! Replace this sample with your birthday letter. ♡",
   },

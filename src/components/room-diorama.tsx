@@ -187,7 +187,7 @@ function IsoChair({ frontOnly = false }: { frontOnly?: boolean }) {
 }
 function IsoPlant() {
   const root = projectRoom(7.25,2.55,.72);
-  return <g>
+  return <g className="iso-room-plant">
     <Shadow x={6.95} y={2.28} w={.63} d={.62}/>
     <Cylinder x={7.25} y={2.55} z={.05} h={.65} radius={.38} fill="#ac7c88"/>
     <ellipse cx={root.x} cy={root.y} rx="24" ry="9" fill="#4e3e4a" stroke={ink} strokeWidth="3"/>

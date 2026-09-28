@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useReducedMotion } from "motion/react";
-import { Heart, LockKeyhole, Mail, ArrowRight } from "lucide-react";
+import { LockKeyhole, ArrowRight } from "lucide-react";
 import { memories } from "@/data/memories";
 import { timeline } from "@/data/timeline";
 import { letters } from "@/data/letters";
@@ -16,6 +16,8 @@ import { Couple } from "./characters";
 import { dreams } from "@/data/expansion";
 import { settings } from "@/config/settings";
 import { relationship } from "@/data/relationship";
+import { LettersSanctuary } from "./letters-sanctuary";
+import { OpenedLetterScene } from "./opened-letter-scene";
 export function MemoryRoom() {
   const [category, setCategory] = useState("All");
   const [selected, setSelected] = useState<Memory | null>(null);
@@ -258,92 +260,63 @@ export function Letters() {
   }, []);
   const [selected, setSelected] = useState<Letter | null>(null);
   const [opening, setOpening] = useState<string | null>(null);
+  const letterOverlayActive = opening !== null || selected !== null;
+  useEffect(() => {
+    if (!letterOverlayActive) return;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousRootOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousRootOverflow;
+    };
+  }, [letterOverlayActive]);
+  const finishOpening = useCallback(
+    (letter: Letter) => {
+      setSelected(letter);
+      discover("letter");
+      setOpening(null);
+    },
+    [discover],
+  );
+  const birthdayToday =
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: relationship.recipientTimezone,
+      month: "2-digit",
+      day: "2-digit",
+    })
+      .format(new Date(now))
+      .replace("/", "-") === settings.birthday;
+  const sanctuaryLetters = letters.map((letter) => {
+    const locked =
+      simulation === "unlocked"
+        ? false
+        : letter.occasion === "birthday"
+          ? !(birthdayToday || simulation === "birthday")
+          : !!letter.unlockDate &&
+            now < new Date(letter.unlockDate).getTime() &&
+            !(simulation === "anniversary" && letter.id === "anniversary");
+    const lockLabel =
+      letter.occasion === "birthday"
+        ? settings.birthday
+          ? "For your birthday"
+          : "Birthday date to be added"
+        : letter.unlockDate
+          ? `Opens ${dateLabel(letter.unlockDate)}`
+          : "Sealed for later";
+    return { letter, locked, lockLabel };
+  });
   return (
     <>
-      <SectionHeading
-        eyebrow="WORDS TO KEEP YOU COMPANY"
-        title="For whenever you need me."
-        description="A little piece of my heart, sealed just for you. Pick the one you need today."
+      <LettersSanctuary
+        items={sanctuaryLetters}
+        opening={opening}
+        onSelect={setOpening}
+        onOpened={finishOpening}
       />
-      <div className="letters-grid">
-        {letters.map((letter) => {
-          const birthdayToday =
-            new Intl.DateTimeFormat("en-US", {
-              timeZone: relationship.recipientTimezone,
-              month: "2-digit",
-              day: "2-digit",
-            })
-              .format(new Date(now))
-              .replace("/", "-") === settings.birthday;
-          const locked =
-            simulation === "unlocked"
-              ? false
-              : letter.occasion === "birthday"
-                ? !(birthdayToday || simulation === "birthday")
-                : !!letter.unlockDate &&
-                  now < new Date(letter.unlockDate).getTime() &&
-                  !(
-                    simulation === "anniversary" && letter.id === "anniversary"
-                  );
-          return (
-            <button
-              key={letter.id}
-              className={`letter-card ${locked ? "locked" : ""}`}
-              disabled={locked || opening !== null}
-              onClick={() => setOpening(letter.id)}
-            >
-              <motion.div
-                className={`envelope ${opening === letter.id ? "envelope-opening" : ""}`}
-                animate={
-                  opening === letter.id
-                    ? {
-                        rotateX: [0, 60, 0],
-                        y: [0, -15, 0],
-                        scale: [1, 1.1, 1],
-                      }
-                    : {}
-                }
-                transition={{ duration: 0.65 }}
-                onAnimationComplete={() => {
-                  if (opening === letter.id) {
-                    setSelected(letter);
-                    discover("letter");
-                    setOpening(null);
-                  }
-                }}
-              >
-                <i className="envelope-paper" aria-hidden="true">
-                  dear Josh, ♡
-                </i>
-                <div className="envelope-flap" />
-                <span>
-                  {locked ? <LockKeyhole size={20} /> : <Heart size={22} />}
-                </span>
-              </motion.div>
-              <h3>{letter.title}</h3>
-              <p>
-                {locked
-                  ? letter.occasion === "birthday"
-                    ? settings.birthday
-                      ? "For your birthday"
-                      : "Birthday date to be added"
-                    : `Opens ${dateLabel(letter.unlockDate!)}`
-                  : "A little love, just for you"}
-              </p>
-            </button>
-          );
-        })}
-      </div>
-      <p className="placeholder-note">
-        Letters include sample prose, ready for Janna’s own words.
-      </p>
       {selected && (
-        <Modal title={selected.title} onClose={() => setSelected(null)}>
-          <div className="letter-paper">
-            <Mail size={24} />
-            <p>{selected.body}</p>
-          </div>
-        </Modal>
+        <OpenedLetterScene letter={selected} onClose={() => setSelected(null)} />
       )}
     </>
   );

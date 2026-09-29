@@ -29,12 +29,16 @@ export interface Question {
   explanation: string;
 }
 export interface Song {
+  id: string;
+  number: number;
   title: string;
   artist: string;
   cover: string;
-  message: string;
+  note: string;
   audioUrl?: string;
   externalUrl?: string;
+  spotifyUri?: string;
+  artworkUrl?: string;
 }
 export interface Achievement {
   id: string;

@@ -1,8 +1,11 @@
 "use client";
 import Image from "next/image";
+import Script from "next/script";
 import {
   createContext,
+  useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
   type ReactNode,
@@ -18,7 +21,7 @@ import {
   Repeat2,
   MoreHorizontal,
 } from "lucide-react";
-import { songs } from "@/data/songs";
+import { playlistDedication, songs } from "@/data/songs";
 import { Couple } from "./characters";
 import "./music-room.css";
 type PlayerState = {
@@ -27,43 +30,148 @@ type PlayerState = {
   time: number;
   duration: number;
   error: string;
+  spotifyReady: boolean;
   choose: (i: number) => void;
   toggle: () => void;
-  seek: (n: number) => void;
+  connectSpotify: (controller: SpotifyEmbedController | null) => void;
+  prepareSpotifyTrack: (spotifyUri: string) => void;
+  markSpotifyReady: () => void;
+  syncSpotifyStarted: (playingUri?: string) => void;
+  syncSpotifyPlayback: (state: SpotifyPlaybackState) => void;
+  reportSpotifyUnavailable: () => void;
 };
+
+type SpotifyPlaybackState = {
+  playingURI?: string;
+  isPaused: boolean;
+  isBuffering: boolean;
+  duration: number;
+  position: number;
+};
+
+type SpotifyEvent<T> = { data: T };
+
+type SpotifyEmbedController = {
+  addListener: (
+    event: "ready" | "playback_started" | "playback_update",
+    listener: (event: SpotifyEvent<unknown>) => void,
+  ) => void;
+  removeListener: (
+    event: "ready" | "playback_started" | "playback_update",
+    listener?: (event: SpotifyEvent<unknown>) => void,
+  ) => void;
+  loadEntity: (spotifyUri: string, preferVideo?: boolean, startAt?: number) => void;
+  togglePlay: () => void;
+  destroy: () => void;
+};
+
+type SpotifyIFrameApi = {
+  createController: (
+    element: HTMLElement,
+    options: { uri: string; width: string; height: number },
+    callback: (controller: SpotifyEmbedController) => void,
+  ) => void;
+};
+
+declare global {
+  interface Window {
+    onSpotifyIframeApiReady?: (api: SpotifyIFrameApi) => void;
+  }
+}
+
+let cachedSpotifyIframeApi: SpotifyIFrameApi | null = null;
+let spotifyApiBridgeInstalled = false;
+const spotifyApiSubscribers = new Set<(api: SpotifyIFrameApi) => void>();
+
+function installSpotifyApiBridge() {
+  if (typeof window === "undefined" || spotifyApiBridgeInstalled) return;
+
+  spotifyApiBridgeInstalled = true;
+  const previousReadyHandler = window.onSpotifyIframeApiReady;
+
+  window.onSpotifyIframeApiReady = (api) => {
+    cachedSpotifyIframeApi = api;
+    previousReadyHandler?.(api);
+    spotifyApiSubscribers.forEach((subscriber) => subscriber(api));
+  };
+}
 const Context = createContext<PlayerState | null>(null);
 export function MusicProvider({ children }: { children: ReactNode }) {
+  const spotifyController = useRef<SpotifyEmbedController | null>(null);
+  const loadedSpotifyUri = useRef(songs[0].spotifyUri ?? "");
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState("");
-  const audio = useRef<HTMLAudioElement>(null);
-  function choose(i: number) {
-    audio.current?.pause();
-    setIndex((i + songs.length) % songs.length);
+  const [spotifyReady, setSpotifyReady] = useState(false);
+
+  const choose = useCallback((i: number) => {
+    const nextIndex = (i + songs.length) % songs.length;
+    loadedSpotifyUri.current = songs[nextIndex].spotifyUri ?? "";
+    setIndex(nextIndex);
     setPlaying(false);
     setTime(0);
     setDuration(0);
     setError("");
-  }
-  function toggle() {
-    if (!songs[index].audioUrl) {
-      setError(
-        "A little silence for now. Add an audio file in songs.ts to bring our soundtrack to life.",
-      );
+  }, []);
+
+  const toggle = useCallback(() => {
+    if (!spotifyController.current || !spotifyReady) {
+      setError("Open in Spotify to listen.");
       return;
     }
-    if (!audio.current) return;
-    if (playing) audio.current.pause();
-    else
-      void audio.current.play().catch(() => {
-        setPlaying(false);
-        setError(
-          "This track could not play. Check its audio URL and try again.",
-        );
-      });
-  }
+
+    try {
+      spotifyController.current.togglePlay();
+    } catch (spotifyError) {
+      console.error("Spotify playback request failed", spotifyError);
+      setError("Open in Spotify to listen.");
+    }
+  }, [spotifyReady]);
+
+  const connectSpotify = useCallback((controller: SpotifyEmbedController | null) => {
+    spotifyController.current = controller;
+    if (!controller) {
+      setSpotifyReady(false);
+      setPlaying(false);
+    }
+  }, []);
+
+  const prepareSpotifyTrack = useCallback((spotifyUri: string) => {
+    loadedSpotifyUri.current = spotifyUri;
+    setPlaying(false);
+    setTime(0);
+    setDuration(0);
+    setError("");
+  }, []);
+
+  const markSpotifyReady = useCallback(() => {
+    setSpotifyReady(true);
+    setError("");
+  }, []);
+
+  const syncSpotifyStarted = useCallback((playingUri?: string) => {
+    if (playingUri && playingUri !== loadedSpotifyUri.current) return;
+    setPlaying(true);
+    setError("");
+  }, []);
+
+  const syncSpotifyPlayback = useCallback((state: SpotifyPlaybackState) => {
+    if (state.playingURI && state.playingURI !== loadedSpotifyUri.current) return;
+
+    setPlaying(!state.isPaused && !state.isBuffering);
+    setTime(Math.max(0, state.position / 1000));
+    setDuration(Math.max(0, state.duration / 1000));
+    setError("");
+  }, []);
+
+  const reportSpotifyUnavailable = useCallback(() => {
+    setSpotifyReady(false);
+    setPlaying(false);
+    setError("Open in Spotify to listen.");
+  }, []);
+
   return (
     <Context.Provider
       value={{
@@ -72,36 +180,17 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         time,
         duration,
         error,
+        spotifyReady,
         choose,
         toggle,
-        seek: (n) => {
-          if (audio.current && Number.isFinite(n)) {
-            audio.current.currentTime = n;
-            setTime(n);
-          }
-        },
+        connectSpotify,
+        prepareSpotifyTrack,
+        markSpotifyReady,
+        syncSpotifyStarted,
+        syncSpotifyPlayback,
+        reportSpotifyUnavailable,
       }}
     >
-      <audio
-        ref={audio}
-        src={songs[index].audioUrl}
-        preload="none"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onTimeUpdate={() => setTime(audio.current?.currentTime ?? 0)}
-        onLoadedMetadata={() =>
-          setDuration(
-            Number.isFinite(audio.current?.duration)
-              ? audio.current!.duration
-              : 0,
-          )
-        }
-        onEnded={() => choose(index + 1)}
-        onError={() => {
-          setPlaying(false);
-          setError("Audio unavailable. Check the configured track file.");
-        }}
-      />
       {children}
     </Context.Provider>
   );
@@ -171,9 +260,236 @@ export function FloatingPlayer({ navigate }: { navigate: () => void }) {
 }
 const timeLabel = (n: number) =>
   `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, "0")}`;
+
+function SongArtwork({
+  song,
+  size,
+  eager = false,
+  decorative = false,
+}: {
+  song: (typeof songs)[number];
+  size: number;
+  eager?: boolean;
+  decorative?: boolean;
+}) {
+  const [failedArtworkUrl, setFailedArtworkUrl] = useState<string | null>(null);
+  const source =
+    song.artworkUrl && song.artworkUrl !== failedArtworkUrl
+      ? song.artworkUrl
+      : song.cover;
+
+  return (
+    <Image
+      key={`${song.id}-${source}`}
+      className="music-track-artwork"
+      src={source}
+      alt={decorative ? "" : `Artwork for ${song.title} by ${song.artist}`}
+      width={size}
+      height={size}
+      loading={eager ? "eager" : "lazy"}
+      onError={() => setFailedArtworkUrl(song.artworkUrl ?? null)}
+    />
+  );
+}
+
+function spotifyTrackUrl(spotifyUri?: string) {
+  const trackId = spotifyUri?.match(/^spotify:track:([A-Za-z0-9]+)$/)?.[1];
+  return trackId ? `https://open.spotify.com/track/${trackId}` : null;
+}
+
+function SpotifyEmbedSurface() {
+  const player = usePlayer();
+  const selectedSpotifyUri = songs[player.index].spotifyUri;
+  const openUrl = spotifyTrackUrl(selectedSpotifyUri);
+  const embedContainerRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<SpotifyEmbedController | null>(null);
+  const controllerCleanupRef = useRef<(() => void) | null>(null);
+  const controllerGenerationRef = useRef(0);
+  const loadedUriRef = useRef("");
+  const selectedUriRef = useRef(selectedSpotifyUri);
+  const playerRef = useRef(player);
+  const [iframeApi, setIframeApi] = useState<SpotifyIFrameApi | null>(null);
+  const [controllerReady, setControllerReady] = useState(false);
+  const [scriptArmed, setScriptArmed] = useState(false);
+
+  selectedUriRef.current = selectedSpotifyUri;
+  playerRef.current = player;
+
+  useEffect(() => {
+    installSpotifyApiBridge();
+    setScriptArmed(true);
+    const receiveApi = (api: SpotifyIFrameApi) => setIframeApi(api);
+    spotifyApiSubscribers.add(receiveApi);
+
+    if (cachedSpotifyIframeApi) receiveApi(cachedSpotifyIframeApi);
+
+    return () => {
+      spotifyApiSubscribers.delete(receiveApi);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!iframeApi || !embedContainerRef.current) return;
+
+    const initialUri = selectedUriRef.current;
+    if (!initialUri) {
+      playerRef.current.reportSpotifyUnavailable();
+      return;
+    }
+
+    const generation = ++controllerGenerationRef.current;
+    const container = embedContainerRef.current;
+    const timer = window.setTimeout(() => {
+      playerRef.current.prepareSpotifyTrack(initialUri);
+      try {
+        iframeApi.createController(
+          container,
+          { uri: initialUri, width: "100%", height: 152 },
+          (controller) => {
+            if (controllerGenerationRef.current !== generation) {
+              controller.destroy();
+              return;
+            }
+
+            const handleReady = () => {
+              if (controllerGenerationRef.current !== generation) return;
+              setControllerReady(true);
+              playerRef.current.markSpotifyReady();
+            };
+            const handlePlaybackStarted = (event: SpotifyEvent<unknown>) => {
+              const data = event.data as { playingURI?: string };
+              playerRef.current.syncSpotifyStarted(data.playingURI);
+            };
+            const handlePlaybackUpdate = (event: SpotifyEvent<unknown>) => {
+              playerRef.current.syncSpotifyPlayback(
+                event.data as SpotifyPlaybackState,
+              );
+            };
+
+            controller.addListener("ready", handleReady);
+            controller.addListener("playback_started", handlePlaybackStarted);
+            controller.addListener("playback_update", handlePlaybackUpdate);
+            controllerRef.current = controller;
+            loadedUriRef.current = initialUri;
+            playerRef.current.connectSpotify(controller);
+
+            const latestUri = selectedUriRef.current;
+            if (latestUri && latestUri !== initialUri) {
+              playerRef.current.prepareSpotifyTrack(latestUri);
+              controller.loadEntity(latestUri);
+              loadedUriRef.current = latestUri;
+            }
+
+            const cleanupController = () => {
+              controller.removeListener("ready", handleReady);
+              controller.removeListener(
+                "playback_started",
+                handlePlaybackStarted,
+              );
+              controller.removeListener(
+                "playback_update",
+                handlePlaybackUpdate,
+              );
+              controller.destroy();
+            };
+            controllerCleanupRef.current = cleanupController;
+          },
+        );
+      } catch (spotifyError) {
+        console.error("Spotify controller could not initialize", spotifyError);
+        playerRef.current.reportSpotifyUnavailable();
+      }
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+      controllerGenerationRef.current += 1;
+      controllerCleanupRef.current?.();
+      controllerCleanupRef.current = null;
+      controllerRef.current = null;
+      playerRef.current.connectSpotify(null);
+    };
+  }, [iframeApi]);
+
+  useEffect(() => {
+    const controller = controllerRef.current;
+    if (!controllerReady || !controller || !selectedSpotifyUri) return;
+    if (loadedUriRef.current === selectedSpotifyUri) return;
+
+    player.prepareSpotifyTrack(selectedSpotifyUri);
+    try {
+      controller.loadEntity(selectedSpotifyUri);
+      loadedUriRef.current = selectedSpotifyUri;
+    } catch (spotifyError) {
+      console.error("Spotify could not load the selected track", spotifyError);
+      player.reportSpotifyUnavailable();
+    }
+  }, [controllerReady, player, selectedSpotifyUri]);
+
+  return (
+    <>
+      {scriptArmed && (
+        <Script
+          id="spotify-iframe-api"
+          src="https://open.spotify.com/embed/iframe-api/v1"
+          strategy="afterInteractive"
+          onError={() => {
+            console.error("Spotify iframe API failed to load");
+            player.reportSpotifyUnavailable();
+          }}
+        />
+      )}
+      <div className="music-spotify-surface">
+        <div className="music-spotify-heading">
+          <span>PLAYING THROUGH SPOTIFY</span>
+          {openUrl && (
+            <a href={openUrl} target="_blank" rel="noopener noreferrer">
+              Open in Spotify <ExternalLink size={12} aria-hidden="true" />
+            </a>
+          )}
+        </div>
+        <div
+          ref={embedContainerRef}
+          className="music-spotify-embed"
+          aria-label={`Spotify player for ${songs[player.index].title}`}
+        />
+        {player.error && (
+          <p className="music-spotify-fallback" role="status">
+            Open in Spotify to listen.
+          </p>
+        )}
+      </div>
+    </>
+  );
+}
+
 export function MusicRoom() {
   const player = usePlayer();
   const song = songs[player.index];
+  const playlistRef = useRef<HTMLDivElement>(null);
+  const trackRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => {
+    const playlist = playlistRef.current;
+    const row = trackRefs.current[player.index];
+    if (!playlist || !row) return;
+
+    const playlistBounds = playlist.getBoundingClientRect();
+    const rowBounds = row.getBoundingClientRect();
+
+    if (rowBounds.top < playlistBounds.top) {
+      playlist.scrollBy({
+        top: rowBounds.top - playlistBounds.top - 7,
+        behavior: "smooth",
+      });
+    } else if (rowBounds.bottom > playlistBounds.bottom) {
+      playlist.scrollBy({
+        top: rowBounds.bottom - playlistBounds.bottom + 7,
+        behavior: "smooth",
+      });
+    }
+  }, [player.index]);
+
   return (
     <section className="music-room-scene">
       <header className="music-night-heading">
@@ -275,7 +591,7 @@ export function MusicRoom() {
           <div className="music-deck">
             <div className={`music-vinyl ${player.playing ? "playing" : ""}`}>
               <span className="music-vinyl-shine" aria-hidden="true" />
-              <Image src={song.cover} alt={`Illustrated cover for ${song.title}`} width={200} height={200} />
+              <SongArtwork song={song} size={200} eager />
               <span className="music-label-magic" aria-hidden="true"><i /></span>
               <i className="music-vinyl-pin" aria-hidden="true" />
             </div>
@@ -287,7 +603,7 @@ export function MusicRoom() {
           </div>
 
           <div className="music-now-playing">
-            <span>NOW PLAYING IN OUR LITTLE CORNER</span><h2>{song.title}</h2><p>{song.artist}</p>
+            <span>NOW PLAYING IN OUR LITTLE CORNER</span><h2 title={song.title}>{song.title}</h2><p title={song.artist}>{song.artist}</p>
           </div>
           <label className="sr-only" htmlFor="music-progress">Track position</label>
           <input
@@ -298,7 +614,10 @@ export function MusicRoom() {
             step={0.1}
             value={player.time}
             disabled={!player.duration}
-            onChange={(e) => player.seek(Number(e.target.value))}
+            readOnly
+            aria-readonly="true"
+            tabIndex={-1}
+            onChange={() => undefined}
           />
           <div className="music-times"><span>{timeLabel(player.time)}</span><span>{timeLabel(player.duration)}</span></div>
           <div className="music-physical-controls">
@@ -307,7 +626,7 @@ export function MusicRoom() {
             <span className="music-control-ornament" aria-hidden="true"><Repeat2 size={17} /></span>
           </div>
           <p className="audio-notice" role="status">
-            {player.error || (!song.audioUrl ? "Your future soundtrack. Add your own audio to listen here." : "Press play when you’re ready. No autoplay, ever.")}
+            {player.error || (player.spotifyReady ? "Press play when you’re ready. No autoplay, ever." : "Connecting our record player to Spotify...")}
           </p>
           {song.externalUrl && (
             <a href={song.externalUrl} target="_blank" rel="noopener noreferrer" className="music-listen-link">
@@ -332,23 +651,36 @@ export function MusicRoom() {
           <section className="music-janna-note">
             <span className="music-paperclip" aria-hidden="true" /><i className="music-note-doodles" aria-hidden="true">☾　·　✦</i>
             <span className="music-note-label">A NOTE FROM JANNA</span>
-            <h2>Why this song reminds me of you...</h2><p>{song.message}</p>
+            <h2>Why this song reminds me of you...</h2>
+            <div className="music-note-body" key={song.id} aria-live="polite">
+              <p>{song.note}</p>
+            </div>
             <span className="music-note-signoff">with love, always ♡</span>
           </section>
 
           <section className="music-playlist" aria-label="Our playlist">
             <h2>OUR PLAYLIST ♥</h2>
-            <div className="music-track-list">
+            <p className="music-playlist-dedication">{playlistDedication}</p>
+            <div className="music-track-list" ref={playlistRef}>
               {songs.map((track, i) => (
-                <button className={i === player.index ? "selected" : ""} key={track.title} onClick={() => player.choose(i)}>
-                  <span className="music-track-number">0{i + 1}</span>
-                  <Image src={track.cover} alt="" width={52} height={52} />
+                <button
+                  className={i === player.index ? "selected" : ""}
+                  key={track.id}
+                  ref={(element) => { trackRefs.current[i] = element; }}
+                  onClick={() => player.choose(i)}
+                  aria-current={i === player.index ? "true" : undefined}
+                  aria-label={`Select ${track.title} by ${track.artist}`}
+                  title={`${track.title} — ${track.artist}`}
+                >
+                  <span className="music-track-number">{String(track.number).padStart(2, "0")}</span>
+                  <SongArtwork song={track} size={52} decorative />
                   <span className="music-track-copy"><strong>{track.title}</strong><small>{track.artist}</small></span>
                   <Music2 className="music-track-note" size={16} /><MoreHorizontal className="music-track-more" size={15} />
                 </button>
               ))}
             </div>
             <div className="music-add-song">+ Add another song to our soundtrack... ♡</div>
+            <SpotifyEmbedSurface />
           </section>
         </aside>
       </div>

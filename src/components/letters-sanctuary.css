@@ -23,7 +23,8 @@
 .ls-lantern-corner,
 .ls-hanging-charms,
 .ls-drifting-petal,
-.ls-lower-details { pointer-events: none; }
+.ls-lower-details,
+.ls-celestial-scenery { pointer-events: none; }
 
 .ls-sky {
   position: absolute;
@@ -47,6 +48,40 @@
 .ls-stars-near i { background: #f3d8b7; opacity: .55; }
 .ls-stars-near i:nth-child(4n)::after { content: ""; position: absolute; inset: -5px; background: linear-gradient(transparent 45%, #f1d4ad 48% 52%, transparent 55%), linear-gradient(90deg, transparent 45%, #f1d4ad 48% 52%, transparent 55%); filter: drop-shadow(0 0 4px #f3d39c); }
 
+.ls-celestial-scenery { position: absolute; z-index: 0; inset: 0; overflow: hidden; }
+.ls-celestial-scenery svg, .ls-celestial-scenery div { pointer-events: none; }
+.ls-nebula-art { position: absolute; overflow: visible; }
+.ls-nebula-one { left: 12%; top: 31%; width: 45%; }
+.ls-nebula-two { right: -2%; top: 61%; width: 52%; }
+.ls-celestial-cloud { position: absolute; overflow: visible; opacity: .46; filter: drop-shadow(0 13px 15px #090a1970); }
+.ls-cloud-a { left: -7%; top: 31%; width: clamp(205px, 21vw, 310px); animation: ls-cloud-drift-a 29s ease-in-out infinite alternate; }
+.ls-cloud-b { left: 42%; top: 39%; width: clamp(175px, 17vw, 250px); opacity: .3; animation: ls-cloud-drift-b 37s ease-in-out -11s infinite alternate; }
+.ls-cloud-c { right: -8%; top: 48%; width: clamp(230px, 23vw, 345px); animation: ls-cloud-drift-a 41s ease-in-out -17s infinite alternate-reverse; }
+.ls-cloud-d { left: 3%; top: 67%; width: clamp(185px, 18vw, 275px); opacity: .36; animation: ls-cloud-drift-b 33s ease-in-out -8s infinite alternate; }
+.ls-cloud-e { right: 25%; top: 84%; width: clamp(195px, 19vw, 285px); opacity: .32; animation: ls-cloud-drift-a 43s ease-in-out -25s infinite alternate; }
+.ls-distant-crescent { position: absolute; left: 8%; top: 43%; width: clamp(38px, 4vw, 58px); opacity: .62; filter: drop-shadow(0 0 12px #d9c4db55); animation: ls-celestial-float 19s ease-in-out infinite; }
+.ls-distant-planet { position: absolute; right: 8%; top: 58%; width: clamp(62px, 6.5vw, 96px); opacity: .58; animation: ls-celestial-float 25s ease-in-out -9s infinite reverse; }
+.ls-distant-moon { position: absolute; left: 15%; top: 80%; width: clamp(34px, 3.5vw, 52px); opacity: .48; animation: ls-celestial-float 29s ease-in-out -14s infinite; }
+.ls-constellation-fragment { position: absolute; overflow: visible; opacity: .34; }
+.ls-constellation-fragment path { fill: none; stroke: #c8adca; stroke-width: 1; stroke-dasharray: 2 7; }
+.ls-constellation-fragment circle { fill: #e9d3b2; filter: drop-shadow(0 0 4px #d8b786); animation: ls-constellation-breathe 9s ease-in-out infinite; }
+.ls-constellation-a { left: 34%; top: 47%; width: clamp(130px, 14vw, 205px); }
+.ls-constellation-b { right: 7%; top: 77%; width: clamp(115px, 12vw, 180px); transform: rotate(-8deg); }
+.ls-star-cluster { position: absolute; width: 110px; height: 86px; }
+.ls-star-cluster-a { left: 7%; top: 57%; }.ls-star-cluster-b { left: 48%; top: 72%; }.ls-star-cluster-c { right: 6%; top: 88%; }
+.ls-star-cluster i { position: absolute; width: 3px; height: 3px; background: #e5d5ef; border-radius: 50%; opacity: .35; animation: ls-cluster-twinkle 8s ease-in-out infinite; }
+.ls-star-cluster i:nth-child(1) { left: 8%; top: 55%; }.ls-star-cluster i:nth-child(2) { left: 35%; top: 18%; width: 5px; height: 5px; background: #e9c993; animation-delay: -3s; }.ls-star-cluster i:nth-child(3) { left: 58%; top: 70%; animation-duration: 11s; }.ls-star-cluster i:nth-child(4) { left: 88%; top: 34%; width: 2px; height: 2px; animation-delay: -6s; }.ls-star-cluster i:nth-child(5) { left: 68%; top: 8%; background: #cbb8de; animation-duration: 13s; }.ls-star-cluster i:nth-child(6) { left: 19%; top: 83%; width: 2px; height: 2px; animation-delay: -8s; }
+.ls-star-cluster i:nth-child(2)::after { content: ""; position: absolute; inset: -7px; background: linear-gradient(transparent 47%, #eacb9a 49% 51%, transparent 53%), linear-gradient(90deg, transparent 47%, #eacb9a 49% 51%, transparent 53%); }
+.ls-meteor { position: absolute; width: clamp(78px, 8vw, 118px); overflow: visible; opacity: 0; }
+.ls-meteor path:first-child { fill: none; stroke: #d8b67f; stroke-width: 1.4; opacity: .55; }
+.ls-meteor circle { fill: #f4deba; filter: drop-shadow(0 0 5px #e8c17c); }
+.ls-meteor-star { fill: #f3d7a8; stroke: none; }
+.ls-meteor-a { left: 18%; top: 50%; animation: ls-meteor-cross 23s ease-out 4s infinite; }
+.ls-meteor-b { right: 19%; top: 69%; animation: ls-meteor-cross 31s ease-out 17s infinite; }
+.ls-magic-dust { position: absolute; inset: 0; }
+.ls-magic-dust i { position: absolute; width: 5px; height: 3px; border-radius: 80% 20% 75% 25%; background: #c78b9f; opacity: .25; animation: ls-dust-drift 17s ease-in-out infinite alternate; }
+.ls-magic-dust i:nth-child(1) { left: 25%; top: 43%; }.ls-magic-dust i:nth-child(2) { left: 77%; top: 43%; animation-delay: -7s; }.ls-magic-dust i:nth-child(3) { left: 38%; top: 62%; width: 3px; height: 3px; background: #e5c68e; animation-duration: 23s; }.ls-magic-dust i:nth-child(4) { left: 84%; top: 74%; animation-delay: -12s; }.ls-magic-dust i:nth-child(5) { left: 12%; top: 73%; width: 3px; height: 3px; background: #d7bfdf; animation-duration: 21s; }.ls-magic-dust i:nth-child(6) { left: 55%; top: 91%; animation-delay: -15s; }
+
 .ls-threads { position: absolute; z-index: -1; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .ls-threads path { fill: none; stroke: #d8b47b; stroke-width: 1.1; stroke-dasharray: 2 9; opacity: .25; }
 .ls-threads circle { fill: #f3d59d; opacity: .2; filter: drop-shadow(0 0 5px #e7b972); animation: ls-thread-mote 11s ease-in-out infinite; }
@@ -60,7 +95,7 @@
 .ls-heading svg path { fill: none; stroke: #bd8298; stroke-width: 1.5; stroke-linecap: round; }
 
 .ls-cluster { position: absolute; z-index: 3; inset: 0; }
-.ls-letter { --paper-light: #f7ddd9; --paper: #dcaeb7; --paper-mid: #edc8cb; --paper-shadow: #b47f91; --seam: #8f617357; --edge-light: #fff1e6; --wax: #914d68; --wax-dark: #5f2e45; --ink: #624453; --ink-accent: #a8697e; --kiss: #a75671; position: absolute; width: clamp(138px, 14.2vw, 208px); padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; text-align: center; perspective: 900px; opacity: 0; }
+.ls-letter { --paper-light: #f7ddd9; --paper: #dcaeb7; --paper-mid: #edc8cb; --paper-shadow: #b47f91; --seam: #8f617357; --edge-light: #fff1e6; --wax: #914d68; --wax-dark: #5f2e45; --ink: #583442; --ink-accent: #a8697e; --kiss: #a75671; position: absolute; width: clamp(138px, 14.2vw, 208px); padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; text-align: center; perspective: 900px; opacity: 0; }
 .ls-letter.is-revealed { animation: ls-envelope-arrive .72s cubic-bezier(.2,.75,.24,1) var(--reveal-delay) both; }
 .ls-letter:nth-child(1) { left: 29%; top: 7%; --base-rotate: -4deg; transform: translate(calc(var(--parallax-x) * 4px), calc(var(--parallax-y) * 3px)); }
 .ls-letter:nth-child(2) { left: 50%; top: 10%; --base-rotate: 2.5deg; transform: translate(calc(var(--parallax-x) * 5px), calc(var(--parallax-y) * 4px)) scale(.94); }
@@ -76,22 +111,26 @@
 .ls-letter:nth-child(12) { left: 43%; top: calc(var(--letters-first-stage) + 360px); --base-rotate: -2deg; transform: translate(calc(var(--parallax-x) * 4px), calc(var(--parallax-y) * 3px)) scale(.94); }
 .ls-letter:nth-child(13) { left: 32%; top: calc(var(--letters-first-stage) + 570px); --base-rotate: -3deg; transform: translate(calc(var(--parallax-x) * 4px), calc(var(--parallax-y) * 3px)); }
 .ls-letter:nth-child(14) { left: 58%; top: calc(var(--letters-first-stage) + 550px); --base-rotate: 3deg; transform: translate(calc(var(--parallax-x) * 5px), calc(var(--parallax-y) * 4px)); }
-.ls-letter-midnight { --paper-light: #77708f; --paper: #504967; --paper-mid: #676078; --paper-shadow: #342f4c; --seam: #c0aec448; --edge-light: #baaed1; --wax: #92719a; --wax-dark: #59405e; --ink: #f0dfe7; --ink-accent: #e1c48f; }
-.ls-letter-ivory { --paper-light: #fff2dd; --paper: #e3d2b8; --paper-mid: #f0e1cb; --paper-shadow: #bda98e; --seam: #8d79634c; --edge-light: #fffaf0; --wax: #b17b67; --wax-dark: #754c45; --ink: #705764; --ink-accent: #a27885; }
-.ls-letter-sage { --paper-light: #e9e4d0; --paper: #bcc2aa; --paper-mid: #d7d8bc; --paper-shadow: #87947d; --seam: #59665352; --edge-light: #f8efda; --wax: #6f7965; --wax-dark: #465144; --ink: #4b5351; --ink-accent: #906c78; }
-.ls-letter-peach { --paper-light: #fee5d2; --paper: #e4b6a7; --paper-mid: #f2cebd; --paper-shadow: #b9827d; --seam: #8b57574a; --edge-light: #fff4e5; --wax: #a96068; --wax-dark: #713c4b; --ink: #74505a; --ink-accent: #bd7e6b; }
-.ls-letter-violet { --paper-light: #e5d7ee; --paper: #bba6ca; --paper-mid: #d2c0db; --paper-shadow: #826c99; --seam: #5b496f4f; --edge-light: #f8ecff; --wax: #74537e; --wax-dark: #493554; --ink: #513e61; --ink-accent: #c29887; }
+.ls-letter-midnight { --paper-light: #77708f; --paper: #504967; --paper-mid: #676078; --paper-shadow: #342f4c; --seam: #c0aec448; --edge-light: #baaed1; --wax: #92719a; --wax-dark: #59405e; --ink: #f3e6e0; --ink-accent: #e1c48f; }
+.ls-letter-ivory { --paper-light: #fff2dd; --paper: #e3d2b8; --paper-mid: #f0e1cb; --paper-shadow: #bda98e; --seam: #8d79634c; --edge-light: #fffaf0; --wax: #b17b67; --wax-dark: #754c45; --ink: #604957; --ink-accent: #a27885; }
+.ls-letter-sage { --paper-light: #e9e4d0; --paper: #bcc2aa; --paper-mid: #d7d8bc; --paper-shadow: #87947d; --seam: #59665352; --edge-light: #f8efda; --wax: #6f7965; --wax-dark: #465144; --ink: #414b47; --ink-accent: #906c78; }
+.ls-letter-peach { --paper-light: #fee5d2; --paper: #e4b6a7; --paper-mid: #f2cebd; --paper-shadow: #b9827d; --seam: #8b57574a; --edge-light: #fff4e5; --wax: #a96068; --wax-dark: #713c4b; --ink: #68424b; --ink-accent: #bd7e6b; }
+.ls-letter-violet { --paper-light: #e5d7ee; --paper: #bba6ca; --paper-mid: #d2c0db; --paper-shadow: #826c99; --seam: #5b496f4f; --edge-light: #f8ecff; --wax: #74537e; --wax-dark: #493554; --ink: #493653; --ink-accent: #c29887; }
 .ls-letter-anniversary { --edge-light: #f5db9e; --ink-accent: #b68a45; --wax: #a77b43; --wax-dark: #6d4b2d; }
 .ls-letter-anniversary .ls-envelope-edge { stroke: #d8b66d; stroke-width: 2; }
 .ls-letter-anniversary .ls-envelope-shell { filter: drop-shadow(0 21px 19px #05061488) drop-shadow(0 0 7px #d5ad5d38); }
 .ls-letter-birthday { --ink-accent: #b58e63; --wax: #8b6f78; --wax-dark: #594550; }
-.ls-letter.has-long-label .ls-written-label { left: 10%; right: 10%; font-size: clamp(9px, .82vw, 13px); line-height: 1.04; }
 .ls-float { display: block; animation: ls-letter-float var(--float-time) ease-in-out var(--float-delay) infinite alternate; transform-style: preserve-3d; }
 .ls-envelope-shell { position: relative; display: block; aspect-ratio: 300 / 194; transform: rotate(var(--base-rotate)); transform-origin: 50% 55%; filter: drop-shadow(0 21px 19px #05061488) drop-shadow(0 4px 2px #08091666); transition: transform .55s cubic-bezier(.2,.8,.2,1), filter .55s ease; }
 .ls-envelope-art { display: block; width: 100%; height: 100%; overflow: visible; }
 .ls-envelope-edge { fill: var(--paper-shadow); stroke: #ffffff25; stroke-width: 1; }
-.ls-written-label { position: absolute; z-index: 3; left: 13%; right: 13%; top: 52%; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 33%; color: var(--ink); font: italic clamp(11px, 1.02vw, 16px)/1.08 "Segoe Print", "Bradley Hand", cursive; text-shadow: 0 1px #fff4; }
-.ls-written-label small { display: block; margin-bottom: 2px; font: italic 500 clamp(7px, .55vw, 9px)/1.2 "Segoe Print", cursive; letter-spacing: .04em; text-transform: none; }
+.ls-written-label { position: absolute; z-index: 3; left: 12%; right: 12%; top: 62%; bottom: 7%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; color: var(--ink); font-family: "Segoe Print", "Bradley Hand", cursive; }
+.ls-written-label small { display: block; flex: none; margin-bottom: 1px; font: italic 500 clamp(7px, .52vw, 8.5px)/1 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .02em; opacity: .78; }
+.ls-written-label strong { display: block; font: italic 650 clamp(11px, 1vw, 15.5px)/.98 "Segoe Print", "Bradley Hand", cursive; letter-spacing: -.025em; white-space: nowrap; }
+.ls-label-medium .ls-written-label { left: 10%; right: 10%; }
+.ls-label-medium .ls-written-label strong { font-size: clamp(9.5px, .88vw, 13.5px); line-height: .96; }
+.ls-label-long .ls-written-label { left: 8%; right: 8%; }
+.ls-label-long .ls-written-label strong { font-size: clamp(8.5px, .76vw, 11.5px); line-height: .94; letter-spacing: -.035em; }
 .ls-wax { position: absolute; z-index: 6; left: 50%; top: 44%; display: grid; place-items: center; width: clamp(29px, 2.4vw, 38px); aspect-ratio: 1; border-radius: 45% 55% 48% 52% / 52% 43% 57% 48%; color: #e4b9a9; background: radial-gradient(circle at 36% 28%, #ffffff42 0 5%, transparent 8%), radial-gradient(circle at 45% 42%, var(--wax) 0 48%, color-mix(in srgb, var(--wax) 74%, var(--wax-dark)) 62%, var(--wax-dark) 80%); box-shadow: inset 2px 3px 4px #ffffff2d, inset -4px -5px 6px #2d10285c, 0 4px 4px #351b2c70; transform: translate(-50%, -50%) rotate(calc(var(--letter-index) * 17deg)); transition: filter .4s, transform .4s; }
 .ls-wax::before { content: ""; position: absolute; inset: 5px; border: 1px solid #f0c8b74d; border-radius: inherit; }
 .ls-wax svg { width: 62%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -100,7 +139,6 @@
 .ls-lock i:nth-child(2) { position: absolute; inset: 12px 3px 0; border-radius: 4px; background: #b28d54; box-shadow: inset 0 2px #f2d9a2; }
 .ls-lock b { position: absolute; z-index: 2; left: 14px; top: 19px; width: 4px; height: 8px; border-radius: 50%; background: #4e3c3c; }
 .ls-letter-note { display: block; margin-top: 5px; color: #ad9db0; font: italic clamp(7px, .56vw, 9px)/1.3 var(--display); letter-spacing: .035em; text-shadow: 0 2px 8px #080914; }
-.ls-open-hint { position: absolute; z-index: 9; left: 50%; bottom: 9%; padding: 3px 8px; color: var(--ink); font: italic 10px "Segoe Print", cursive; opacity: 0; transform: translate(-50%, 6px); transition: opacity .35s, transform .35s; white-space: nowrap; }
 .ls-hover-spark { position: absolute; z-index: 9; width: 5px; height: 5px; opacity: 0; background: #f5d79f; transform: rotate(45deg) scale(.2); box-shadow: 0 0 8px #efc37f; transition: .35s ease; }
 .ls-hover-spark-a { left: 9%; top: 21%; }.ls-hover-spark-b { right: 8%; bottom: 15%; transition-delay: .08s; }
 .ls-letter:hover .ls-envelope-shell,
@@ -109,8 +147,6 @@
 .ls-letter:focus-visible .ls-float { animation-play-state: paused; }
 .ls-letter:hover .ls-wax,
 .ls-letter:focus-visible .ls-wax { filter: brightness(1.16) drop-shadow(-2px -2px 5px #f2c49588); transform: translate(-50%, -50%) rotate(0) scale(1.04); }
-.ls-letter:hover .ls-open-hint,
-.ls-letter:focus-visible .ls-open-hint,
 .ls-letter:hover .ls-hover-spark,
 .ls-letter:focus-visible .ls-hover-spark { opacity: 1; transform: translate(-50%, 0); }
 .ls-letter:hover .ls-hover-spark,
@@ -167,6 +203,13 @@
 @keyframes ls-charm-sway { from { transform: rotate(-1.5deg); } to { transform: rotate(1.8deg); } }
 @keyframes ls-petal-drift { 0%,72% { opacity: 0; transform: translate(0,0) rotate(0); } 76% { opacity: .7; } 98% { opacity: .15; transform: translate(42vw,42vh) rotate(280deg); } 100% { opacity: 0; transform: translate(44vw,44vh) rotate(300deg); } }
 @keyframes ls-thread-mote { 0%,72%,100% { opacity: .15; transform: translate(0,0); } 82% { opacity: .8; transform: translate(7px,-3px); } 92% { opacity: .18; transform: translate(14px,-5px); } }
+@keyframes ls-cloud-drift-a { to { transform: translate3d(12px,-3px,0); } }
+@keyframes ls-cloud-drift-b { to { transform: translate3d(-9px,4px,0); } }
+@keyframes ls-celestial-float { 50% { transform: translateY(-5px) rotate(.6deg); } }
+@keyframes ls-constellation-breathe { 0%,100% { opacity: .4; } 54% { opacity: .85; } }
+@keyframes ls-cluster-twinkle { 0%,100% { opacity: .22; transform: scale(.78); } 52% { opacity: .7; transform: scale(1.08); } }
+@keyframes ls-meteor-cross { 0%,78% { opacity: 0; transform: translate3d(42px,-10px,0); } 80% { opacity: .16; } 84% { opacity: .78; } 90% { opacity: 0; transform: translate3d(-66px,22px,0); } 100% { opacity: 0; transform: translate3d(-66px,22px,0); } }
+@keyframes ls-dust-drift { to { transform: translate3d(9px,-13px,0) rotate(35deg); opacity: .42; } }
 
 @media (max-width: 980px) {
   .letters-sanctuary { --letters-first-stage: clamp(540px, calc(100svh - 126px), 760px); height: calc(var(--letters-first-stage) + 760px); }
@@ -176,6 +219,14 @@
   .ls-letter { width: clamp(112px, 14.5vw, 150px); }
   .ls-lantern-corner { width: clamp(175px, 19vw, 220px); }
   .ls-window { right: -3%; width: 16%; opacity: .78; }
+}
+
+@media (min-width: 681px) and (max-width: 820px) {
+  .ls-written-label { top: 65%; bottom: 3%; }
+  .ls-written-label small { font-size: 6.5px; }
+  .ls-written-label strong { font-size: 9.5px; line-height: .96; }
+  .ls-label-medium .ls-written-label strong { font-size: 8.2px; line-height: .94; }
+  .ls-label-long .ls-written-label strong { font-size: 7.5px; line-height: .92; }
 }
 
 @media (max-width: 680px) {
@@ -196,15 +247,25 @@
   .ls-letter:nth-child(11), .ls-letter:nth-child(12) { top: 69%; }
   .ls-letter:nth-child(13), .ls-letter:nth-child(14) { top: 83%; }
   .ls-letter:nth-child(3n) { --base-rotate: 2deg; }.ls-letter:nth-child(3n + 1) { --base-rotate: -2deg; }
+  .ls-written-label { top: 62%; bottom: 7%; }
+  .ls-written-label small { font-size: 7px; }
+  .ls-written-label strong { font-size: clamp(11px, 3.2vw, 14px); }
+  .ls-label-medium .ls-written-label strong { font-size: clamp(9.5px, 2.8vw, 12.5px); }
+  .ls-label-long .ls-written-label strong { font-size: clamp(8.5px, 2.5vw, 11px); }
   .ls-letter-note { font-size: 8px; }
   .ls-lantern-corner { left: -35px; width: 245px; opacity: .95; }
   .ls-threads { opacity: .52; }
   .ls-hanging-charms { left: 55%; width: 38%; height: 11%; }
+  .ls-cloud-a, .ls-cloud-c { width: 48vw; opacity: .3; }
+  .ls-cloud-b, .ls-cloud-d, .ls-cloud-e { width: 38vw; opacity: .24; }
+  .ls-distant-planet { right: 3%; }.ls-distant-crescent { left: 3%; }
+  .ls-constellation-fragment { opacity: .24; }
+  .ls-star-cluster { transform: scale(.78); transform-origin: center; }
   @keyframes ls-open-letter { 0% { } 58%,100% { opacity: 1; transform: translate(var(--open-viewport-x), var(--open-viewport-y)) rotate(0) scale(1.08); } }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .letters-sanctuary *, .letters-sanctuary *::before, .letters-sanctuary *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
-  .ls-sky::before, .ls-stars, .ls-threads, .ls-window, .ls-lantern-corner, .ls-writing-ledge, .ls-right-props { transform: none !important; }
+  .ls-sky::before, .ls-stars, .ls-threads, .ls-window, .ls-lantern-corner, .ls-writing-ledge, .ls-right-props, .ls-celestial-scenery * { transform: none !important; }
   .ls-letter:hover .ls-envelope-shell, .ls-letter:focus-visible .ls-envelope-shell { transform: rotate(0) scale(1.02); }
 }

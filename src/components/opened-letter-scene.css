@@ -2,8 +2,11 @@
   --ol-envelope: #d8aeb7;
   --ol-envelope-light: #efd0cf;
   --ol-envelope-shadow: #a67688;
-  --ol-ink: #5e4352;
+  --ol-ink: #2b2025;
   --ol-accent: #a65f78;
+  --ol-body-ink: #35282d;
+  --ol-secondary-ink: #35282d;
+  --ol-soft-ink: #35282d;
   position: fixed;
   z-index: 1200;
   inset: 0;
@@ -16,12 +19,12 @@
   isolation: isolate;
   animation: ol-scene-in .34s ease both;
 }
-.opened-letter-scene.ol-midnight { --ol-envelope: #514a68; --ol-envelope-light: #756d8d; --ol-envelope-shadow: #302c47; --ol-ink: #4b405c; --ol-accent: #8c729c; }
-.opened-letter-scene.ol-sage { --ol-envelope: #bbc0a8; --ol-envelope-light: #d9d8bd; --ol-envelope-shadow: #7e8c75; --ol-ink: #4e574f; --ol-accent: #758267; }
-.opened-letter-scene.ol-violet { --ol-envelope: #b9a5c9; --ol-envelope-light: #d7c5df; --ol-envelope-shadow: #806b97; --ol-ink: #554361; --ol-accent: #80618c; }
-.opened-letter-scene.ol-ivory { --ol-envelope: #e2d2b9; --ol-envelope-light: #f5e7cf; --ol-envelope-shadow: #b5a187; --ol-ink: #65515b; --ol-accent: #9a7181; }
-.opened-letter-scene.ol-peach { --ol-envelope: #e1b5a7; --ol-envelope-light: #f4d2bf; --ol-envelope-shadow: #ad7c77; --ol-ink: #714e58; --ol-accent: #a9616a; }
-.opened-letter-scene.ol-champagne { --ol-envelope: #dfcda8; --ol-envelope-light: #f4e5c5; --ol-envelope-shadow: #ad9363; --ol-ink: #675242; --ol-accent: #a97e43; }
+.opened-letter-scene.ol-midnight { --ol-envelope: #514a68; --ol-envelope-light: #756d8d; --ol-envelope-shadow: #302c47; --ol-accent: #8c729c; }
+.opened-letter-scene.ol-sage { --ol-envelope: #bbc0a8; --ol-envelope-light: #d9d8bd; --ol-envelope-shadow: #7e8c75; --ol-accent: #758267; }
+.opened-letter-scene.ol-violet { --ol-envelope: #b9a5c9; --ol-envelope-light: #d7c5df; --ol-envelope-shadow: #806b97; --ol-accent: #80618c; }
+.opened-letter-scene.ol-ivory { --ol-envelope: #e2d2b9; --ol-envelope-light: #f5e7cf; --ol-envelope-shadow: #b5a187; --ol-accent: #9a7181; }
+.opened-letter-scene.ol-peach { --ol-envelope: #e1b5a7; --ol-envelope-light: #f4d2bf; --ol-envelope-shadow: #ad7c77; --ol-accent: #a9616a; }
+.opened-letter-scene.ol-champagne { --ol-envelope: #dfcda8; --ol-envelope-light: #f4e5c5; --ol-envelope-shadow: #ad9363; --ol-accent: #a97e43; }
 
 .ol-night-depth {
   position: absolute;
@@ -54,6 +57,12 @@
 
 .ol-letter-stage { position: relative; z-index: 6; width: clamp(430px, 55vw, 790px); height: min(84svh, 850px); display: grid; place-items: center; perspective: 1300px; }
 .ol-letter-stage::before { content: ""; position: absolute; z-index: 4; width: 75%; height: min(700px, 76svh); background: transparent; box-shadow: 0 5px 4px #160e1870, 0 29px 58px #02030bc7, 0 0 42px #e1b98b24; transform: rotate(.7deg); opacity: 0; animation: ol-paper-shadow .72s ease .12s both; pointer-events: none; }
+.ol-special-confetti { position: absolute; z-index: 14; inset: -4% -10% 0; overflow: hidden; pointer-events: none; }
+.ol-confetti-piece { position: absolute; top: 0; left: var(--ol-confetti-x); width: var(--ol-confetti-width); height: var(--ol-confetti-height); display: block; color: var(--ol-confetti-color); background: var(--ol-confetti-color); border-radius: 1px; opacity: 0; box-shadow: inset 1px 0 #fff5, 0 1px 2px #29152524; transform-origin: 50% 50%; animation: ol-special-confetti-fall var(--ol-confetti-duration) cubic-bezier(.18,.62,.34,1) var(--ol-confetti-delay) both; }
+.ol-confetti-piece.is-circle { border-radius: 50%; }
+.ol-confetti-piece.is-heart,
+.ol-confetti-piece.is-star { width: auto; height: auto; background: transparent; box-shadow: none; font: 700 var(--ol-confetti-width)/1 Georgia, serif; }
+.ol-confetti-piece.is-metallic:not(.is-heart):not(.is-star) { background: linear-gradient(105deg, #ad793e, #f0d898 45%, #bf8b48 76%); box-shadow: inset 1px 0 #fff8, 0 1px 3px #4f321e35; }
 .ol-envelope { position: absolute; z-index: 1; left: 11%; right: 11%; bottom: 3%; height: 31%; filter: drop-shadow(0 22px 24px #02030a99); animation: ol-envelope-settle .3s cubic-bezier(.2,.75,.25,1) both; }
 .ol-envelope-back { position: absolute; inset: 12% 0 0; border: 2px solid color-mix(in srgb, var(--ol-envelope-shadow), transparent 25%); border-radius: 4px 4px 9px 9px; background: linear-gradient(145deg, var(--ol-envelope-light), var(--ol-envelope)); }
 .ol-envelope-inner { position: absolute; z-index: 1; inset: 18% 4% 8%; background: linear-gradient(#b28f9955, #fff1df55); box-shadow: inset 0 12px 18px #4a2f4633; }
@@ -72,7 +81,7 @@
   overflow: auto;
   padding: clamp(45px, 5.4vw, 76px) clamp(42px, 5vw, 74px) clamp(55px, 6vw, 88px);
   clip-path: polygon(.6% 1%, 23% .4%, 51% .8%, 78% .2%, 99.3% 1.1%, 99.7% 34%, 99.1% 65%, 99.6% 98.8%, 72% 99.4%, 48% 99%, 21% 99.6%, .5% 98.7%, .9% 69%, .3% 35%);
-  color: #4f3d48;
+  color: #35282d;
   background:
     linear-gradient(90deg, transparent 0 10%, #ad809107 10.2% 10.45%, transparent 10.7%),
     repeating-linear-gradient(0deg, transparent 0 43px, #8e6f7d08 44px 45px),
@@ -88,16 +97,569 @@
 .ol-paper::after { content: ""; position: absolute; right: 0; bottom: 0; width: 52px; height: 48px; background: linear-gradient(135deg, transparent 48%, #c7ad9b 50%, #f3e3d0 72%); filter: drop-shadow(-4px -4px 4px #6f526533); }
 .ol-paper-grain { position: absolute; inset: 0; pointer-events: none; opacity: .18; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.13'/%3E%3C/svg%3E"); mix-blend-mode: multiply; }
 .ol-paper-header { position: relative; z-index: 2; text-align: center; opacity: 0; animation: ol-ink-in .38s ease .55s both; }
-.ol-paper-header small { display: block; color: color-mix(in srgb, var(--ol-accent), #654756 25%); font: italic 13px/1.2 "Segoe Print", cursive; letter-spacing: .08em; }
+.ol-paper-header small { display: block; color: var(--ol-secondary-ink); font: italic 13px/1.2 "Segoe Print", cursive; letter-spacing: .08em; }
 .ol-paper-header h1 { max-width: 18ch; margin: 7px auto 8px; color: var(--ol-ink); font: italic 400 clamp(30px, 3.5vw, 51px)/1.02 var(--display); letter-spacing: -.025em; }
-.ol-paper-header span { color: #987481; font: italic 12px "Segoe Print", cursive; }
+.ol-paper-header span { color: var(--ol-secondary-ink); font: italic 12px "Segoe Print", cursive; }
 .ol-rule { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; gap: 9px; width: 115px; margin: 22px auto 28px; opacity: 0; animation: ol-ink-in .36s ease .6s both; }
-.ol-rule::before, .ol-rule::after { content: ""; width: 35px; height: 1px; background: #b68a9666; }.ol-rule i { width: 3px; height: 3px; border-radius: 50%; background: var(--ol-accent); }
-.ol-letter-body { position: relative; z-index: 2; margin: 0; white-space: pre-line; color: #55434b; font: clamp(15px, 1.35vw, 19px)/1.82 var(--display); text-align: left; opacity: 0; animation: ol-ink-in .42s ease .64s both; }
-.ol-margin-doodle { position: absolute; z-index: 2; color: color-mix(in srgb, var(--ol-accent), transparent 18%); font-family: "Segoe Print", cursive; opacity: 0; animation: ol-details-settle .42s ease .69s both; }
+.ol-rule::before, .ol-rule::after { content: ""; width: 35px; height: 1px; background: #211d1f70; }.ol-rule i { width: 3px; height: 3px; border-radius: 50%; background: #211d1f; }
+.ol-letter-body { position: relative; z-index: 2; margin: 0; white-space: pre-line; color: #35282d !important; font: clamp(15px, 1.35vw, 19px)/1.82 var(--display); text-align: left; opacity: 1 !important; filter: none !important; mix-blend-mode: normal; animation: ol-ink-in .42s ease .64s both; }
+.ol-response-quote { display: block; margin: 10px 0 10px 1.15em; padding: 2px 0 3px 1em; border-left: 1px solid #211d1f99; color: var(--ol-body-ink); font-family: "Segoe Print", "Bradley Hand", cursive; font-size: .9em; font-style: italic; line-height: 1.55; }
+.ol-angry-letter-body > p { position: relative; margin: 0 0 1.35em; }
+.ol-angry-meter { position: relative; width: min(94%, 460px); margin: 9px auto 1.65em; padding: 21px 20px 19px; color: #35282d; border: 1px solid #916d764f; border-radius: 3px 7px 4px 6px; background: linear-gradient(166deg, #f1dfcc 0 56%, #e8cfbf 100%); box-shadow: 0 3px 3px #5f404b30, 0 13px 22px #432d3630, inset 0 1px #fff9e9; box-sizing: border-box; transform: rotate(-.25deg); }
+.ol-angry-meter::before { content: ""; position: absolute; inset: 7px; border: 1px dashed #825e6738; border-radius: 5px 3px 6px 4px; pointer-events: none; }
+.ol-angry-meter h2 { position: relative; z-index: 2; margin: 0 0 9px; color: #2b2025; font: 700 clamp(14px, 1.3vw, 17px)/1.2 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .045em; text-align: center; }
+.ol-anger-scene { position: relative; min-height: 147px; }
+.ol-anger-gauge { position: absolute; left: 2%; top: 15px; width: 64%; color: #35282d; }
+.ol-anger-track { position: relative; height: 25px; overflow: hidden; border: 2px solid #69434f; border-radius: 7px 4px 6px 5px; background: repeating-linear-gradient(90deg, #f2e2d5 0 calc(10% - 2px), #8c6b7355 calc(10% - 2px) 10%); box-shadow: inset 0 2px 5px #5c3d4738, 0 2px 0 #fff7e7; transform: rotate(.3deg); }
+.ol-anger-track > i { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(90deg, #9d4c61, #c26d79 58%, #dc8f8b); box-shadow: inset 0 2px #f6b7aa70, inset 0 -3px #71374745; transition: width .78s cubic-bezier(.22,.72,.24,1); }
+.ol-anger-track > span { position: absolute; z-index: 2; top: 0; bottom: 0; width: 1px; background: #5f3c454f; }.ol-anger-track > span:nth-of-type(1) { left: 25%; }.ol-anger-track > span:nth-of-type(2) { left: 50%; }.ol-anger-track > span:nth-of-type(3) { left: 75%; }.ol-anger-track > span:nth-of-type(4) { left: calc(100% - 1px); }
+.ol-anger-gauge strong { display: block; margin: 7px 0 0; color: #2b2025; font: 700 16px/1.1 "Segoe Print", "Bradley Hand", cursive; }
+.ol-anger-gauge p { margin: 3px 0 0; color: #35282d; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .025em; }
+.ol-anger-ground { position: absolute; right: 0; bottom: 4px; width: 35%; height: 7px; border-top: 1px solid #6d4b555e; border-radius: 50%; }
+.ol-anger-janna, .ol-anger-josh { position: absolute; z-index: 3; bottom: 3px; width: 51px; height: 76px; transition: right .72s cubic-bezier(.2,.75,.24,1), transform .72s ease; }
+.ol-anger-janna { right: 2%; }
+.ol-anger-josh { right: 19%; animation: ol-anger-josh-walk .84s ease both; }
+.ol-anger-janna svg, .ol-anger-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ol-anger-brows, .ol-anger-marks, .ol-anger-janna-arms, .ol-anger-janna-open-arms { transition: opacity .55s ease, transform .6s ease; transform-origin: center; }
+.ol-anger-janna-open-arms { opacity: 0; }
+.ol-anger-reaction-1 .ol-anger-marks { opacity: .75; }.ol-anger-reaction-2 .ol-anger-marks { opacity: .38; }.ol-anger-reaction-3 .ol-anger-marks, .ol-anger-reaction-4 .ol-anger-marks { opacity: 0; }
+.ol-anger-reaction-2 .ol-anger-brows { transform: rotate(2deg); }.ol-anger-reaction-3 .ol-anger-brows, .ol-anger-reaction-4 .ol-anger-brows { opacity: .45; transform: translateY(1px); }
+.ol-anger-stage-4 .ol-anger-janna { right: 1%; transform: translateX(-5px) rotate(-2deg); }.ol-anger-stage-4 .ol-anger-josh { right: 18%; animation: none; transform: translateX(5px) rotate(2deg); }
+.ol-anger-stage-4 .ol-anger-janna-arms { opacity: 0; transform: translateY(3px) scale(.9); }.ol-anger-stage-4 .ol-anger-janna-open-arms { opacity: 1; }
+.ol-anger-kisses { position: absolute; z-index: 4; right: 14%; top: 22px; color: #9c4c64; font: 700 13px/1 Georgia, serif; }
+.ol-anger-kisses i { position: absolute; font-style: normal; opacity: 0; animation: ol-anger-kiss .8s ease-out both; }.ol-anger-kisses i:nth-child(2) { left: -14px; top: 17px; animation-delay: .12s; }.ol-anger-kisses i:nth-child(3) { left: 8px; top: 28px; animation-delay: .23s; }
+.ol-anger-heart { position: absolute; z-index: 5; right: 13%; top: 31px; color: #9b4f64; font: 700 17px/1 Georgia, serif; opacity: 0; animation: ol-anger-heart-in .55s ease .55s forwards; }
+.ol-anger-attempts { position: relative; z-index: 2; margin: 3px 4px 13px; padding: 0; list-style: none; color: #35282d; font: italic 12px/1.5 "Segoe Print", "Bradley Hand", cursive; }
+.ol-anger-attempts li { margin: 4px 0; opacity: .72; }.ol-anger-attempts li.is-current { color: #2b2025; font-weight: 700; opacity: 1; animation: ol-anger-attempt-in .4s ease both; }
+.ol-anger-action { position: relative; z-index: 2; display: block; min-width: min(92%, 280px); margin: 6px auto 1px; padding: 10px 18px 9px; border: 1px solid #865567; border-radius: 4px 7px 5px 3px; color: #2b2025; background: linear-gradient(155deg, #e2a5ad, #c7798d); box-shadow: 0 4px 0 #855467, 0 8px 12px #54364138, inset 0 1px #ffe6dd; cursor: pointer; font: 700 11px/1.25 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .035em; transform: rotate(.25deg); transition: transform .18s, box-shadow .18s; }
+.ol-anger-action:hover, .ol-anger-action:focus-visible { transform: translateY(-1px) rotate(0); box-shadow: 0 5px 0 #855467, 0 10px 14px #54364140, inset 0 1px #ffe6dd; }.ol-anger-action:active { transform: translateY(4px); box-shadow: 0 0 0 #855467, 0 3px 5px #54364138; }
+.ol-anger-action:focus-visible { outline: 2px dotted #593640; outline-offset: 4px; }
+.ol-anger-success { position: relative; z-index: 2; margin: 9px auto 2px; text-align: center; }
+.ol-anger-success strong { display: inline-block; padding: 8px 13px 6px; border: 2px solid #8f4e61; color: #2b2025; font: 800 11px/1.35 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .035em; transform: rotate(-1deg); opacity: 0; animation: ol-anger-stamp .58s cubic-bezier(.2,.75,.24,1.2) .45s forwards; }
+.ol-anger-success small { display: block; margin: 11px auto 0; color: #35282d; font: italic 11px/1.45 "Segoe Print", "Bradley Hand", cursive; opacity: 0; animation: ol-anger-attempt-in .4s ease 1s forwards; }
+.ol-mad-at-me-letter-body > p { position: relative; margin: 0 0 1.35em; }
+.ol-josh-needs { position: relative; width: min(94%, 460px); margin: 8px auto 1.7em; padding: 18px 13px 14px; color: #35282d; box-sizing: border-box; }
+.ol-josh-needs::before { content: ""; position: absolute; left: 6%; right: 6%; top: 0; border-top: 1px solid #87636d55; transform: rotate(-.3deg); }
+.ol-josh-needs h2 { margin: 0 auto 15px; color: #2b2025; font: 700 clamp(13px, 1.2vw, 16px)/1.35 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .025em; text-align: center; }
+.ol-need-options { display: grid; gap: 11px; }
+.ol-need-option { position: relative; transition: opacity .25s ease, filter .25s ease; }
+.ol-need-option.is-softened { filter: saturate(.64); }
+.ol-need-option > button { position: relative; z-index: 2; display: block; width: min(92%, 340px); min-height: 43px; margin: 0 auto; padding: 10px 30px 9px 18px; border: 1px solid #8b68705c; border-radius: 3px 7px 4px 6px; color: #2b2025; background: linear-gradient(157deg, #f2e2d1, #dfc4b7); box-shadow: 0 3px 0 #8b68705c, 0 7px 12px #5239432b, inset 0 1px #fff9eb; cursor: pointer; font: 700 11px/1.35 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .025em; text-align: left; transform: rotate(-.25deg); transition: transform .18s ease, box-shadow .18s ease; }
+.ol-need-option:nth-child(2) > button { background: linear-gradient(157deg, #e9c9ce, #d9aeb8); transform: rotate(.3deg); }.ol-need-option:nth-child(3) > button { background: linear-gradient(157deg, #eadbd2, #d7b4bc); transform: rotate(-.4deg); }.ol-need-option:nth-child(4) > button { background: linear-gradient(157deg, #ddc6d0, #c7a6b5); transform: rotate(.2deg); }
+.ol-need-option > button::after { content: ""; position: absolute; right: 0; top: 0; width: 24px; height: 21px; background: linear-gradient(225deg, #97717a38 49%, #fff3df 51%); box-shadow: -2px 2px 3px #62454f24; }
+.ol-need-option > button:hover, .ol-need-option > button:focus-visible { transform: translateY(-1px) rotate(0); box-shadow: 0 4px 0 #8b68705c, 0 9px 14px #52394335, inset 0 1px #fff9eb; }.ol-need-option > button:active, .ol-need-option.is-selected > button { transform: translateY(3px) rotate(0); box-shadow: 0 0 0 #8b68705c, 0 3px 6px #5239432b, inset 0 2px 4px #76545e20; }
+.ol-need-option > button:focus-visible { outline: 2px dotted #5b3c46; outline-offset: 4px; }
+.ol-need-response { position: relative; width: min(94%, 390px); margin: 4px auto 2px; padding: 18px 20px 16px; overflow: hidden; color: #35282d; border: 1px solid #8d6c7448; background: linear-gradient(164deg, #f5e6d3, #e9d3c4); box-shadow: 0 3px 3px #5d424b2b, 0 11px 17px #49313b25; box-sizing: border-box; transform-origin: 50% 0; animation: ol-need-note-open .5s cubic-bezier(.18,.76,.24,1) both; }
+.ol-need-response::before { content: ""; position: absolute; right: 0; top: 0; width: 30px; height: 27px; background: linear-gradient(225deg, #95717a30 49%, #fff4e3 51%); box-shadow: -2px 2px 3px #62454f25; }
+.ol-need-response.is-closing { animation: ol-need-note-close .28s ease both; pointer-events: none; }
+.ol-need-response > p { margin: 0; color: #35282d; font: italic 12px/1.55 "Segoe Print", "Bradley Hand", cursive; }
+.ol-need-space-scene, .ol-need-talk-scene, .ol-need-hug-scene { position: relative; height: 86px; margin-top: 10px; border-bottom: 1px solid #7957624d; }
+.ol-need-space-scene > div { position: absolute; left: 16%; bottom: 0; width: 45px; height: 68px; transform: translateY(8px) scaleY(.8) rotate(-3deg); transform-origin: center bottom; }.ol-need-space-scene > div svg, .ol-need-talk-scene > div svg, .ol-need-hug-scene > div svg { display: block; width: 100%; height: 100%; }
+.ol-need-space-scene > span { position: absolute; left: 39%; top: 33px; color: #2b2025; font: italic 11px/1 "Segoe Print", "Bradley Hand", cursive; transform: rotate(-2deg); }
+.ol-need-talk-scene > div { position: absolute; bottom: 0; width: 44px; height: 68px; transform: translateY(8px) scaleY(.82); transform-origin: center bottom; }.ol-need-talk-scene > div:first-child { left: 23%; }.ol-need-talk-scene > div:last-child { right: 23%; transform: translateY(8px) scale(-1,.82); }
+.ol-need-talk-scene > span { position: absolute; left: 50%; top: 19px; min-width: 31px; padding: 2px 5px 4px; border: 1px solid #76535e66; border-radius: 48%; color: #2b2025; font: 700 12px/1 Georgia, serif; text-align: center; transform: translateX(-50%); }
+.ol-need-hug-scene { height: 99px; }
+.ol-need-hug-janna, .ol-need-hug-josh { position: absolute; bottom: 0; width: 46px; height: 74px; }.ol-need-hug-janna { left: calc(50% - 54px); animation: ol-need-janna-walk .85s ease both; }.ol-need-hug-josh { left: calc(50% + 3px); transform: rotate(2deg); }
+.ol-need-hug-scene > span { position: absolute; left: 50%; top: 3px; color: #9c4f65; font: 700 16px/1 Georgia, serif; opacity: 0; animation: ol-need-heart-in .45s ease .78s forwards; }
+.ol-need-hug-scene > small { position: absolute; left: 50%; bottom: 1px; padding: 3px 7px; border: 1px solid #8d5063; color: #2b2025; background: #eed8ce; font: 700 8px/1.2 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .025em; white-space: nowrap; transform: translateX(-50%) rotate(-1deg); }
+.ol-need-pending > p:first-child { margin-bottom: 11px; font-weight: 700; }.ol-need-pending > p:last-child { margin-top: 12px; animation: ol-anger-attempt-in .35s ease .72s both; }
+.ol-forgiveness-request { position: relative; width: min(94%, 295px); margin: 0 auto; padding: 13px 15px 14px; border: 1px solid #75525d70; color: #35282d; background: #edddcd; box-shadow: inset 0 0 0 4px #f8ebdc, 0 4px 8px #4c333c24; transform: rotate(.3deg); animation: ol-pending-request-in .38s ease .32s both; }
+.ol-forgiveness-request h3 { margin: 0 0 9px; color: #2b2025; font: 800 11px/1.25 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .025em; }.ol-forgiveness-request > span { display: block; color: #35282d; font: 700 9px/1.2 "Segoe Print", cursive; }.ol-forgiveness-request > strong { position: absolute; right: 16px; top: 34px; padding: 5px 10px 4px; border: 2px solid #925268; color: #2b2025; font: 800 13px/1 "Segoe Print", cursive; transform: rotate(-7deg); animation: ol-pending-stamp .5s ease .25s both; }
+.ol-forgiveness-request > i { position: relative; display: block; width: 68%; height: 6px; margin-top: 12px; overflow: hidden; border: 1px solid #76545e66; background: #f7eadc; }.ol-forgiveness-request > i b { display: block; width: 0; height: 100%; background: #a86a79; animation: ol-pending-progress 1.1s ease .55s forwards; }
+.ol-mad-please, .ol-mad-together { color: #2b2025; font-family: "Segoe Print", "Bradley Hand", cursive; font-weight: 700; }.ol-mad-please { margin-top: .55em !important; }.ol-mad-together::after { content: ""; position: absolute; left: 0; bottom: -.12em; width: min(78%, 340px); border-bottom: 1px solid #2b202599; transform: rotate(-.4deg); }
+.ol-mad-return { margin: 2em 0 2.2em !important; color: #2b2025; font-family: "Segoe Print", "Bradley Hand", cursive; font-weight: 650; }
+.ol-sad-letter-body > p { position: relative; margin: 0 0 1.35em; }
+.ol-sad-emphasis { color: var(--ol-ink); font-family: "Segoe Print", "Bradley Hand", cursive; font-weight: 600; line-height: 1.55; }
+.ol-sad-emphasis::after { content: ""; position: absolute; left: 0; bottom: -.18em; width: min(82%, 330px); height: 5px; border-bottom: 1px solid #211d1f99; border-radius: 50%; transform: rotate(-.4deg); }
+.ol-pillow-instruction { display: inline-flex; align-items: center; gap: 12px; margin-left: 1.1em !important; padding: 0 4px 2px; }
+.ol-pillow-instruction::before { content: "↳"; position: absolute; left: -1.15em; color: #211d1f; font: 18px/1 "Segoe Print", cursive; transform: rotate(-8deg); }
+.ol-pillow-doodle { position: relative; flex: none; width: 29px; height: 20px; border: 1.5px solid #211d1f; border-radius: 45% 38% 44% 37%; transform: rotate(5deg); }
+.ol-pillow-doodle::before, .ol-pillow-doodle::after { content: ""; position: absolute; border-radius: 50%; }
+.ol-pillow-doodle::before { inset: 4px 7px; border: 1px solid #211d1f80; }
+.ol-pillow-doodle::after { left: 12px; top: 8px; width: 3px; height: 3px; background: #211d1f; }
+.ol-heart-hunt { position: relative; min-height: 84px; margin: -2px 0 1.45em; }
+.ol-hidden-heart { position: absolute; z-index: 3; left: 7%; top: 38px; display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; color: #211d1f; background: transparent; cursor: pointer; font: italic 17px/1 "Segoe Print", cursive; opacity: .55; transform: rotate(-9deg); animation: ol-hidden-heart-pulse 6.5s ease-in-out infinite; }
+.ol-hidden-heart:hover, .ol-hidden-heart:focus-visible { opacity: .86; outline: 1px dotted #211d1f88; outline-offset: 4px; }
+.ol-hidden-heart:active { transform: rotate(-9deg) scale(.82); }
+.ol-hidden-heart i { --ol-kiss-x: 0px; position: absolute; left: 8px; top: 8px; width: 5px; height: 5px; opacity: 0; background: #211d1f; transform: rotate(45deg); }
+.ol-hidden-heart i::before, .ol-hidden-heart i::after { content: ""; position: absolute; width: 5px; height: 5px; border-radius: 50%; background: inherit; }
+.ol-hidden-heart i::before { left: -3px; }.ol-hidden-heart i::after { top: -3px; }
+.ol-hidden-heart i:nth-of-type(1) { --ol-kiss-x: -14px; }.ol-hidden-heart i:nth-of-type(3) { --ol-kiss-x: 14px; }
+.ol-heart-hunt.is-found .ol-hidden-heart { color: #211d1f; opacity: .8; animation: none; }
+.ol-heart-hunt.is-found .ol-hidden-heart i { animation: ol-kiss-particle .75s ease-out both; }
+.ol-heart-hunt.is-found .ol-hidden-heart i:nth-of-type(2) { animation-delay: .08s; }.ol-heart-hunt.is-found .ol-hidden-heart i:nth-of-type(3) { animation-delay: .14s; }
+.ol-secret-kiss-note { position: relative; width: min(86%, 390px); margin: 4px auto 24px; padding: 21px 25px 18px; color: var(--ol-body-ink); background: linear-gradient(145deg, #f3dfd0, #e8c9c6); box-shadow: 0 3px 3px #65465633, 0 14px 22px #412d3a30; font: italic .78em/1.55 "Segoe Print", "Bradley Hand", cursive; transform-origin: 50% 0; animation: ol-secret-note-open .72s cubic-bezier(.18,.78,.24,1) both; }
+.ol-secret-kiss-note::before { content: ""; position: absolute; right: 0; top: 0; width: 28px; height: 25px; background: linear-gradient(225deg, #b98b9740 49%, #f8e9da 51%); box-shadow: -2px 2px 3px #6f4b5730; }
+.ol-secret-kiss-note b { display: block; margin-bottom: 9px; color: var(--ol-ink); font-weight: 700; }
+.ol-secret-kiss-note p { margin: 0 0 8px; }
+.ol-prescription { margin: -.2em 0 1.45em .35em; }
+.ol-prescription button { display: flex; align-items: flex-start; gap: 9px; width: 100%; margin: 0; padding: 4px 0; border: 0; color: var(--ol-soft-ink); background: transparent; font: italic .9em/1.42 "Segoe Print", "Bradley Hand", cursive; text-align: left; cursor: pointer; }
+.ol-ink-checkbox { position: relative; flex: 0 0 15px; width: 15px; height: 15px; margin-top: .16em; border: 1.5px solid #211d1fcc; transform: rotate(calc((var(--ol-check-angle, 0)) * 1deg)); }
+.ol-prescription button:nth-child(2n) .ol-ink-checkbox { --ol-check-angle: -2; }.ol-prescription button:nth-child(3n) .ol-ink-checkbox { --ol-check-angle: 2; }
+.ol-prescription button.is-checked .ol-ink-checkbox::after { content: ""; position: absolute; left: 2px; top: -1px; width: 13px; height: 8px; border-left: 2px solid #211d1f; border-bottom: 2px solid #211d1f; transform: rotate(-48deg) scale(0); transform-origin: 20% 80%; animation: ol-ink-check .3s cubic-bezier(.2,.8,.3,1.2) forwards; }
+.ol-prescription button.is-checked > span:last-child { color: var(--ol-ink); }
+.ol-stressed-letter-body > p { position: relative; margin: 0 0 1.35em; }
+.ol-stress-emphasis { color: var(--ol-ink); font-family: "Segoe Print", "Bradley Hand", cursive; font-weight: 650; line-height: 1.52; }
+.ol-stress-emphasis::after { content: ""; position: absolute; left: 0; bottom: -.14em; width: min(76%, 315px); border-bottom: 1px solid #211d1f99; transform: rotate(-.35deg); }
+.ol-stress-device { position: relative; width: min(92%, 410px); min-height: 178px; margin: 8px auto 1.6em; padding-top: 28px; text-align: center; perspective: 700px; }
+.ol-stress-annotation { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 7px; color: #35282d; font: italic 11px/1.1 "Segoe Print", "Bradley Hand", cursive; transform: rotate(-2deg); }
+.ol-stress-annotation i { display: inline-block; font-style: normal; transform: translateY(2px) rotate(4deg); }
+.ol-stress-mount { position: relative; z-index: 2; width: min(220px, 82%); height: 92px; margin: 0 auto; border: 1px solid #92747b66; border-radius: 38% 43% 40% 36% / 24% 29% 25% 31%; background: linear-gradient(145deg, #f3e4d2, #d9c2b2); box-shadow: 0 3px 2px #644a5238, 0 12px 18px #47323d30, inset 0 1px #fff8e6; transform: rotate(.5deg); }
+.ol-stress-mount::before { content: ""; position: absolute; inset: 9px; border: 1px dashed #896c7352; border-radius: inherit; }
+.ol-stress-screw { position: absolute; z-index: 3; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 36% 30%, #f0dfca, #8d7472 72%); box-shadow: 0 1px 2px #39272e55; }
+.ol-stress-screw::after { content: ""; position: absolute; left: 1px; right: 1px; top: 3px; height: 1px; background: #675359; transform: rotate(12deg); }
+.ol-stress-screw-a { left: 18px; }.ol-stress-screw-b { right: 18px; transform: rotate(55deg); }
+.ol-stress-button { position: absolute; z-index: 4; left: 50%; top: 17px; display: grid; place-items: center; width: 145px; height: 58px; padding: 0; border: 2px solid #8c5063; border-radius: 45% 43% 47% 41% / 38% 44% 39% 46%; color: #2b2025; background: linear-gradient(155deg, #dfa0ac 0 34%, #c5798f 60%, #9d5970); box-shadow: 0 7px 0 #754052, 0 10px 13px #59344166, inset 0 3px 4px #ffe0db88, inset 0 -3px 5px #6d334b44; transform: translateX(-50%); cursor: pointer; overflow: hidden; }
+.ol-stress-button::after { content: ""; position: absolute; top: -32%; left: -55%; width: 38%; height: 165%; background: linear-gradient(90deg, transparent, #fff7e690, transparent); transform: skewX(-18deg); animation: ol-stress-highlight 8s ease-in-out 2s infinite; }
+.ol-stress-button span { position: relative; z-index: 2; font: 700 10px/1.25 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .055em; }
+.ol-stress-button:focus-visible { outline: 2px dotted #5d3a47; outline-offset: 5px; }
+.ol-stress-device.is-pressing .ol-stress-button { animation: ol-stress-press .43s cubic-bezier(.2,.75,.24,1) both; }
+.ol-stress-fortune { position: relative; z-index: 1; width: min(94%, 365px); margin: -9px auto 0; padding: 25px 28px 17px; color: #35282d; background: linear-gradient(175deg, #f5e7d6, #ead1c8); box-shadow: 0 3px 3px #5e414b38, 0 12px 18px #452d3830; font: italic clamp(12px, 1.05vw, 15px)/1.5 "Segoe Print", "Bradley Hand", cursive; transform-origin: 50% 0; }
+.ol-stress-fortune::before, .ol-stress-fortune::after { content: ""; position: absolute; top: 5px; width: 19px; height: 7px; background: #d5b9a277; transform: rotate(-5deg); }.ol-stress-fortune::before { left: 13px; }.ol-stress-fortune::after { right: 13px; transform: rotate(6deg); }
+.ol-stress-fortune.is-visible { animation: ol-stress-note-out .52s cubic-bezier(.18,.8,.23,1) both; }
+.ol-stress-fortune.is-retracting { animation: ol-stress-note-in .17s ease-in both; }
+.ol-stress-fortune p { margin: 0; }
+.ol-stress-detail { position: absolute; right: 10px; bottom: 3px; color: #8e5268; font: italic 11px/1 "Segoe Print", cursive; transform: rotate(-7deg); }
+.ol-stress-detail-0, .ol-stress-detail-1 { font-size: 15px; }.ol-stress-detail-2 { right: 12px; }
+.ol-miss-letter-body > p { margin: 0 0 1.35em; }
+.ol-distance-keepsake { position: relative; width: min(96%, 470px); margin: 8px auto 1.55em; padding: 22px 21px 20px; border: 1px solid #8b6a7466; background: linear-gradient(155deg, #f2e2d2cc, #e7d1c8b8); box-shadow: 0 3px 3px #5b414b2e, 0 13px 20px #3e29352b; transform: rotate(-.3deg); }
+.ol-distance-keepsake::before, .ol-distance-keepsake::after { content: ""; position: absolute; top: -7px; width: 42px; height: 14px; background: #d6b99e73; box-shadow: inset 0 1px #fff8e677; }.ol-distance-keepsake::before { left: 16px; transform: rotate(-5deg); }.ol-distance-keepsake::after { right: 16px; transform: rotate(4deg); }
+.ol-distance-keepsake h2 { margin: 0 0 12px; color: #2b2025; font: 700 clamp(10px, .85vw, 12px)/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .075em; text-align: center; }
+.ol-distance-scene { position: relative; height: 105px; overflow: hidden; }
+.ol-distance-path { position: absolute; inset: 12px 0 auto; width: 100%; height: 76px; overflow: visible; }
+.ol-distance-path > path:first-child { fill: none; stroke: #67515c; stroke-width: 2; stroke-linecap: round; }
+.ol-distance-dots { fill: none; stroke: #9d7a89; stroke-width: 1; stroke-dasharray: 2 8; }
+.ol-distance-cloud { fill: #b7a8bd; opacity: .4; stroke: none; }
+.ol-distance-janna, .ol-distance-josh { position: absolute; z-index: 3; bottom: 22px; width: 38px; height: 62px; }
+.ol-distance-janna { transition: left .72s linear; }
+.ol-distance-josh { left: 86%; }
+.ol-distance-janna svg, .ol-distance-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ol-distance-janna-body { transform-origin: center bottom; }
+.ol-distance-leg-a, .ol-distance-leg-b { transform-box: fill-box; transform-origin: center top; }
+.ol-distance-keepsake.is-travelling .ol-distance-leg-a { animation: ol-distance-step-a .42s ease-in-out infinite alternate; }
+.ol-distance-keepsake.is-travelling .ol-distance-leg-b { animation: ol-distance-step-b .42s ease-in-out infinite alternate; }
+.ol-distance-heart { position: absolute; z-index: 5; left: 84%; top: 7px; color: #a65771; font: 18px/1 "Segoe Print", cursive; opacity: 0; transform: translateY(5px) scale(.5) rotate(-8deg); }
+.ol-distance-keepsake.is-complete .ol-distance-heart { animation: ol-distance-heart-in .5s ease .16s both; }
+.ol-distance-scene > b { position: absolute; z-index: 4; left: 50%; bottom: 0; padding: 1px 8px; color: #2b2025; background: #f3e5d7d9; font: italic 600 10px/1.4 "Segoe Print", "Bradley Hand", cursive; transform: translateX(-50%) rotate(-1deg); white-space: nowrap; }
+.ol-distance-facts { display: grid; gap: 7px; margin: 10px 0 17px; color: #35282d; }
+.ol-distance-facts div { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 11px; align-items: baseline; border-bottom: 1px dotted #71586555; padding-bottom: 4px; }
+.ol-distance-facts dt { color: #35282d; font: italic 10px/1.3 "Segoe Print", cursive; }
+.ol-distance-facts dd { margin: 0; color: #2b2025; font: 600 11px/1.3 "Segoe Print", cursive; text-align: right; }
+.ol-distance-button { display: block; min-width: min(270px, 88%); margin: 0 auto; padding: 9px 15px 8px; border: 1px solid #89617088; color: #2b2025; background: linear-gradient(165deg, #eacfd0, #d8aeb7); box-shadow: 0 4px 0 #966979, 0 8px 12px #59394338, inset 0 1px #fff0e5; font: 700 10px/1.25 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .055em; transform: rotate(.45deg); cursor: pointer; transition: transform .22s ease, box-shadow .22s ease; }
+.ol-distance-button:not(:disabled):hover, .ol-distance-button:not(:disabled):focus-visible { transform: translateY(-2px) rotate(0) scale(1.015); box-shadow: 0 6px 0 #966979, 0 11px 15px #59394342, inset 0 1px #fff0e5; }
+.ol-distance-button:disabled { cursor: default; opacity: 1; }
+.ol-distance-arrival { margin: 15px 0 0; color: #2b2025 !important; font: italic 650 14px/1.5 "Segoe Print", "Bradley Hand", cursive; text-align: center; animation: ol-distance-arrival .52s ease both; }
+.ol-fight-letter-body > p { margin: 0 0 1.35em; }
+.ol-fight-keepsake { position: relative; width: min(94%, 440px); margin: 8px auto 1.55em; padding: 20px 20px 18px; border: 1px solid #82636e66; background: linear-gradient(155deg, #f2e3d3cf, #ead4cab8); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(.25deg); }
+.ol-fight-keepsake::before, .ol-fight-keepsake::after { content: ""; position: absolute; top: -7px; width: 38px; height: 13px; background: #d4b59970; }.ol-fight-keepsake::before { left: 17px; transform: rotate(-5deg); }.ol-fight-keepsake::after { right: 17px; transform: rotate(5deg); }
+.ol-fight-keepsake h2 { margin: 0 0 7px; color: #2b2025; font: 700 12px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .08em; text-align: center; }
+.ol-fight-scene { position: relative; height: 116px; overflow: hidden; }
+.ol-fight-ground { position: absolute; left: 5%; right: 5%; bottom: 20px; height: 2px; border-radius: 50%; background: #6d536080; transform: rotate(-.5deg); }
+.ol-fight-janna, .ol-fight-josh { position: absolute; z-index: 3; bottom: 18px; width: 43px; height: 72px; transition: left .9s cubic-bezier(.25,.7,.25,1), transform .4s ease; }
+.ol-fight-janna { left: 10%; transform: scaleX(-1) rotate(-2deg); }.ol-fight-josh { left: 80%; transform: scaleX(1) rotate(2deg); }
+.ol-fight-janna svg, .ol-fight-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ol-fight-soft { opacity: 0; transition: opacity .35s ease; }.ol-fight-annoyed { opacity: 1; transition: opacity .35s ease; }
+.ol-fight-versus { position: absolute; z-index: 2; left: 50%; top: 42px; color: #2b2025; font: 700 16px/1 "Segoe Print", cursive; transform: translateX(-50%) rotate(-3deg); }
+.ol-fight-versus svg { position: absolute; left: -15px; top: -9px; width: 70px; height: 35px; overflow: visible; pointer-events: none; }
+.ol-fight-versus path { fill: none; stroke: #8f4d62; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 150; stroke-dashoffset: 150; }
+.ol-fight-phase-1 .ol-fight-versus path, .ol-fight-phase-2 .ol-fight-versus path, .ol-fight-phase-3 .ol-fight-versus path, .ol-fight-phase-4 .ol-fight-versus path { animation: ol-fight-scribble .62s ease forwards; }
+.ol-fight-phase-2 .ol-fight-annoyed, .ol-fight-phase-3 .ol-fight-annoyed, .ol-fight-phase-4 .ol-fight-annoyed { opacity: 0; }
+.ol-fight-phase-2 .ol-fight-soft, .ol-fight-phase-3 .ol-fight-soft, .ol-fight-phase-4 .ol-fight-soft { opacity: 1; }
+.ol-fight-phase-2 .ol-fight-janna { transform: scaleX(1); }.ol-fight-phase-2 .ol-fight-josh { transform: scaleX(-1); }
+.ol-fight-phase-3 .ol-fight-janna { left: 35%; transform: scaleX(1); }.ol-fight-phase-3 .ol-fight-josh { left: 48%; transform: scaleX(-1); }
+.ol-fight-phase-3 .ol-fight-leg-a { animation: ol-fight-step-a .34s ease-in-out infinite alternate; }.ol-fight-phase-3 .ol-fight-leg-b { animation: ol-fight-step-b .34s ease-in-out infinite alternate; }
+.ol-fight-phase-4 .ol-fight-janna { left: 25%; transform: scaleX(1); }.ol-fight-phase-4 .ol-fight-josh { left: 37%; transform: scaleX(1); }
+.ol-fight-phase-4 .ol-fight-versus { opacity: .18; }
+.ol-fight-heart { position: absolute; z-index: 5; left: 36%; top: 5px; color: #a45670; font: 18px/1 "Segoe Print", cursive; opacity: 0; transform: translateY(5px) scale(.5); }
+.ol-fight-phase-4 .ol-fight-heart { animation: ol-fight-heart-in .45s ease .12s both; }
+.ol-fight-problem { position: absolute; z-index: 3; right: 8%; top: 27px; width: 58px; height: 52px; opacity: 0; }
+.ol-fight-problem path:first-child { fill: #756879; stroke: #514451; stroke-width: 2; }.ol-fight-problem path:nth-child(2) { fill: none; stroke: #c18a69; stroke-width: 3; }.ol-fight-problem path:last-child { fill: none; stroke: #765565; stroke-width: 2; }
+.ol-fight-phase-4 .ol-fight-problem { animation: ol-fight-problem-in .48s ease .18s both; }
+.ol-fight-old-label { position: relative; width: fit-content; margin: -4px auto 12px; color: #2b2025; font: 650 13px/1.2 "Segoe Print", cursive; }
+.ol-fight-old-label span { margin: 0 8px; }
+.ol-fight-phase-1 .ol-fight-old-label, .ol-fight-phase-2 .ol-fight-old-label, .ol-fight-phase-3 .ol-fight-old-label, .ol-fight-phase-4 .ol-fight-old-label { text-decoration: line-through 2px #8f4d62; text-decoration-skip-ink: none; opacity: .48; }
+.ol-fight-fix { display: block; min-width: min(265px, 90%); margin: 0 auto; padding: 8px 14px; border: 1px solid #80606c88; color: #2b2025; background: linear-gradient(165deg, #eedbd0, #ddb8ba); box-shadow: 0 4px 0 #98707b, 0 8px 12px #54374133; font: 650 9px/1.4 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .04em; transform: rotate(-.5deg); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+.ol-fight-fix b { font-size: 12px; }
+.ol-fight-fix:hover, .ol-fight-fix:focus-visible { transform: translateY(-2px) rotate(0) scale(1.01); box-shadow: 0 6px 0 #98707b, 0 11px 14px #5437413b; }
+.ol-fight-team-label { display: grid; justify-items: center; gap: 2px; margin: -2px auto 0; color: #2b2025; font-family: "Segoe Print", "Bradley Hand", cursive; animation: ol-fight-words-in .5s ease both; }
+.ol-fight-team-label strong { font-size: 14px; }.ol-fight-team-label span { font-size: 9px; }.ol-fight-team-label b { font-size: 12px; }
+.ol-fight-better { margin: 13px 0 0; color: #2b2025 !important; font: italic 650 14px/1.4 "Segoe Print", cursive; text-align: center; animation: ol-fight-words-in .45s ease .18s both; }
+.ol-distant-letter-body > p { margin: 0 0 1.35em; }
+.ol-signal-keepsake { position: relative; width: min(94%, 440px); margin: 8px auto 1.55em; padding: 19px 20px 18px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f2e3d3d9, #ead4cabd); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(-.2deg); }
+.ol-signal-keepsake::before, .ol-signal-keepsake::after { content: ""; position: absolute; top: -7px; width: 39px; height: 13px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-signal-keepsake::before { left: 17px; transform: rotate(-5deg); }.ol-signal-keepsake::after { right: 17px; transform: rotate(4deg); }
+.ol-signal-keepsake h2 { margin: 0 0 8px; color: #2b2025; font: 700 12px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .09em; text-align: center; }
+.ol-signal-scene { position: relative; height: 112px; overflow: hidden; }
+.ol-signal-path { position: absolute; inset: 13px 2% auto; width: 96%; height: 74px; overflow: visible; }
+.ol-signal-path > path { fill: none; stroke: #936c7d; stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 3 8; }
+.ol-signal-janna, .ol-signal-josh { position: absolute; z-index: 3; bottom: 17px; width: 38px; height: 62px; transition: left .42s linear; }
+.ol-signal-janna svg, .ol-signal-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ol-signal-phase-3 .ol-signal-janna .ol-distance-leg-a, .ol-signal-phase-4 .ol-signal-janna .ol-distance-leg-a, .ol-signal-phase-5 .ol-signal-janna .ol-distance-leg-a, .ol-signal-phase-6 .ol-signal-janna .ol-distance-leg-a, .ol-signal-phase-7 .ol-signal-janna .ol-distance-leg-a,
+.ol-signal-phase-3 .ol-signal-josh .ol-distance-leg-a, .ol-signal-phase-4 .ol-signal-josh .ol-distance-leg-a, .ol-signal-phase-5 .ol-signal-josh .ol-distance-leg-a, .ol-signal-phase-6 .ol-signal-josh .ol-distance-leg-a, .ol-signal-phase-7 .ol-signal-josh .ol-distance-leg-a { animation: ol-distance-step-a .34s ease-in-out infinite alternate; }
+.ol-signal-phase-3 .ol-signal-janna .ol-distance-leg-b, .ol-signal-phase-4 .ol-signal-janna .ol-distance-leg-b, .ol-signal-phase-5 .ol-signal-janna .ol-distance-leg-b, .ol-signal-phase-6 .ol-signal-janna .ol-distance-leg-b, .ol-signal-phase-7 .ol-signal-janna .ol-distance-leg-b,
+.ol-signal-phase-3 .ol-signal-josh .ol-distance-leg-b, .ol-signal-phase-4 .ol-signal-josh .ol-distance-leg-b, .ol-signal-phase-5 .ol-signal-josh .ol-distance-leg-b, .ol-signal-phase-6 .ol-signal-josh .ol-distance-leg-b, .ol-signal-phase-7 .ol-signal-josh .ol-distance-leg-b { animation: ol-distance-step-b .34s ease-in-out infinite alternate; }
+.ol-signal-phase-3 .ol-signal-josh svg > path:nth-of-type(2), .ol-signal-phase-4 .ol-signal-josh svg > path:nth-of-type(2), .ol-signal-phase-5 .ol-signal-josh svg > path:nth-of-type(2), .ol-signal-phase-6 .ol-signal-josh svg > path:nth-of-type(2), .ol-signal-phase-7 .ol-signal-josh svg > path:nth-of-type(2) { transform-box: fill-box; transform-origin: center top; animation: ol-signal-josh-step .34s ease-in-out infinite alternate; }
+.ol-signal-traveller { position: absolute; z-index: 5; left: 17%; top: 43px; width: 7px; height: 7px; opacity: 0; background: #c59b62; clip-path: polygon(50% 0,60% 39%,100% 50%,60% 61%,50% 100%,40% 61%,0 50%,40% 39%); filter: drop-shadow(0 0 3px #c59b6288); }
+.ol-signal-phase-1 .ol-signal-traveller { animation: ol-signal-search .72s ease-in-out both; }
+.ol-signal-phase-1 .ol-signal-path > path { animation: ol-signal-dashes .7s linear infinite; }
+.ol-signal-josh::after { content: "✦"; position: absolute; right: -9px; top: 2px; color: #b88758; font-size: 11px; opacity: 0; }
+.ol-signal-phase-2 .ol-signal-josh::after { animation: ol-signal-spark .48s ease both; }
+.ol-signal-connected-heart { position: absolute; z-index: 5; left: 45%; top: 6px; color: #a45670; font: 18px/1 "Segoe Print", cursive; opacity: 0; transform: translateY(5px) scale(.55); }
+.ol-signal-phase-8 .ol-signal-connected-heart { animation: ol-signal-heart-in .46s ease .12s both; }
+.ol-signal-readout { display: grid; grid-template-columns: auto auto; gap: 3px 8px; align-items: end; width: fit-content; max-width: 100%; margin: -4px auto 15px; color: #35282d; font: 600 10px/1.35 "Segoe Print", "Bradley Hand", cursive; }
+.ol-signal-readout > span, .ol-signal-readout > b { color: #2b2025; }
+.ol-signal-readout > b { grid-column: 1 / -1; min-width: 0; font-size: 10px; text-align: center; }
+.ol-signal-bars { display: flex; align-items: end; gap: 3px; height: 19px; }
+.ol-signal-bars i { display: block; width: 6px; height: 5px; border: 1px solid #8e5b6f; background: #f0ddd5; opacity: .3; transform-origin: bottom; }.ol-signal-bars i:nth-child(2) { height: 9px; }.ol-signal-bars i:nth-child(3) { height: 13px; }.ol-signal-bars i:nth-child(4) { height: 17px; }
+.ol-signal-bars i.is-active { background: #a25d73; opacity: 1; animation: ol-signal-bar-in .3s ease both; }
+.ol-signal-phase-0 .ol-signal-bars i:first-child { animation: ol-signal-weak 2.8s ease-in-out infinite; }
+.ol-signal-button { display: block; min-width: min(205px, 76%); margin: 0 auto; padding: 9px 15px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #eedbd0, #ddb7bc); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; font: 700 11px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .07em; transform: rotate(.35deg); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+.ol-signal-button:not(:disabled):hover, .ol-signal-button:not(:disabled):focus-visible { transform: translateY(-2px) rotate(0) scale(1.01); box-shadow: 0 6px 0 #97707c, 0 11px 14px #5437413b, inset 0 1px #fff0e5; }
+.ol-signal-button:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-signal-button-press .55s ease both; }
+.ol-signal-receipt { width: min(92%, 350px); margin: -3px auto 10px; padding: 9px 12px; border: 1px dashed #80657388; color: #35282d; background: #f5e7d9c9; box-shadow: 0 4px 9px #4d33402b; font: 600 10px/1.45 "Segoe Print", "Bradley Hand", cursive; transform: rotate(.35deg); animation: ol-signal-receipt-in .44s ease both; }
+.ol-signal-receipt div { display: grid; grid-template-columns: 85px 1fr; gap: 8px; }.ol-signal-receipt dt, .ol-signal-receipt dd { margin: 0; color: #2b2025; }.ol-signal-receipt dd { font-weight: 700; }
+.ol-signal-found-line { position: relative; width: fit-content; margin: 12px auto 0 !important; color: #2b2025 !important; font: italic 700 14px/1.45 "Segoe Print", "Bradley Hand", cursive; animation: ol-signal-line-in .4s ease both; }
+.ol-signal-found-line::after { content: ""; position: absolute; left: -3%; right: -3%; bottom: -2px; height: 2px; border-radius: 50%; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .62s ease .18s forwards; }
+.ol-motivation-letter-body > p { margin: 0 0 1.35em; }
+.ol-battery-keepsake { position: relative; width: min(94%, 450px); margin: 8px auto 1.55em; padding: 19px 20px 18px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f3e5d6dc, #ead3c9c2); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(.18deg); }
+.ol-battery-keepsake::before, .ol-battery-keepsake::after { content: ""; position: absolute; top: -7px; width: 40px; height: 13px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-battery-keepsake::before { left: 17px; transform: rotate(-5deg); }.ol-battery-keepsake::after { right: 17px; transform: rotate(4deg); }
+.ol-battery-keepsake h2 { margin: 0 0 6px; color: #2b2025; font: 700 12px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .09em; text-align: center; }
+.ol-battery-scene { position: relative; height: 122px; overflow: hidden; }
+.ol-battery-ground { position: absolute; left: 1%; right: 1%; bottom: 15px; height: 2px; border-radius: 50%; background: #76596870; transform: rotate(-.3deg); }
+.ol-battery-shell { position: absolute; z-index: 2; left: 18%; right: 18%; top: 37px; height: 46px; padding: 6px; border: 3px solid #604752; border-radius: 8px 11px 9px 7px; background: #f1ded0; box-shadow: 0 5px 0 #765866, 0 9px 12px #4e344030, inset 0 2px #fff8e9; transform: rotate(-.6deg); }
+.ol-battery-shell::after { content: ""; position: absolute; right: -11px; top: 12px; width: 8px; height: 18px; border-radius: 0 4px 4px 0; background: #604752; }
+.ol-battery-segments { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; height: 100%; }
+.ol-battery-segments > i { position: relative; overflow: hidden; border: 1px solid #76586670; border-radius: 3px 4px 3px 2px; background: #d7c6c17d; box-shadow: inset 0 1px 2px #5e41452e; }
+.ol-battery-segments > i > span { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, #a95e75, #ce8991 58%, #d8a666); box-shadow: inset 0 1px #ffe6d799, 0 0 7px #c9857a55; transition: width .68s cubic-bezier(.22,.75,.28,1), filter .5s ease; }
+.ol-battery-phase-5 .ol-battery-segments > i > span, .ol-battery-phase-6 .ol-battery-segments > i > span { background: linear-gradient(90deg, #b96778, #d49582 48%, #dcb25f); }
+.ol-battery-phase-4 .ol-battery-shell { animation: ol-battery-75-bounce .55s ease both; }
+.ol-battery-phase-6 .ol-battery-shell { animation: ol-battery-full-pulse .7s ease .15s both; }
+.ol-battery-josh, .ol-battery-janna { position: absolute; z-index: 4; bottom: 13px; width: 39px; height: 64px; transform-origin: center bottom; }
+.ol-battery-josh { left: 1%; transform: translateY(7px) rotate(7deg); transition: transform .65s ease; }.ol-battery-josh svg, .ol-battery-janna svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ol-battery-phase-2 .ol-battery-josh { transform: translateY(5px) rotate(4deg); }.ol-battery-phase-3 .ol-battery-josh { transform: translateY(3px) rotate(2deg); }.ol-battery-phase-4 .ol-battery-josh, .ol-battery-phase-5 .ol-battery-josh { transform: translateY(1px) rotate(0); }.ol-battery-phase-6 .ol-battery-josh { transform: translateY(0) rotate(0) scale(1.04); animation: ol-battery-josh-ready .55s ease .18s both; }
+.ol-battery-janna { right: 1%; opacity: 0; transform: translateY(6px) scale(.8); }.ol-battery-phase-5 .ol-battery-janna { animation: ol-battery-janna-cheer .65s ease both; }.ol-battery-phase-6 .ol-battery-janna { opacity: 1; transform: translateY(0) scale(1); }
+.ol-battery-uh-oh { position: absolute; z-index: 5; left: 0; top: 9px; color: #7a4e5c; font: italic 9px/1 "Segoe Print", cursive; transform: rotate(-8deg); opacity: .8; }.ol-battery-phase-2 .ol-battery-uh-oh, .ol-battery-phase-3 .ol-battery-uh-oh, .ol-battery-phase-4 .ol-battery-uh-oh, .ol-battery-phase-5 .ol-battery-uh-oh, .ol-battery-phase-6 .ol-battery-uh-oh { opacity: 0; }
+.ol-battery-sparkles i { position: absolute; z-index: 6; color: #ba8b4e; font: 13px/1 "Segoe Print", cursive; opacity: 0; }.ol-battery-sparkles i:nth-child(1) { left: 30%; top: 12px; }.ol-battery-sparkles i:nth-child(2) { left: 48%; top: 7px; color: #a85e74; }.ol-battery-sparkles i:nth-child(3) { right: 27%; top: 18px; }.ol-battery-sparkles i:nth-child(4) { right: 13%; top: 3px; font-size: 21px; }
+.ol-battery-phase-2 .ol-battery-sparkles i:first-child, .ol-battery-phase-3 .ol-battery-sparkles i:nth-child(-n+2), .ol-battery-phase-4 .ol-battery-sparkles i:nth-child(-n+3), .ol-battery-phase-5 .ol-battery-sparkles i, .ol-battery-phase-6 .ol-battery-sparkles i { animation: ol-battery-spark .55s ease both; }
+.ol-battery-phase-3 .ol-battery-sparkles i:nth-child(2), .ol-battery-phase-4 .ol-battery-sparkles i:nth-child(2), .ol-battery-phase-5 .ol-battery-sparkles i:nth-child(2), .ol-battery-phase-6 .ol-battery-sparkles i:nth-child(2) { animation-delay: .12s; }.ol-battery-phase-4 .ol-battery-sparkles i:nth-child(3), .ol-battery-phase-5 .ol-battery-sparkles i:nth-child(3), .ol-battery-phase-6 .ol-battery-sparkles i:nth-child(3) { animation-delay: .2s; }.ol-battery-phase-5 .ol-battery-sparkles i:nth-child(4), .ol-battery-phase-6 .ol-battery-sparkles i:nth-child(4) { animation-delay: .28s; }
+.ol-battery-status { min-height: 41px; display: grid; place-items: center; align-content: center; gap: 2px; margin: -3px auto 12px; color: #35282d; font-family: "Segoe Print", "Bradley Hand", cursive; text-align: center; }.ol-battery-status strong { color: #2b2025; font-size: 12px; letter-spacing: .025em; }.ol-battery-status span { color: #35282d; font: italic 10px/1.35 "Segoe Print", cursive; animation: ol-battery-message-in .42s ease both; }
+.ol-battery-boost { display: block; min-width: min(230px, 82%); margin: 0 auto; padding: 9px 15px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #eedbd0, #dcaeb8); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .06em; transform: rotate(-.35deg); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
+.ol-battery-boost:not(:disabled):hover, .ol-battery-boost:not(:disabled):focus-visible { transform: translateY(-2px) rotate(0) scale(1.01); box-shadow: 0 6px 0 #97707c, 0 11px 14px #5437413b, inset 0 1px #fff0e5; }.ol-battery-boost:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-battery-button-press .55s ease both; }
+.ol-battery-fixed { position: relative; width: fit-content; margin: 13px auto 0 !important; color: #2b2025 !important; font: italic 700 14px/1.45 "Segoe Print", cursive; animation: ol-battery-message-in .4s ease both; }.ol-battery-fixed::after { content: "✓"; position: absolute; right: -22px; top: -3px; color: #996077; font-size: 15px; opacity: 0; animation: ol-battery-check .45s ease .22s forwards; }.ol-battery-fixed::before { content: ""; position: absolute; left: -4%; right: -4%; bottom: -2px; height: 2px; border-radius: 50%; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .62s ease .15s forwards; }
+.ol-motivation-quote, .ol-motivation-push { position: relative; color: #2b2025 !important; font-weight: 700; }.ol-motivation-quote { padding-left: 13px; border-left: 2px solid #9b5d72a3; font-style: italic; }.ol-motivation-push { width: fit-content; margin-left: auto !important; margin-right: auto !important; text-align: center; }.ol-motivation-push::after { content: ""; position: absolute; left: -2%; right: -2%; bottom: -2px; height: 2px; border-radius: 50%; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .72s ease .15s forwards; }
+.ol-love-reminder-body > p { margin: 0 0 1.35em; }
+.ol-love-calculator { position: relative; width: min(94%, 430px); margin: 8px auto 1.6em; padding: 18px 20px 17px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f3e5d6df, #ead2c9c5); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(-.18deg); }
+.ol-love-calculator::before, .ol-love-calculator::after { content: ""; position: absolute; top: -7px; width: 39px; height: 13px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-love-calculator::before { left: 17px; transform: rotate(-5deg); }.ol-love-calculator::after { right: 17px; transform: rotate(4deg); }
+.ol-love-calculator h2 { margin: 0 0 9px; color: #2b2025; font: 700 11px/1.35 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .07em; text-align: center; }
+.ol-love-machine { position: relative; width: min(94%, 360px); height: 126px; margin: 0 auto 11px; border: 2px solid #745461; border-radius: 14px 11px 16px 10px; background: linear-gradient(145deg, #dfbdba, #c98f9d 58%, #b7768b); box-shadow: 0 5px 0 #77505f, 0 10px 14px #4d303d38, inset 0 2px #ffe7db8f, inset 0 -4px #70435235; transform-origin: center; }
+.ol-love-machine::before { content: ""; position: absolute; inset: 8px; border: 1px dashed #6c4b5880; border-radius: 10px 8px 12px 7px; pointer-events: none; }
+.ol-love-display { position: absolute; z-index: 3; left: 16%; right: 16%; top: 22px; min-height: 59px; display: grid; place-items: center; align-content: center; gap: 3px; padding: 7px 10px; border: 2px solid #694d58; border-radius: 6px 8px 5px 7px; color: #2b2025; background: linear-gradient(165deg, #f5e9d8, #e8d3c5); box-shadow: inset 0 2px 5px #53374428, 0 2px #ffeedd88; text-align: center; }
+.ol-love-display strong { max-width: 100%; color: #2b2025; font: 700 clamp(9px, .82vw, 11px)/1.35 "Segoe Print", "Bradley Hand", cursive; overflow-wrap: anywhere; }.ol-love-display small { color: #35282d; font: italic 9px/1.25 "Segoe Print", cursive; animation: ol-love-result-in .36s ease both; }
+.ol-love-calc-phase-0 .ol-love-display { animation: ol-love-idle-flicker 4.6s ease-in-out infinite; }
+.ol-love-calc-phase-13 .ol-love-display strong, .ol-love-calc-phase-14 .ol-love-display strong { font-size: clamp(10px, .95vw, 13px); letter-spacing: .02em; }
+.ol-love-calc-phase-1 .ol-love-display strong, .ol-love-calc-phase-2 .ol-love-display strong, .ol-love-calc-phase-3 .ol-love-display strong, .ol-love-calc-phase-4 .ol-love-display strong, .ol-love-calc-phase-5 .ol-love-display strong, .ol-love-calc-phase-6 .ol-love-display strong, .ol-love-calc-phase-7 .ol-love-display strong, .ol-love-calc-phase-8 .ol-love-display strong, .ol-love-calc-phase-9 .ol-love-display strong, .ol-love-calc-phase-10 .ol-love-display strong, .ol-love-calc-phase-11 .ol-love-display strong, .ol-love-calc-phase-12 .ol-love-display strong, .ol-love-calc-phase-13 .ol-love-display strong, .ol-love-calc-phase-14 .ol-love-display strong { animation: ol-love-result-in .38s ease both; }
+.ol-love-wire { position: absolute; z-index: 4; color: #5d3e4a; font: 700 9px/1 "Segoe Print", cursive; }.ol-love-wire-a { left: 7px; top: 8px; font-size: 14px; transform: rotate(-12deg); }.ol-love-wire-b { right: 7px; bottom: 8px; transform: rotate(7deg); }
+.ol-love-gear { position: absolute; z-index: 4; display: grid; place-items: center; border: 3px dotted #6f4e5b; border-radius: 50%; color: #bf8b55; line-height: 1; }.ol-love-gear-a { left: 8px; bottom: 15px; width: 27px; height: 27px; font-size: 12px; }.ol-love-gear-b { right: 9px; top: 12px; width: 22px; height: 22px; font-size: 9px; }
+.ol-love-calc-phase-1 .ol-love-gear-a, .ol-love-calc-phase-2 .ol-love-gear-a, .ol-love-calc-phase-3 .ol-love-gear-a { animation: ol-love-gear-spin 2s linear infinite; }.ol-love-calc-phase-1 .ol-love-gear-b, .ol-love-calc-phase-2 .ol-love-gear-b, .ol-love-calc-phase-3 .ol-love-gear-b { animation: ol-love-gear-spin 1.45s linear infinite reverse; }
+.ol-love-calc-phase-4 .ol-love-gear-a, .ol-love-calc-phase-5 .ol-love-gear-a, .ol-love-calc-phase-6 .ol-love-gear-a, .ol-love-calc-phase-7 .ol-love-gear-a, .ol-love-calc-phase-8 .ol-love-gear-a, .ol-love-calc-phase-9 .ol-love-gear-a, .ol-love-calc-phase-10 .ol-love-gear-a, .ol-love-calc-phase-11 .ol-love-gear-a, .ol-love-calc-phase-12 .ol-love-gear-a { animation: ol-love-gear-spin .55s linear infinite; }.ol-love-calc-phase-4 .ol-love-gear-b, .ol-love-calc-phase-5 .ol-love-gear-b, .ol-love-calc-phase-6 .ol-love-gear-b, .ol-love-calc-phase-7 .ol-love-gear-b, .ol-love-calc-phase-8 .ol-love-gear-b, .ol-love-calc-phase-9 .ol-love-gear-b, .ol-love-calc-phase-10 .ol-love-gear-b, .ol-love-calc-phase-11 .ol-love-gear-b, .ol-love-calc-phase-12 .ol-love-gear-b { animation: ol-love-gear-spin .42s linear infinite reverse; }
+.ol-love-meter { position: absolute; z-index: 4; left: 20%; right: 20%; bottom: 10px; height: 10px; overflow: hidden; border: 1px solid #6c4b58; border-radius: 8px; background: #ead7cc; }.ol-love-meter i { position: absolute; inset: 0 auto 0 0; width: 8%; border-radius: inherit; background: linear-gradient(90deg, #a85871, #d39386, #d7aa5d); box-shadow: 0 0 6px #d9a86666; transition: width .55s ease; }.ol-love-meter span { position: absolute; z-index: 2; left: 50%; top: 50%; color: #563743; font: 9px/1 serif; transform: translate(-50%,-50%); }
+.ol-love-calc-phase-2 .ol-love-meter i { width: 20%; }.ol-love-calc-phase-3 .ol-love-meter i { width: 36%; }.ol-love-calc-phase-4 .ol-love-meter i { width: 58%; }.ol-love-calc-phase-5 .ol-love-meter i, .ol-love-calc-phase-6 .ol-love-meter i, .ol-love-calc-phase-7 .ol-love-meter i, .ol-love-calc-phase-8 .ol-love-meter i, .ol-love-calc-phase-9 .ol-love-meter i, .ol-love-calc-phase-10 .ol-love-meter i, .ol-love-calc-phase-11 .ol-love-meter i, .ol-love-calc-phase-12 .ol-love-meter i, .ol-love-calc-phase-13 .ol-love-meter i, .ol-love-calc-phase-14 .ol-love-meter i { width: 100%; }
+.ol-love-warning { position: absolute; z-index: 5; right: 10px; bottom: 17px; width: 7px; height: 7px; border-radius: 50%; background: #a14f65; opacity: 0; box-shadow: 0 0 5px #a14f6588; }.ol-love-calc-phase-5 .ol-love-warning, .ol-love-calc-phase-6 .ol-love-warning, .ol-love-calc-phase-7 .ol-love-warning, .ol-love-calc-phase-8 .ol-love-warning, .ol-love-calc-phase-9 .ol-love-warning, .ol-love-calc-phase-10 .ol-love-warning, .ol-love-calc-phase-11 .ol-love-warning, .ol-love-calc-phase-12 .ol-love-warning { animation: ol-love-warning .52s ease-in-out infinite alternate; }
+.ol-love-calc-phase-6 .ol-love-display, .ol-love-calc-phase-7 .ol-love-display, .ol-love-calc-phase-8 .ol-love-display, .ol-love-calc-phase-9 .ol-love-display, .ol-love-calc-phase-10 .ol-love-display, .ol-love-calc-phase-11 .ol-love-display, .ol-love-calc-phase-12 .ol-love-display { animation: ol-love-display-flicker .45s steps(2,end) infinite; }
+.ol-love-sparks i { position: absolute; z-index: 6; color: #c09255; font: 12px/1 "Segoe Print", cursive; opacity: 0; }.ol-love-sparks i:first-child { left: 3%; top: 47px; }.ol-love-sparks i:nth-child(2) { right: 4%; top: 49px; color: #8f4e65; }.ol-love-sparks i:last-child { right: 24%; top: 5px; }
+.ol-love-calc-phase-6 .ol-love-sparks i, .ol-love-calc-phase-7 .ol-love-sparks i, .ol-love-calc-phase-8 .ol-love-sparks i, .ol-love-calc-phase-9 .ol-love-sparks i, .ol-love-calc-phase-10 .ol-love-sparks i, .ol-love-calc-phase-11 .ol-love-sparks i, .ol-love-calc-phase-12 .ol-love-sparks i { animation: ol-love-spark-pop .5s ease both; }.ol-love-sparks i:nth-child(2) { animation-delay: .1s !important; }.ol-love-sparks i:nth-child(3) { animation-delay: .2s !important; }
+.ol-love-calc-phase-13 .ol-love-machine { animation: ol-love-machine-shake .46s ease both; }.ol-love-calc-phase-13 .ol-love-gear-a, .ol-love-calc-phase-14 .ol-love-gear-a { transform: rotate(23deg); }.ol-love-calc-phase-13 .ol-love-gear-b, .ol-love-calc-phase-14 .ol-love-gear-b { transform: rotate(-17deg); }
+.ol-love-smoke { position: absolute; z-index: 7; right: -5px; top: -17px; color: #674954; font: italic 9px/1 "Segoe Print", cursive; opacity: 0; transform: translateY(8px) rotate(7deg); }.ol-love-calc-phase-13 .ol-love-smoke, .ol-love-calc-phase-14 .ol-love-smoke { animation: ol-love-smoke-out .7s ease .15s both; }
+.ol-love-calculate { display: block; min-width: min(190px, 72%); margin: 0 auto; padding: 9px 15px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #eedbd0, #dcaeb8); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .07em; transform: rotate(.35deg); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }.ol-love-calculate:not(:disabled):hover, .ol-love-calculate:not(:disabled):focus-visible { transform: translateY(-2px) rotate(0) scale(1.01); box-shadow: 0 6px 0 #97707c, 0 11px 14px #5437413b, inset 0 1px #fff0e5; }.ol-love-calculate:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-love-button-press .55s ease both; }
+.ol-love-broke { position: relative; width: fit-content; margin: 14px auto 0 !important; color: #2b2025 !important; font: italic 700 14px/1.45 "Segoe Print", cursive; animation: ol-love-result-in .42s ease both; }.ol-love-broke span { position: absolute; right: -27px; top: -15px; color: #8e5268; font-size: 18px; transform: rotate(-12deg); animation: ol-love-arrow-in .48s ease .2s both; }
+.ol-love-calculator + p { margin-top: 2.25em; }
+.ol-love-found { color: #35282d !important; }.ol-love-found strong { position: relative; color: #2b2025 !important; font: italic 750 1.08em/1 "Segoe Print", "Bradley Hand", cursive; }.ol-love-found strong::after { content: ""; position: absolute; left: -7%; right: -7%; bottom: -3px; height: 2px; background: #9b5d728c; transform: scaleX(0) rotate(-2deg); transform-origin: left; animation: ol-signal-underline .65s ease .12s forwards; }
+.ol-love-again { width: fit-content; color: #2b2025 !important; font-style: italic; }.ol-love-again-a { margin-left: 5% !important; }.ol-love-again-b { margin-left: 18% !important; }.ol-love-again-c { margin-left: 32% !important; }
+.ol-love-universe { display: grid; justify-items: center; gap: 7px; width: fit-content; margin: 2em auto 1.7em !important; color: #2b2025 !important; font: italic 700 1.05em/1.5 "Segoe Print", "Bradley Hand", cursive; text-align: center; }.ol-love-universe span { color: #a06a78; font-size: 10px; letter-spacing: .28em; }
+.ol-bad-day-letter-body > p { margin: 0 0 1.35em; }
+.ol-day-delete { position: relative; width: min(94%, 440px); margin: 8px auto 1.6em; padding: 18px 20px 19px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f3e5d6db, #ead2c9c2); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(.15deg); }
+.ol-day-delete::before, .ol-day-delete::after { content: ""; position: absolute; top: -7px; width: 39px; height: 13px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-day-delete::before { left: 17px; transform: rotate(-5deg); }.ol-day-delete::after { right: 17px; transform: rotate(4deg); }
+.ol-day-stage { position: relative; min-height: 190px; }
+.ol-day-report { position: relative; z-index: 4; width: 76%; min-height: 159px; margin: 0 auto; padding: 17px 20px 15px; border: 1px solid #82656e7a; color: #35282d; background: linear-gradient(167deg, #f5e7d8, #e9d2c5); box-shadow: 0 4px 3px #5435412b, 0 10px 15px #3d29312a; transform-origin: 52% 58%; transition: transform .65s cubic-bezier(.3,.7,.25,1), border-radius .55s ease, filter .5s ease, opacity .25s ease; }
+.ol-day-report::after { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; background: repeating-linear-gradient(27deg, transparent 0 18px, #8a68741a 19px 20px, transparent 21px 31px); transition: opacity .45s ease; }
+.ol-day-tape { position: absolute; left: 50%; top: -7px; width: 48px; height: 14px; background: #d2b39578; transform: translateX(-50%) rotate(-2deg); }
+.ol-day-report h2 { margin: 0 0 10px; color: #2b2025; font: 800 17px/1.2 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .12em; text-align: center; text-decoration: line-through 2px #97566c; text-decoration-skip-ink: none; }
+.ol-day-report dl { display: grid; gap: 4px; margin: 0; color: #35282d; font: 600 10px/1.35 "Segoe Print", "Bradley Hand", cursive; }.ol-day-report dl div { display: grid; grid-template-columns: auto 1fr; gap: 6px; }.ol-day-report dt, .ol-day-report dd { margin: 0; color: #35282d; }.ol-day-report dd { color: #2b2025; font-weight: 700; }
+.ol-day-zero-stars { margin-top: 8px; color: #8b5266; font-size: 13px; letter-spacing: .15em; text-align: center; text-decoration: line-through 1px; }.ol-day-ew { position: absolute; right: 8px; top: 8px; color: #754b59; font: italic 9px/1 "Segoe Print", cursive; transform: rotate(12deg); }
+.ol-day-cloud { position: absolute; left: 8px; bottom: 8px; width: 26px; height: 12px; border-radius: 50% 55% 45% 45%; background: #816d78; opacity: .62; }.ol-day-cloud::before, .ol-day-cloud::after { content: ""; position: absolute; bottom: 3px; border-radius: 50%; background: inherit; }.ol-day-cloud::before { left: 3px; width: 12px; height: 12px; }.ol-day-cloud::after { right: 2px; width: 14px; height: 15px; }.ol-day-cloud i { position: absolute; z-index: 2; left: 7px; top: 4px; width: 12px; height: 5px; border-bottom: 1px solid #3e3037; transform: rotate(-8deg); }
+.ol-day-phase-1 .ol-day-report { animation: ol-day-report-shake .42s ease both; }
+.ol-day-phase-3 .ol-day-report { transform: skew(-1deg,1deg) rotate(-1.5deg) scale(.97); }.ol-day-phase-3 .ol-day-report::after, .ol-day-phase-4 .ol-day-report::after, .ol-day-phase-5 .ol-day-report::after, .ol-day-phase-6 .ol-day-report::after, .ol-day-phase-7 .ol-day-report::after, .ol-day-phase-8 .ol-day-report::after { opacity: 1; }
+.ol-day-phase-4 .ol-day-report { transform: rotate(5deg) skew(4deg,-3deg) scale(.78,.72); filter: saturate(.85); }
+.ol-day-phase-5 .ol-day-report, .ol-day-phase-6 .ol-day-report, .ol-day-phase-7 .ol-day-report, .ol-day-phase-8 .ol-day-report { border-radius: 44% 52% 47% 39%; transform: rotate(21deg) scale(.32); filter: saturate(.72) contrast(.94); }
+.ol-day-phase-5 .ol-day-report > *, .ol-day-phase-6 .ol-day-report > *, .ol-day-phase-7 .ol-day-report > *, .ol-day-phase-8 .ol-day-report > *, .ol-day-phase-9 .ol-day-report > *, .ol-day-phase-10 .ol-day-report > *, .ol-day-phase-11 .ol-day-report > * { opacity: 0; }
+.ol-day-phase-9 .ol-day-report { border-radius: 48%; animation: ol-day-paper-toss .62s cubic-bezier(.25,.6,.45,1) both; }
+.ol-day-phase-10 .ol-day-report, .ol-day-phase-11 .ol-day-report { border-radius: 48%; opacity: 0; transform: translate(91%,116px) rotate(205deg) scale(.18); }
+.ol-day-bin { position: absolute; z-index: 6; right: 4%; bottom: 4px; width: 49px; height: 55px; filter: drop-shadow(0 5px 3px #4b30383b); }.ol-day-bin span { position: absolute; left: 6px; right: 5px; bottom: 0; height: 43px; border: 2px solid #654b55; border-radius: 4px 4px 9px 8px; background: linear-gradient(100deg, #b28d8f, #d0adb0 48%, #98747f); transform: perspective(70px) rotateX(-3deg); }.ol-day-bin span::before, .ol-day-bin span::after { content: ""; position: absolute; top: 7px; bottom: 7px; width: 2px; border-radius: 50%; background: #765a6470; }.ol-day-bin span::before { left: 10px; }.ol-day-bin span::after { right: 10px; }.ol-day-bin i { position: absolute; z-index: 2; left: 1px; right: 0; top: 7px; height: 8px; border: 2px solid #654b55; border-radius: 5px 5px 3px 3px; background: #c39da2; transform-origin: right center; }.ol-day-bin b { position: absolute; z-index: 3; left: 18px; top: 1px; width: 15px; height: 7px; border: 2px solid #654b55; border-radius: 5px 5px 0 0; }
+.ol-day-phase-9 .ol-day-bin { animation: ol-day-bin-bounce .58s ease .45s both; }.ol-day-phase-9 .ol-day-bin i { animation: ol-day-lid-bounce .58s ease .38s both; }
+.ol-day-delete-button { display: block; min-width: min(220px, 80%); margin: 1px auto 0; padding: 9px 15px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #edd9cf, #d8a8b3); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .06em; transform: rotate(-.4deg); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }.ol-day-delete-button:hover, .ol-day-delete-button:focus-visible { transform: translateY(-2px) rotate(0) scale(1.01); box-shadow: 0 6px 0 #97707c, 0 11px 14px #5437413b, inset 0 1px #fff0e5; }
+.ol-day-confirmation { width: min(96%, 370px); margin: 4px auto 0; padding: 11px 13px 10px; border: 1px dashed #80616d85; color: #35282d; background: #f4e4d6d9; box-shadow: 0 5px 10px #4e323d25; transform: rotate(.25deg); animation: ol-day-confirm-in .42s ease both; }.ol-day-confirmation p { margin: 0 0 9px; color: #2b2025 !important; font: italic 650 10px/1.4 "Segoe Print", cursive; text-align: center; }.ol-day-confirmation > div { display: flex; justify-content: center; gap: 12px; }.ol-day-confirmation button { min-width: 80px; padding: 6px 10px; border: 1px solid #785563; color: #2b2025; background: #e0b9ba; box-shadow: 0 3px 0 #916776; font: 700 9px/1.2 "Segoe Print", cursive; cursor: pointer; }.ol-day-confirmation button.is-pressed { animation: ol-day-choice-press .35s ease both; }.ol-day-confirmation button:disabled { color: #2b2025; opacity: 1; cursor: default; }
+.ol-day-step { min-height: 34px; display: flex; justify-content: center; align-items: center; gap: 7px; margin: 9px auto 0 !important; color: #2b2025 !important; font: italic 650 11px/1.4 "Segoe Print", cursive; text-align: center; animation: ol-day-step-in .4s ease both; }.ol-day-step.is-keeping span { color: #7c4d60; font-size: 15px; }.ol-day-step b { color: #9d526c; font-size: 15px; }
+.ol-day-stamp { width: fit-content; max-width: 94%; margin: 12px auto 0; padding: 7px 11px 5px; border: 3px double #874a5d; color: #733e50; font: 800 10px/1.25 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .05em; text-align: center; transform: rotate(-2deg); opacity: 0; animation: ol-day-stamp-down .65s cubic-bezier(.2,.85,.3,1) both; }
+.ol-day-gone { position: relative; width: fit-content; margin: 15px auto 0 !important; color: #2b2025 !important; font: italic 700 14px/1.45 "Segoe Print", cursive; animation: ol-day-step-in .4s ease both; }.ol-day-gone::after { content: ""; position: absolute; left: -4%; right: -4%; bottom: -2px; height: 2px; border-radius: 50%; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .62s ease .15s forwards; }
+.ol-day-delete + p { margin-top: 2.15em; }.ol-day-enough { width: fit-content; margin: 2.1em auto 1.7em !important; color: #2b2025 !important; font-weight: 700; }.ol-day-tomorrow { position: relative; width: fit-content; margin: 0 auto 2em !important; color: #2b2025 !important; font: italic 700 1.04em/1.5 "Segoe Print", "Bradley Hand", cursive; }.ol-day-tomorrow::after { content: ""; position: absolute; left: -3%; right: -3%; bottom: -2px; height: 2px; background: #a066798f; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .7s ease .15s forwards; }.ol-day-tomorrow span { position: absolute; right: -22px; top: -7px; color: #b48651; font-size: 13px; }
+.ol-day-me { display: grid; justify-items: center; gap: 7px; width: fit-content; margin: 2.4em auto 2em !important; color: #2b2025 !important; font: italic 750 1.15em/1.2 "Segoe Print", cursive; }.ol-day-me span { color: #9c536c; font-size: 13px; }
+.ol-insecure-letter-body > p { margin: 0 0 1.35em; }
+.ol-janna-mirror { position: relative; width: min(94%, 430px); margin: 8px auto 1.65em; padding: 18px 20px 19px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f3e5d6de, #ead2c9c4); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(-.15deg); }
+.ol-janna-mirror::before, .ol-janna-mirror::after { content: ""; position: absolute; top: -7px; width: 39px; height: 13px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-janna-mirror::before { left: 17px; transform: rotate(-5deg); }.ol-janna-mirror::after { right: 17px; transform: rotate(4deg); }
+.ol-janna-mirror h2 { margin: 0 0 7px; color: #2b2025; font: 700 12px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .09em; text-align: center; }
+.ol-mirror-visual { position: relative; height: 224px; }
+.ol-mirror-frame { position: absolute; z-index: 2; left: 50%; top: 2px; width: 166px; height: 188px; padding: 10px; border: 4px solid #946274; border-radius: 49% 51% 48% 52% / 44% 45% 55% 56%; background: linear-gradient(140deg, #d8a6a7, #b9788d 48%, #d0a56d 73%, #9c6679); box-shadow: 0 7px 0 #76505e, 0 13px 17px #432d3538, inset 0 2px #ffe9d7a3, inset 0 -4px #67404f55; transform: translateX(-50%) rotate(.5deg); }
+.ol-mirror-frame::before, .ol-mirror-frame::after { content: ""; position: absolute; z-index: -1; left: 50%; border: 3px solid #805365; background: linear-gradient(120deg, #c58f98, #b88168); transform: translateX(-50%); }.ol-mirror-frame::before { bottom: -31px; width: 24px; height: 34px; border-radius: 0 0 8px 8px; }.ol-mirror-frame::after { bottom: -39px; width: 77px; height: 11px; border-radius: 50%; box-shadow: 0 4px 5px #4b30373b; }
+.ol-mirror-glass { position: relative; width: 100%; height: 100%; overflow: hidden; border: 2px solid #765767; border-radius: inherit; background: radial-gradient(ellipse at 53% 34%, #efe7df, #cbbfc4 54%, #968997); box-shadow: inset 0 4px 10px #49364155, inset 0 -3px 8px #fff5e766; }
+.ol-mirror-glass::after { content: ""; position: absolute; z-index: 6; inset: 7% 13% 52% 48%; border-radius: 50%; background: linear-gradient(120deg, #fff9ec75, transparent 70%); transform: rotate(-14deg); pointer-events: none; }
+.ol-mirror-phase-0 .ol-mirror-glass::after { animation: ol-mirror-glass-shimmer 5.2s ease-in-out infinite; }
+.ol-mirror-josh { position: absolute; z-index: 2; left: 50%; bottom: 9px; width: 61px; height: 99px; opacity: .2; filter: blur(3px) saturate(.7); transform: translateX(-50%); transition: opacity .65s ease, filter .65s ease, transform .65s ease; }.ol-mirror-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ol-mirror-fog { position: absolute; z-index: 4; inset: -8%; opacity: .87; background: radial-gradient(circle at 34% 28%, #f4ebdfd9 0 17%, transparent 38%), radial-gradient(circle at 70% 55%, #b5aab4e8 0 23%, transparent 48%), linear-gradient(145deg, #d9d2d2d9, #9e939fd6); filter: blur(4px); transition: opacity .7s ease; }
+.ol-mirror-doubts { position: absolute; z-index: 5; inset: 0; color: #56434b; font: italic 8px/1 "Segoe Print", cursive; }.ol-mirror-doubts span { position: absolute; opacity: .42; transition: opacity .45s ease, transform .45s ease; }.ol-mirror-doubts span:first-child { left: 15px; top: 39px; transform: rotate(-8deg); }.ol-mirror-doubts span:nth-child(2) { right: 14px; top: 67px; transform: rotate(7deg); }.ol-mirror-doubts span:nth-child(3) { left: 19px; bottom: 46px; transform: rotate(5deg); }.ol-mirror-doubts span:last-child { right: 17px; bottom: 27px; transform: rotate(-6deg); }
+.ol-mirror-phase-2 .ol-mirror-doubts span:first-child, .ol-mirror-phase-3 .ol-mirror-doubts span:first-child, .ol-mirror-phase-4 .ol-mirror-doubts span:first-child, .ol-mirror-phase-5 .ol-mirror-doubts span:first-child, .ol-mirror-phase-6 .ol-mirror-doubts span:first-child, .ol-mirror-phase-7 .ol-mirror-doubts span:first-child, .ol-mirror-phase-8 .ol-mirror-doubts span:first-child, .ol-mirror-phase-9 .ol-mirror-doubts span:first-child, .ol-mirror-phase-10 .ol-mirror-doubts span:first-child, .ol-mirror-phase-11 .ol-mirror-doubts span:first-child,
+.ol-mirror-phase-3 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-4 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-5 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-6 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-7 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-8 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-9 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-10 .ol-mirror-doubts span:nth-child(2), .ol-mirror-phase-11 .ol-mirror-doubts span:nth-child(2),
+.ol-mirror-phase-4 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-5 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-6 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-7 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-8 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-9 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-10 .ol-mirror-doubts span:nth-child(3), .ol-mirror-phase-11 .ol-mirror-doubts span:nth-child(3),
+.ol-mirror-phase-5 .ol-mirror-doubts span:last-child, .ol-mirror-phase-6 .ol-mirror-doubts span:last-child, .ol-mirror-phase-7 .ol-mirror-doubts span:last-child, .ol-mirror-phase-8 .ol-mirror-doubts span:last-child, .ol-mirror-phase-9 .ol-mirror-doubts span:last-child, .ol-mirror-phase-10 .ol-mirror-doubts span:last-child, .ol-mirror-phase-11 .ol-mirror-doubts span:last-child { opacity: 0; transform: translateY(-3px) scale(.9); }
+.ol-mirror-phase-1 .ol-mirror-fog { opacity: .75; }.ol-mirror-phase-2 .ol-mirror-fog { opacity: .65; }.ol-mirror-phase-3 .ol-mirror-fog { opacity: .54; }.ol-mirror-phase-4 .ol-mirror-fog { opacity: .43; }.ol-mirror-phase-5 .ol-mirror-fog { opacity: .33; }.ol-mirror-phase-6 .ol-mirror-fog, .ol-mirror-phase-7 .ol-mirror-fog { opacity: .24; }.ol-mirror-phase-8 .ol-mirror-fog { opacity: .13; }.ol-mirror-phase-9 .ol-mirror-fog, .ol-mirror-phase-10 .ol-mirror-fog, .ol-mirror-phase-11 .ol-mirror-fog { opacity: 0; }
+.ol-mirror-phase-2 .ol-mirror-josh { opacity: .36; filter: blur(2.5px) saturate(.76); }.ol-mirror-phase-3 .ol-mirror-josh { opacity: .48; filter: blur(2px) saturate(.8); }.ol-mirror-phase-4 .ol-mirror-josh { opacity: .62; filter: blur(1.5px) saturate(.85); }.ol-mirror-phase-5 .ol-mirror-josh { opacity: .73; filter: blur(1px) saturate(.9); }.ol-mirror-phase-6 .ol-mirror-josh, .ol-mirror-phase-7 .ol-mirror-josh { opacity: .82; filter: blur(.6px) saturate(.94); }.ol-mirror-phase-8 .ol-mirror-josh { opacity: .9; filter: blur(.25px) saturate(.98); }.ol-mirror-phase-9 .ol-mirror-josh, .ol-mirror-phase-10 .ol-mirror-josh, .ol-mirror-phase-11 .ol-mirror-josh { opacity: 1; filter: drop-shadow(0 0 7px #e1aa6b70) saturate(1); transform: translateX(-50%) scale(1.03); }
+.ol-mirror-stars i { position: absolute; z-index: 7; color: #c39a5c; font: 12px/1 "Segoe Print", cursive; opacity: 0; }.ol-mirror-stars i:first-child { left: 18px; top: 25px; }.ol-mirror-stars i:nth-child(2) { right: 19px; top: 42px; font-size: 18px; }.ol-mirror-stars i:last-child { right: 24px; bottom: 25px; }
+.ol-mirror-phase-5 .ol-mirror-stars i:first-child, .ol-mirror-phase-6 .ol-mirror-stars i:first-child, .ol-mirror-phase-7 .ol-mirror-stars i:first-child, .ol-mirror-phase-8 .ol-mirror-stars i:first-child, .ol-mirror-phase-9 .ol-mirror-stars i, .ol-mirror-phase-10 .ol-mirror-stars i, .ol-mirror-phase-11 .ol-mirror-stars i { animation: ol-mirror-star-in .5s ease both; }.ol-mirror-stars i:nth-child(2) { animation-delay: .12s !important; }.ol-mirror-stars i:nth-child(3) { animation-delay: .22s !important; }
+.ol-mirror-heart { position: absolute; z-index: 8; right: 33px; top: 26px; color: #9d4f69; font: 19px/1 "Segoe Print", cursive; opacity: 0; transform: rotate(-8deg) scale(.5); }.ol-mirror-phase-9 .ol-mirror-heart, .ol-mirror-phase-10 .ol-mirror-heart, .ol-mirror-phase-11 .ol-mirror-heart { animation: ol-mirror-heart-in .55s ease .16s both; }
+.ol-mirror-engraving { position: absolute; z-index: 8; color: #f3d39e; font: 12px/1 serif; text-shadow: 0 1px #704653; }.ol-mirror-engraving-a { left: 13px; top: 26px; }.ol-mirror-engraving-b { right: 12px; bottom: 30px; }
+.ol-mirror-loading { width: fit-content; margin: -2px auto 11px !important; color: #2b2025 !important; font: italic 650 10px/1.35 "Segoe Print", cursive; animation: ol-mirror-loading 1.1s ease-in-out infinite alternate; }
+.ol-mirror-results { display: grid; gap: 5px; width: min(96%, 355px); margin: -2px auto 13px; padding: 0; list-style: none; color: #35282d; font: 600 10px/1.35 "Segoe Print", "Bradley Hand", cursive; }.ol-mirror-results li { display: grid; grid-template-columns: 17px 1fr; color: #35282d; animation: ol-mirror-result-in .4s ease both; }.ol-mirror-results li > span { color: #8e5367; font-size: 13px; }.ol-mirror-results li.is-perfect { margin-top: 3px; color: #2b2025; font-weight: 700; }.ol-mirror-results li.is-never { margin-bottom: 3px; color: #2b2025; font-weight: 750; }.ol-mirror-results li.is-loved { color: #2b2025; font-weight: 750; }
+.ol-mirror-button { position: relative; display: grid; place-items: center; min-width: min(245px, 86%); margin: 0 auto; padding: 8px 16px 7px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #eedbd0, #dcaeb8); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; font-family: "Segoe Print", "Bradley Hand", cursive; transform: rotate(-.35deg); cursor: pointer; overflow: hidden; }.ol-mirror-button::after { content: ""; position: absolute; top: -20%; bottom: -20%; left: -25%; width: 18%; background: linear-gradient(90deg, transparent, #fff8e6a3, transparent); transform: skewX(-18deg); animation: ol-mirror-tab-shimmer 4.8s ease-in-out infinite; }.ol-mirror-button span { color: #2b2025; font-size: 9px; letter-spacing: .05em; }.ol-mirror-button b { color: #2b2025; font-size: 11px; letter-spacing: .04em; }.ol-mirror-button:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-mirror-button-press .55s ease both; }
+.ol-mirror-warning { width: min(96%, 365px); margin: 10px auto 0; padding: 10px 13px; border: 1px dashed #805d6b99; color: #35282d; background: #f0d8cd; box-shadow: 0 5px 10px #4e323d2b; font: 600 9px/1.45 "Segoe Print", "Bradley Hand", cursive; transform: rotate(.5deg); animation: ol-mirror-warning-out .55s ease both; }.ol-mirror-warning b { color: #2b2025; }
+.ol-mirror-accurate { position: relative; width: fit-content; margin: 14px auto 0 !important; color: #2b2025 !important; font: italic 700 14px/1.45 "Segoe Print", cursive; animation: ol-mirror-result-in .42s ease both; }.ol-mirror-accurate::after { content: ""; position: absolute; left: -4%; right: -4%; bottom: -2px; height: 2px; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .62s ease .15s forwards; }
+.ol-janna-mirror + p { margin-top: 2.1em; }.ol-mirror-be-josh { margin: 2em 0 !important; color: #35282d !important; text-align: center; }.ol-mirror-be-josh strong { position: relative; color: #2b2025 !important; font: italic 750 1.12em/1 "Segoe Print", cursive; }.ol-mirror-be-josh strong::after { content: ""; position: absolute; left: -8%; right: -8%; bottom: -3px; height: 2px; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .62s ease .15s forwards; }
+.ol-mirror-favorite { position: relative; margin-top: 2em !important; color: #35282d !important; }.ol-mirror-favorite span { display: block; width: fit-content; margin: 8px 8% 0 auto; color: #7d4b5f; font: italic 10px/1.2 "Segoe Print", cursive; transform: rotate(-4deg); }
+.ol-jealous-letter-body > p { margin: 0 0 1.35em; }
+.ol-applications { position: relative; width: min(94%, 450px); margin: 8px auto 1.65em; padding: 18px 18px 19px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f3e5d6df, #ead2c9c5); box-shadow: 0 3px 3px #5b414b2b, 0 13px 20px #3e293528; transform: rotate(.12deg); }
+.ol-applications::before, .ol-applications::after { content: ""; position: absolute; top: -7px; width: 39px; height: 13px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-applications::before { left: 17px; transform: rotate(-5deg); }.ol-applications::after { right: 17px; transform: rotate(4deg); }
+.ol-folder-scene { position: relative; min-height: 333px; overflow: hidden; }
+.ol-folder-back { position: absolute; z-index: 2; left: 50%; top: 29px; width: min(88%, 365px); height: 231px; border: 2px solid #8b6753; border-radius: 5px 9px 8px 6px; background: linear-gradient(145deg, #d9b579, #c89a61 58%, #b58455); box-shadow: 0 7px 0 #8e6545, 0 12px 15px #4a302b38, inset 0 2px #f5d69a8c; transform: translateX(-50%) rotate(-.35deg); }
+.ol-folder-tab { position: absolute; z-index: 2; left: 10px; top: -26px; min-width: 158px; padding: 6px 10px 5px; border: 2px solid #8b6753; border-bottom: 0; border-radius: 7px 7px 0 0; color: #2b2025; background: #d7b174; font: 700 8px/1.2 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .04em; text-align: center; }
+.ol-folder-confidential { position: absolute; right: 10px; top: 8px; color: #744854; font: 700 8px/1 "Segoe Print", cursive; transform: rotate(3deg); }.ol-folder-jj { position: absolute; left: 12px; top: 12px; color: #674953; font: italic 9px/1 "Segoe Print", cursive; transform: rotate(-6deg); }
+.ol-folder-front { position: absolute; z-index: 7; left: -2px; right: -2px; bottom: -2px; height: 158px; display: grid; place-content: center; gap: 7px; border: 2px solid #876248; border-radius: 6px 7px 9px 6px; color: #2b2025; background: linear-gradient(155deg, #dcb978, #c99b62 55%, #b88455); box-shadow: inset 0 2px #f9dba074, 0 -2px 4px #63442c2b; transform-origin: bottom center; transition: transform .7s cubic-bezier(.25,.72,.3,1), filter .5s ease; }.ol-folder-front span, .ol-folder-front small { color: #2b2025; font: 700 10px/1.25 "Segoe Print", cursive; text-align: center; }.ol-folder-front small { font-size: 8px; font-style: italic; }
+.ol-applications-phase-1 .ol-folder-front, .ol-applications-phase-2 .ol-folder-front, .ol-applications-phase-3 .ol-folder-front, .ol-applications-phase-4 .ol-folder-front, .ol-applications-phase-5 .ol-folder-front, .ol-applications-phase-6 .ol-folder-front, .ol-applications-phase-7 .ol-folder-front { transform: perspective(520px) rotateX(63deg) translateY(15px); filter: brightness(.93); }
+.ol-folder-blank { position: absolute; z-index: 3; left: 13%; top: 36px; width: 74%; height: 151px; border: 1px solid #8b6d665e; background: #f0e1d1; box-shadow: 0 3px 5px #50343d2b; opacity: 0; transform-origin: bottom center; }.ol-folder-blank::before { content: ""; position: absolute; left: 14px; right: 14px; top: 20px; height: 62px; background: repeating-linear-gradient(to bottom, #86677338 0 1px, transparent 1px 14px); }.ol-folder-blank-a { transform: rotate(-2deg); }.ol-folder-blank-b { transform: rotate(2deg); }
+.ol-applications-phase-1 .ol-folder-blank-a { animation: ol-folder-sheet-a .65s ease .25s both; }.ol-applications-phase-2 .ol-folder-blank-a { animation: ol-folder-sheet-a .65s ease both; }.ol-applications-phase-2 .ol-folder-blank-b { animation: ol-folder-sheet-b .7s ease .18s both; }
+.ol-josh-application { position: absolute; z-index: 5; left: 8%; top: 23px; width: 84%; min-height: 205px; padding: 12px 15px 13px; border: 1px solid #8b6a716b; color: #35282d; background: linear-gradient(167deg, #f6eadb, #ead5c9); box-shadow: 0 5px 5px #52353e33, 0 11px 14px #432c3528; opacity: 0; transform: translateY(68px) scale(.91) rotate(.8deg); transition: opacity .45s ease, transform .72s cubic-bezier(.22,.75,.28,1); }
+.ol-applications-phase-4 .ol-josh-application, .ol-applications-phase-5 .ol-josh-application, .ol-applications-phase-6 .ol-josh-application, .ol-applications-phase-7 .ol-josh-application { opacity: 1; transform: translateY(-30px) scale(1) rotate(-.45deg); }
+.ol-josh-application > small { display: block; margin-bottom: 3px; color: #35282d; font: 700 7px/1.2 "Segoe Print", cursive; letter-spacing: .08em; text-align: center; }.ol-josh-application h3 { margin: 0 0 7px; color: #2b2025; font: 800 18px/1.1 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .12em; text-align: center; }
+.ol-josh-application dl { display: grid; gap: 3px; margin: 0; color: #35282d; font: 600 8px/1.32 "Segoe Print", "Bradley Hand", cursive; }.ol-josh-application dl div { display: grid; grid-template-columns: minmax(84px,.9fr) 1.1fr; gap: 5px; opacity: 0; }.ol-applications-phase-4 .ol-josh-application dl div, .ol-applications-phase-5 .ol-josh-application dl div, .ol-applications-phase-6 .ol-josh-application dl div, .ol-applications-phase-7 .ol-josh-application dl div { animation: ol-app-detail-in .34s ease both; }.ol-josh-application dl div:nth-child(2) { animation-delay: .08s !important; }.ol-josh-application dl div:nth-child(3) { animation-delay: .16s !important; }.ol-josh-application dl div:nth-child(4) { animation-delay: .24s !important; }.ol-josh-application dl div:nth-child(5) { animation-delay: .32s !important; }.ol-josh-application dt, .ol-josh-application dd { margin: 0; color: #35282d; }.ol-josh-application dd { color: #2b2025; font-weight: 750; }.ol-josh-application dl div:last-child { grid-template-columns: 1fr; gap: 1px; padding-top: 2px; }.ol-josh-application dl div:last-child dd { text-align: center; }
+.ol-application-contract dd { position: relative; }.ol-applications-phase-5 .ol-application-contract dd::after, .ol-applications-phase-6 .ol-application-contract dd::after, .ol-applications-phase-7 .ol-application-contract dd::after { content: ""; position: absolute; left: -2%; right: 18%; bottom: -2px; height: 2px; background: #92596d8c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .55s ease .32s forwards; }
+.ol-application-replacement span { display: inline-block; margin-left: 3px; color: #76495a; font: italic 7px/1 "Segoe Print", cursive; opacity: 0; transform: rotate(-5deg); }.ol-applications-phase-5 .ol-application-replacement span, .ol-applications-phase-6 .ol-application-replacement span, .ol-applications-phase-7 .ol-application-replacement span { animation: ol-app-note-in .4s ease .35s both; }
+.ol-hired-stamp { position: absolute; z-index: 7; right: 14px; top: 43px; padding: 5px 9px 3px; border: 3px double #8b4055; color: #843b51; font: 900 17px/1 "Segoe Print", cursive; letter-spacing: .08em; opacity: 0; transform: translateY(-23px) rotate(-12deg) scale(1.18); }.ol-applications-phase-5 .ol-hired-stamp, .ol-applications-phase-6 .ol-hired-stamp, .ol-applications-phase-7 .ol-hired-stamp { animation: ol-app-hired-stamp .65s cubic-bezier(.2,.82,.3,1) both; }
+.ol-applicant-count { position: absolute; z-index: 9; left: 50%; top: 0; width: fit-content; padding: 4px 9px; border: 1px dashed #7657657a; color: #2b2025; background: #f1dfd1e8; font: italic 650 9px/1.25 "Segoe Print", cursive; opacity: 0; transform: translateX(-50%) rotate(-1deg); white-space: nowrap; }.ol-applications-phase-1 .ol-applicant-count, .ol-applications-phase-2 .ol-applicant-count { animation: ol-app-count-in .38s ease both; }.ol-applications-phase-3 .ol-applicant-count, .ol-applications-phase-4 .ol-applicant-count, .ol-applications-phase-5 .ol-applicant-count, .ol-applications-phase-6 .ol-applicant-count, .ol-applications-phase-7 .ol-applicant-count { opacity: 1; }
+.ol-applications-closed { position: absolute; z-index: 10; left: 50%; top: 195px; width: fit-content; padding: 6px 10px 4px; border: 3px double #81485a; color: #733e50; background: #f3ded0e8; font: 850 9px/1.25 "Segoe Print", cursive; letter-spacing: .05em; text-align: center; opacity: 0; transform: translate(-50%,-18px) rotate(3deg) scale(1.12); }.ol-applications-phase-6 .ol-applications-closed, .ol-applications-phase-7 .ol-applications-closed { animation: ol-app-closed-stamp .62s ease both; }
+.ol-applications-janna, .ol-applications-josh { position: absolute; z-index: 11; bottom: 1px; width: 36px; height: 59px; transform-origin: center bottom; transition: left .72s ease, right .72s ease, opacity .35s ease; }.ol-applications-janna { left: 8%; }.ol-applications-josh { right: 8%; opacity: 0; }.ol-applications-janna svg, .ol-applications-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }.ol-applications-janna i { position: absolute; right: -7px; top: 25px; width: 14px; height: 18px; border: 1px solid #654a55; background: #d6b489; transform: rotate(5deg); }.ol-applications-janna i::before { content: ""; position: absolute; left: 3px; right: 3px; top: -3px; height: 4px; border: 1px solid #654a55; border-radius: 3px; }
+.ol-applications-phase-4 .ol-applications-josh, .ol-applications-phase-5 .ol-applications-josh { opacity: 1; animation: ol-app-josh-in .45s ease both; }.ol-applications-phase-5 .ol-applications-janna { animation: ol-app-janna-stamp .58s ease both; }.ol-applications-phase-6 .ol-applications-janna, .ol-applications-phase-7 .ol-applications-janna { left: 41%; animation: ol-app-walk-together .72s ease both; }.ol-applications-phase-6 .ol-applications-josh, .ol-applications-phase-7 .ol-applications-josh { right: 39%; opacity: 1; animation: ol-app-walk-together .72s ease both; }.ol-applications-phase-6 .ol-applications-janna i, .ol-applications-phase-7 .ol-applications-janna i { opacity: 0; }
+.ol-applications-heart { position: absolute; z-index: 12; left: 50%; bottom: 45px; color: #9e5068; font: 17px/1 "Segoe Print", cursive; opacity: 0; transform: translateX(-50%) scale(.5); }.ol-applications-phase-6 .ol-applications-heart, .ol-applications-phase-7 .ol-applications-heart { animation: ol-app-heart-in .45s ease .55s both; }
+.ol-applications-button { display: block; min-width: min(245px, 86%); margin: 0 auto; padding: 9px 15px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #eedbc9, #d6ae83); box-shadow: 0 4px 0 #95705b, 0 8px 12px #543b3138, inset 0 1px #fff1d9; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .05em; transform: rotate(-.35deg); cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }.ol-applications-button:not(:disabled):hover, .ol-applications-button:not(:disabled):focus-visible { transform: translateY(-2px) rotate(0) scale(1.01); box-shadow: 0 6px 0 #95705b, 0 11px 14px #543b3140, inset 0 1px #fff1d9; }.ol-applications-button:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-app-button-press .55s ease both; }
+.ol-applications-happy { position: relative; width: fit-content; margin: 14px auto 0 !important; color: #2b2025 !important; font: italic 700 14px/1.45 "Segoe Print", cursive; animation: ol-app-note-in .42s ease both; }.ol-applications-happy::after { content: ""; position: absolute; left: -3%; right: -3%; bottom: -2px; height: 2px; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .62s ease .15s forwards; }
+.ol-applications + p { margin-top: 2.15em; }.ol-jealous-heart-place { padding-left: 13px; border-left: 2px solid #9a5c71a1; color: #2b2025 !important; font-weight: 700; }.ol-jealous-loves { width: fit-content; margin: 2.25em auto 0 !important; color: #2b2025 !important; font: italic 700 1.04em/1.4 "Segoe Print", cursive; }.ol-jealous-a-lot { position: relative; width: fit-content; margin: .9em 24% 2em auto !important; color: #2b2025 !important; font: italic 750 1.08em/1.3 "Segoe Print", cursive; }.ol-jealous-a-lot span { position: absolute; right: -21px; top: -3px; color: #9d5069; font-size: 14px; }
+.ol-anniversary-letter-body > p { margin: 0 0 1.35em; }
+.ol-storybook-keepsake { position: relative; width: min(96%, 470px); margin: 9px auto 1.8em; padding: 18px 18px 21px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f4e7d7e3, #ead2c8c7); box-shadow: 0 3px 3px #5b414b2b, 0 14px 22px #3e29352d; transform: rotate(-.12deg); }
+.ol-storybook-keepsake::before, .ol-storybook-keepsake::after { content: ""; position: absolute; top: -7px; width: 41px; height: 14px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-storybook-keepsake::before { left: 17px; transform: rotate(-5deg); }.ol-storybook-keepsake::after { right: 17px; transform: rotate(4deg); }
+.ol-storybook-keepsake > h2 { margin: 0 0 10px; color: #2b2025; font: 750 13px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .11em; text-align: center; }
+.ol-storybook { position: relative; width: min(100%, 405px); height: 386px; margin: 0 auto; perspective: 1000px; filter: drop-shadow(0 11px 9px #49313a32); }
+.ol-story-binding { position: absolute; z-index: 8; left: -7px; top: 13px; bottom: 13px; width: 17px; border-radius: 8px 3px 3px 8px; background: linear-gradient(90deg, #794c60, #b27487 53%, #75495b); box-shadow: inset 2px 0 #d8a4aa75, 3px 2px 5px #3f29322e; }.ol-story-binding i { position: absolute; left: 2px; width: 13px; height: 3px; border-radius: 50%; background: #d5ab69; box-shadow: 0 1px #573a43; }.ol-story-binding i:first-child { top: 15%; }.ol-story-binding i:nth-child(2) { top: 38%; }.ol-story-binding i:nth-child(3) { top: 62%; }.ol-story-binding i:last-child { top: 84%; }
+.ol-year-one-page, .ol-year-two-page { position: absolute; inset: 0; overflow: hidden; padding: 24px 28px 25px 34px; border: 1px solid #8b6b7161; border-radius: 4px 10px 9px 4px; color: #35282d; background: linear-gradient(165deg, #f8eddd, #eddacd 70%, #e6cfc2); box-shadow: inset 0 1px #fffaf0, inset -5px 0 8px #80606b17, 0 4px 5px #49303928; transform-style: preserve-3d; backface-visibility: hidden; }
+.ol-year-one-page::before, .ol-year-two-page::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .28; background: repeating-linear-gradient(0deg, transparent 0 25px, #9b778018 26px 27px); }
+.ol-year-one-page { z-index: 3; transform-origin: left center; }.ol-year-two-page { z-index: 2; background: linear-gradient(165deg, #f8eddd, #ecd8ca 60%, #e5cdbf); }
+.ol-story-phase-4 .ol-year-one-page { animation: ol-story-page-turn .85s cubic-bezier(.45,.05,.25,1) both; }.ol-story-phase-5 .ol-year-one-page, .ol-story-phase-6 .ol-year-one-page, .ol-story-phase-7 .ol-year-one-page, .ol-story-phase-8 .ol-year-one-page, .ol-story-phase-9 .ol-year-one-page, .ol-story-phase-10 .ol-year-one-page, .ol-story-phase-11 .ol-year-one-page, .ol-story-phase-12 .ol-year-one-page, .ol-story-phase-13 .ol-year-one-page, .ol-story-phase-14 .ol-year-one-page { visibility: hidden; transform: rotateY(-180deg); }
+.ol-year-one-page header, .ol-year-two-page header { position: relative; z-index: 2; display: grid; justify-items: center; margin-bottom: 16px; color: #2b2025; text-align: center; }.ol-year-one-page header small, .ol-year-two-page header small { color: #35282d; font: 650 8px/1.2 "Segoe Print", cursive; letter-spacing: .13em; }.ol-year-one-page header h3, .ol-year-two-page header h3 { margin: 2px 0; color: #2b2025; font: 800 21px/1.12 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .08em; }.ol-year-one-page header b, .ol-year-two-page header b { color: #2b2025; font: 750 10px/1.25 "Segoe Print", cursive; letter-spacing: .06em; }
+.ol-year-one-page ul { position: relative; z-index: 2; display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; color: #35282d; font: 600 9px/1.35 "Segoe Print", "Bradley Hand", cursive; }.ol-year-one-page li { display: grid; grid-template-columns: 18px 1fr; color: #35282d; }.ol-year-one-page li > span { color: #9d536b; font-size: 12px; }.ol-year-one-page li.is-choosing { position: relative; color: #2b2025; font-weight: 750; }
+.ol-story-phase-1 .ol-year-one-page li.is-choosing::after, .ol-story-phase-2 .ol-year-one-page li.is-choosing::after, .ol-story-phase-3 .ol-year-one-page li.is-choosing::after, .ol-story-phase-4 .ol-year-one-page li.is-choosing::after { content: ""; position: absolute; left: 18px; right: 2px; bottom: -3px; height: 2px; background: #9b5d728f; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .55s ease forwards; }
+.ol-story-phase-1 .ol-year-one-page li.is-choosing > span, .ol-story-phase-2 .ol-year-one-page li.is-choosing > span, .ol-story-phase-3 .ol-year-one-page li.is-choosing > span, .ol-story-phase-4 .ol-year-one-page li.is-choosing > span { animation: ol-story-heart-pop .42s ease .2s both; }
+.ol-year-one-complete { position: absolute; z-index: 4; left: 50%; bottom: 24px; min-width: min(225px, 75%); padding: 9px 14px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #ead8c6, #d7aa92); box-shadow: 0 4px 0 #987064, 0 8px 12px #543b3438, inset 0 1px #fff1dc; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .055em; transform: translateX(-50%) rotate(-.3deg); cursor: pointer; }.ol-year-one-complete:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-story-button-press .55s ease both; }
+.ol-year-one-stamp { position: absolute; z-index: 6; left: 50%; top: 145px; width: max-content; padding: 7px 13px 5px; border: 4px double #8b465b; color: #7c3d51; font: 850 15px/1.05 "Segoe Print", cursive; letter-spacing: .07em; text-align: center; opacity: 0; transform: translate(-50%,-34px) rotate(-8deg) scale(1.16); }.ol-story-phase-2 .ol-year-one-stamp, .ol-story-phase-3 .ol-year-one-stamp, .ol-story-phase-4 .ol-year-one-stamp { animation: ol-story-stamp .7s cubic-bezier(.2,.82,.3,1) both; }
+.ol-year-one-sparkles i { position: absolute; z-index: 7; color: #bd8e4f; font: 13px/1 "Segoe Print", cursive; opacity: 0; }.ol-year-one-sparkles i:first-child { left: 15%; top: 115px; }.ol-year-one-sparkles i:nth-child(2) { right: 17%; top: 133px; color: #9d536b; }.ol-year-one-sparkles i:nth-child(3) { left: 24%; top: 203px; }.ol-year-one-sparkles i:last-child { right: 25%; top: 215px; font-size: 20px; }.ol-story-phase-3 .ol-year-one-sparkles i, .ol-story-phase-4 .ol-year-one-sparkles i { animation: ol-story-spark-in .45s ease both; }.ol-year-one-sparkles i:nth-child(2) { animation-delay: .1s !important; }.ol-year-one-sparkles i:nth-child(3) { animation-delay: .18s !important; }.ol-year-one-sparkles i:nth-child(4) { animation-delay: .25s !important; }
+.ol-turn-page { position: absolute; z-index: 8; right: 20px; bottom: 20px; padding: 5px 8px; border: 0; color: #2b2025; background: transparent; font: italic 700 10px/1.3 "Segoe Print", cursive; cursor: pointer; animation: ol-story-turn-prompt .5s ease both; }.ol-turn-page::after { content: ""; position: absolute; right: -20px; bottom: -20px; width: 45px; height: 45px; background: linear-gradient(135deg, transparent 48%, #d8bcae 50%); filter: drop-shadow(-2px -2px 2px #60434c25); transform-origin: right bottom; animation: ol-story-corner-lift 1.8s ease-in-out infinite; }
+.ol-year-two-page { transition: background .65s ease, box-shadow .65s ease; }.ol-story-phase-14 .ol-year-two-page { background: linear-gradient(160deg, #fff0db, #edd6c8 62%, #e3c6b8); box-shadow: inset 0 1px #fffaf0, inset -5px 0 8px #80606b17, 0 4px 5px #49303928, 0 0 15px #d7a75b4a; }
+.ol-year-two-page header { margin-bottom: 9px; }.ol-year-two-page header b { padding: 3px 8px; border: 1px dashed #79596566; transform: rotate(-1deg); }
+.ol-year-two-lock { position: absolute; z-index: 5; right: 27px; bottom: 50px; width: 34px; height: 32px; border: 3px solid #765462; border-radius: 7px; background: linear-gradient(145deg, #d5a86d, #b98258); box-shadow: 0 3px 0 #795240, 0 6px 8px #4d33372d; transform-origin: center bottom; }.ol-year-two-lock::before { content: ""; position: absolute; left: 5px; top: -23px; width: 18px; height: 24px; border: 4px solid #765462; border-bottom: 0; border-radius: 13px 13px 0 0; transform-origin: left bottom; transition: transform .5s ease; }.ol-year-two-lock i { position: absolute; left: 50%; top: 8px; width: 6px; height: 12px; border-radius: 50% 50% 3px 3px; background: #684654; transform: translateX(-50%); }.ol-year-two-lock span { position: absolute; right: -10px; top: -8px; color: #9c5068; font: 12px/1 "Segoe Print", cursive; opacity: 0; }
+.ol-story-phase-6 .ol-year-two-lock, .ol-story-phase-7 .ol-year-two-lock, .ol-story-phase-8 .ol-year-two-lock, .ol-story-phase-9 .ol-year-two-lock, .ol-story-phase-10 .ol-year-two-lock, .ol-story-phase-11 .ol-year-two-lock, .ol-story-phase-12 .ol-year-two-lock, .ol-story-phase-13 .ol-year-two-lock { animation: ol-story-lock-wiggle .65s ease-in-out infinite alternate; }.ol-story-phase-14 .ol-year-two-lock { animation: ol-story-lock-open .52s ease both; }.ol-story-phase-14 .ol-year-two-lock::before { transform: rotate(-32deg) translate(-2px,-2px); }.ol-story-phase-14 .ol-year-two-lock span { animation: ol-story-heart-pop .42s ease .2s both; }
+.ol-year-two-unlocking { width: fit-content; margin: 0 auto 8px; color: #2b2025 !important; font: italic 650 9px/1.3 "Segoe Print", cursive; animation: ol-mirror-loading .8s ease-in-out infinite alternate; }
+.ol-year-two-lines { position: relative; z-index: 3; display: grid; gap: 5px; width: 76%; margin: 0; padding: 0; list-style: none; color: #35282d; font: 600 8.5px/1.3 "Segoe Print", "Bradley Hand", cursive; }.ol-year-two-lines li { color: #35282d; animation: ol-story-line-write .4s ease both; }.ol-year-two-lines li::before { content: "· "; color: #9d536b; }
+.ol-year-two-unlock { position: absolute; z-index: 7; left: 50%; bottom: 24px; min-width: min(210px, 70%); padding: 8px 13px 7px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #ead8c6, #d7aa92); box-shadow: 0 4px 0 #987064, 0 8px 12px #543b3438, inset 0 1px #fff1dc; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; transform: translateX(-50%) rotate(.3deg); cursor: pointer; }
+.ol-year-two-unlock:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-story-unlock-press .55s ease both; }
+.ol-year-two-janna, .ol-year-two-josh { position: absolute; z-index: 6; bottom: 13px; width: 35px; height: 57px; transition: left .7s ease, right .7s ease; transform-origin: center bottom; }.ol-year-two-janna { left: 14%; }.ol-year-two-josh { right: 14%; }.ol-year-two-janna svg, .ol-year-two-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }.ol-story-phase-6 .ol-year-two-janna, .ol-story-phase-7 .ol-year-two-janna, .ol-story-phase-8 .ol-year-two-janna, .ol-story-phase-9 .ol-year-two-janna, .ol-story-phase-10 .ol-year-two-janna, .ol-story-phase-11 .ol-year-two-janna, .ol-story-phase-12 .ol-year-two-janna, .ol-story-phase-13 .ol-year-two-janna { left: 67%; animation: ol-app-walk-together .7s ease both; }.ol-story-phase-14 .ol-year-two-janna { left: 42%; }.ol-story-phase-14 .ol-year-two-josh { right: 39%; }
+.ol-year-two-heart { position: absolute; z-index: 8; left: 50%; bottom: 57px; color: #9d5068; font: 16px/1 "Segoe Print", cursive; opacity: 0; transform: translateX(-50%) scale(.5); }.ol-story-phase-14 .ol-year-two-heart { animation: ol-app-heart-in .45s ease .35s both; }
+.ol-blank-future { position: absolute; z-index: 3; left: 28%; right: 20%; bottom: 80px; display: grid; gap: 11px; opacity: 0; animation: ol-story-future-in .55s ease .35s forwards; }.ol-blank-future i { height: 1px; background: #8e6b7538; }.ol-blank-future span { width: fit-content; margin-left: auto; color: #35282d; font: italic 8px/1.2 "Segoe Print", cursive; transform: rotate(-2deg); }
+.ol-storybook-keepsake + p { margin-top: 2.3em; }.ol-anniversary-find-out { position: relative; width: fit-content; margin: 2.15em auto 2em !important; color: #2b2025 !important; font: italic 700 1.04em/1.5 "Segoe Print", cursive; }.ol-anniversary-find-out::after { content: ""; position: absolute; left: -3%; right: -3%; bottom: -2px; height: 2px; background: #9b5d728c; transform: scaleX(0) rotate(-1deg); transform-origin: left; animation: ol-signal-underline .7s ease .15s forwards; }
+.ol-anniversary-happy { width: fit-content; margin: 2.2em auto 1.8em !important; color: #2b2025 !important; font: italic 750 1.08em/1.45 "Segoe Print", "Bradley Hand", cursive; text-align: center; }
+.ol-anniversary-another { width: fit-content; color: #2b2025 !important; font-style: italic; }.ol-anniversary-another-a { margin-left: 5% !important; }.ol-anniversary-another-b { margin-left: 19% !important; }.ol-anniversary-another-c { margin-left: 34% !important; }
+.ol-anniversary-love { display: grid; justify-items: center; gap: 8px; width: fit-content; margin: 2.5em auto 2.2em !important; color: #2b2025 !important; font: italic 750 1.1em/1.4 "Segoe Print", cursive; }.ol-anniversary-love span { color: #a16a75; font-size: 10px; letter-spacing: .24em; }
+.ol-birthday-letter-body > p { margin: 0 0 1.35em; }
+.ol-birthday-wish { position: relative; width: min(96%, 455px); margin: 9px auto 1.75em; padding: 18px 19px 20px; border: 1px solid #82636e66; color: #35282d; background: linear-gradient(155deg, #f4e7d7e1, #ead2c8c6); box-shadow: 0 3px 3px #5b414b2b, 0 14px 22px #3e29352d; transform: rotate(.1deg); }
+.ol-birthday-wish::before, .ol-birthday-wish::after { content: ""; position: absolute; top: -7px; width: 41px; height: 14px; background: #d5b79a70; box-shadow: inset 0 1px #fff8e677; }.ol-birthday-wish::before { left: 17px; transform: rotate(-5deg); }.ol-birthday-wish::after { right: 17px; transform: rotate(4deg); }
+.ol-birthday-wish > h2 { margin: 0 0 10px; color: #2b2025; font: 750 11px/1.35 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .075em; text-align: center; }
+.ol-wish-device { position: relative; width: min(96%, 375px); height: 203px; margin: 0 auto 13px; border: 2px solid #775361; border-radius: 19px 13px 20px 15px; background: linear-gradient(145deg, #d8ada9, #bc7d91 50%, #c9996b); box-shadow: 0 6px 0 #774f5c, 0 11px 15px #4b303b38, inset 0 2px #ffe7d89c, inset 0 -5px #70425038; }
+.ol-wish-device::before { content: "birthday wishes only"; position: absolute; left: 50%; top: 7px; color: #2b2025; font: italic 7px/1 "Segoe Print", cursive; letter-spacing: .04em; transform: translateX(-50%) rotate(-1deg); }
+.ol-wish-star, .ol-wish-crescent { position: absolute; z-index: 3; color: #f0cd88; text-shadow: 0 1px #6a4150; }.ol-wish-star { left: 15px; top: 14px; font-size: 15px; }.ol-wish-crescent { right: 17px; top: 14px; font-size: 17px; }
+.ol-wish-display { position: absolute; z-index: 4; left: 17%; right: 17%; top: 37px; min-height: 65px; display: grid; place-items: center; padding: 8px 11px; border: 2px solid #674a57; border-radius: 8px 11px 7px 10px; color: #2b2025; background: linear-gradient(165deg, #f7ead8, #e8d2c4); box-shadow: inset 0 2px 6px #5036402c, 0 2px #fff0df80; text-align: center; }.ol-wish-display strong { color: #2b2025; font: 700 clamp(9px,.85vw,11px)/1.35 "Segoe Print", "Bradley Hand", cursive; overflow-wrap: anywhere; animation: ol-wish-option-in .4s ease both; }
+.ol-birthday-phase-7 .ol-wish-display::after, .ol-birthday-phase-8 .ol-wish-display::after, .ol-birthday-phase-9 .ol-wish-display::after, .ol-birthday-phase-10 .ol-wish-display::after { content: "✓"; position: absolute; right: 8px; bottom: 5px; color: #8c4e62; font: 13px/1 "Segoe Print", cursive; animation: ol-wish-check-in .4s ease both; }
+.ol-wish-dial { position: absolute; z-index: 5; left: 50%; top: 111px; width: 58px; height: 31px; border: 2px solid #694a57; border-radius: 31px 31px 8px 8px; background: #efd9c8; transform: translateX(-50%); }.ol-wish-dial i { position: absolute; left: 50%; bottom: 4px; width: 2px; height: 19px; border-radius: 2px; background: #754c5b; transform: translateX(-50%) rotate(-42deg); transform-origin: bottom; transition: transform .55s ease; }.ol-wish-dial span { position: absolute; left: 50%; bottom: 1px; color: #9c5068; font: 9px/1 serif; transform: translateX(-50%); }
+.ol-birthday-phase-2 .ol-wish-dial i { transform: translateX(-50%) rotate(-27deg); }.ol-birthday-phase-3 .ol-wish-dial i { transform: translateX(-50%) rotate(-9deg); }.ol-birthday-phase-4 .ol-wish-dial i { transform: translateX(-50%) rotate(15deg); }.ol-birthday-phase-5 .ol-wish-dial i, .ol-birthday-phase-6 .ol-wish-dial i { transform: translateX(-50%) rotate(34deg); }.ol-birthday-phase-7 .ol-wish-dial i, .ol-birthday-phase-8 .ol-wish-dial i, .ol-birthday-phase-9 .ol-wish-dial i, .ol-birthday-phase-10 .ol-wish-dial i { transform: translateX(-50%) rotate(0); }
+.ol-wish-candle { position: absolute; z-index: 7; right: 23px; top: 79px; width: 14px; height: 45px; border: 1px solid #7d5260; border-radius: 4px 4px 2px 2px; background: linear-gradient(90deg, #f1d8c7, #dba9af 62%, #bd7c91); box-shadow: 2px 3px 4px #57374438; }.ol-wish-candle i { position: absolute; left: 50%; top: -15px; width: 9px; height: 16px; border-radius: 65% 35% 60% 40%; background: radial-gradient(circle at 50% 67%, #fff4bf 0 22%, #dca75d 45%, #a96b58 72%); filter: drop-shadow(0 0 4px #e4af6680); transform: translateX(-50%); transform-origin: center bottom; animation: ol-wish-flame 2.1s ease-in-out infinite; }.ol-wish-candle span { position: absolute; left: 50%; top: -17px; width: 14px; height: 27px; border: 2px solid #76616b; border-bottom-color: transparent; border-left-color: transparent; border-radius: 50%; opacity: 0; transform: translateX(-50%) rotate(-15deg); }
+.ol-birthday-phase-1 .ol-wish-candle i { animation: ol-wish-flame-out .55s ease both; }.ol-birthday-phase-2 .ol-wish-candle i, .ol-birthday-phase-3 .ol-wish-candle i, .ol-birthday-phase-4 .ol-wish-candle i, .ol-birthday-phase-5 .ol-wish-candle i, .ol-birthday-phase-6 .ol-wish-candle i, .ol-birthday-phase-7 .ol-wish-candle i, .ol-birthday-phase-8 .ol-wish-candle i, .ol-birthday-phase-9 .ol-wish-candle i, .ol-birthday-phase-10 .ol-wish-candle i { opacity: 0; }.ol-birthday-phase-1 .ol-wish-candle span, .ol-birthday-phase-2 .ol-wish-candle span, .ol-birthday-phase-3 .ol-wish-candle span, .ol-birthday-phase-4 .ol-wish-candle span, .ol-birthday-phase-5 .ol-wish-candle span, .ol-birthday-phase-6 .ol-wish-candle span, .ol-birthday-phase-7 .ol-wish-candle span, .ol-birthday-phase-8 .ol-wish-candle span { animation: ol-wish-smoke 2.4s ease-out infinite; }.ol-birthday-phase-9 .ol-wish-candle span, .ol-birthday-phase-10 .ol-wish-candle span { opacity: 0; animation: none; }
+.ol-wish-coin, .ol-wish-sleep, .ol-wish-food { position: absolute; z-index: 6; opacity: 0; color: #744956; font: 15px/1 "Segoe Print", cursive; }.ol-wish-coin { left: 21px; top: 65px; color: #b58246; }.ol-wish-sleep { left: 24px; top: 66px; color: #74576a; }.ol-wish-food { left: 25px; top: 68px; color: #b17f4f; }.ol-birthday-phase-2 .ol-wish-coin { animation: ol-wish-doodle-in .5s ease both; }.ol-birthday-phase-3 .ol-wish-sleep { animation: ol-wish-sleepy-in .58s ease both; }.ol-birthday-phase-4 .ol-wish-food { animation: ol-wish-doodle-in .5s ease both; }
+.ol-wish-kisses { position: absolute; z-index: 6; left: 14px; top: 57px; display: grid; gap: 3px; color: #2b2025; opacity: 0; font-family: "Segoe Print", cursive; }.ol-wish-kisses span { color: #2b2025; font: 700 8px/1.2 "Segoe Print", cursive; }.ol-wish-kisses small { color: #35282d; font: 600 7px/1.2 "Segoe Print", cursive; }.ol-wish-kisses b { color: #2b2025; }.ol-birthday-phase-5 .ol-wish-kisses, .ol-birthday-phase-6 .ol-wish-kisses { animation: ol-wish-kiss-in .5s ease both; }
+.ol-wish-janna, .ol-wish-josh { position: absolute; z-index: 6; bottom: 7px; width: 34px; height: 55px; transform-origin: center bottom; }.ol-wish-janna { left: 13px; }.ol-wish-josh { right: 13px; }.ol-wish-janna svg, .ol-wish-josh svg { display: block; width: 100%; height: 100%; overflow: visible; }.ol-wish-janna > i { position: absolute; right: -12px; top: 17px; width: 18px; height: 3px; border-radius: 3px; background: #654653; transform: rotate(-25deg); transform-origin: left; }.ol-birthday-phase-1 .ol-wish-janna > i { animation: ol-wish-lever-pull .62s ease both; }.ol-birthday-phase-5 .ol-wish-janna { animation: ol-wish-janna-kiss .65s ease both; }
+.ol-wish-connection { position: absolute; z-index: 4; left: 14%; right: 14%; bottom: 31px; width: 72%; height: 24px; opacity: 0; }.ol-wish-connection path { fill: none; stroke: #9b607493; stroke-width: 1.3; stroke-dasharray: 2 7; }.ol-wish-connection text { fill: #9d5068; font: 13px serif; text-anchor: middle; }.ol-birthday-phase-9 .ol-wish-connection, .ol-birthday-phase-10 .ol-wish-connection { animation: ol-wish-connection-in .55s ease .3s both; }
+.ol-wish-gift { position: absolute; right: 51px; bottom: 10px; width: 21px; height: 18px; border: 1px solid #785260; background: #dba9ae; opacity: .78; }.ol-wish-gift::before, .ol-wish-gift::after { content: ""; position: absolute; background: #b47d53; }.ol-wish-gift::before { left: 8px; top: 0; width: 4px; height: 100%; }.ol-wish-gift::after { left: 0; right: 0; top: 6px; height: 3px; }.ol-wish-gift i, .ol-wish-gift span { position: absolute; top: -7px; width: 10px; height: 8px; border: 2px solid #9a6574; border-radius: 50%; }.ol-wish-gift i { left: 2px; transform: rotate(20deg); }.ol-wish-gift span { right: 2px; transform: rotate(-20deg); }
+.ol-wish-button { display: block; min-width: min(205px, 74%); margin: 0 auto; padding: 9px 15px 8px; border: 1px solid #805d6b88; color: #2b2025; background: linear-gradient(165deg, #eed8cd, #d6a7b1); box-shadow: 0 4px 0 #957064, 0 8px 12px #543b3438, inset 0 1px #fff1dc; font: 700 10px/1.3 "Segoe Print", "Bradley Hand", cursive; letter-spacing: .07em; transform: rotate(-.3deg); cursor: pointer; }.ol-wish-button:disabled { color: #2b2025; opacity: 1; cursor: default; animation: ol-wish-button-press .55s ease both; }
+.ol-birthday-fortune { position: relative; z-index: 2; width: min(96%, 385px); min-height: 84px; margin: -5px auto 0; padding: 19px 23px 17px; border: 1px solid #8c6a7069; color: #35282d; background: linear-gradient(172deg, #f8ead9, #ebd1c7); box-shadow: 0 5px 5px #53353f32, 0 13px 18px #3f29322b; transform-origin: top center; }.ol-birthday-phase-8 .ol-birthday-fortune { animation: ol-wish-note-emerge .65s ease both; }.ol-birthday-phase-9 .ol-birthday-fortune, .ol-birthday-phase-10 .ol-birthday-fortune { animation: ol-wish-note-unfold .68s ease both; }.ol-birthday-fortune p { margin: 0; color: #2b2025 !important; font: italic 650 clamp(10px,.9vw,12px)/1.5 "Segoe Print", "Bradley Hand", cursive; text-align: center; }.ol-birthday-fortune > div i { position: absolute; color: #bd8b4f; font: 12px/1 "Segoe Print", cursive; opacity: 0; }.ol-birthday-fortune > div i:first-child { left: 8px; top: 8px; }.ol-birthday-fortune > div i:nth-child(2) { right: 11px; top: 10px; color: #9c5068; }.ol-birthday-fortune > div i:last-child { right: 15px; bottom: 9px; }.ol-birthday-phase-9 .ol-birthday-fortune > div i, .ol-birthday-phase-10 .ol-birthday-fortune > div i { animation: ol-story-spark-in .45s ease .45s both; }
+.ol-birthday-wish + p { margin-top: 2.3em; }.ol-birthday-next { margin-bottom: 1.8em !important; color: #35282d !important; }.ol-birthday-happy { width: fit-content; margin: 2.2em auto 1.8em !important; color: #2b2025 !important; font: italic 750 1.08em/1.45 "Segoe Print", "Bradley Hand", cursive; text-align: center; }.ol-birthday-loved { width: fit-content; margin: 2.15em auto 0 !important; color: #35282d !important; }.ol-birthday-especially { position: relative; width: fit-content; margin: 1em 18% 2.2em auto !important; color: #2b2025 !important; font: italic 750 1.08em/1.35 "Segoe Print", cursive; }.ol-birthday-especially span { position: absolute; right: -22px; top: -3px; color: #9d5068; font-size: 14px; }
+.ol-margin-doodle { position: absolute; z-index: 2; color: #211d1f; font-family: "Segoe Print", cursive; opacity: 0; animation: ol-details-settle .42s ease .69s both; }
 .ol-doodle-heart { left: 7%; top: 35%; font-size: 20px; transform: rotate(-12deg); }.ol-doodle-jj { right: 5%; top: 53%; font-size: 10px; transform: rotate(8deg); }.ol-doodle-stars { left: 8%; bottom: 12%; font-size: 11px; transform: rotate(-5deg); }
 .ol-pressed-flower { position: absolute; z-index: 8; left: -18px; top: 9%; width: 72px; filter: drop-shadow(2px 5px 3px #3d243b35); opacity: 0; transform-origin: 50% 100%; animation: ol-flower-settle .46s ease .68s both; }
 .ol-kiss { position: absolute; z-index: 3; right: 6%; bottom: 5%; width: 74px; fill: #9f4e69; opacity: 0; transform: rotate(-9deg); animation: ol-kiss-in .42s ease .73s both; }
+
+/* Permanent readable ink system for every physical letter. */
+.ol-paper { color: #35282d; }
+.ol-paper .ol-letter-body,
+.ol-paper .ol-letter-body > p,
+.ol-paper .ol-secret-kiss-note p,
+.ol-paper .ol-prescription button,
+.ol-paper .ol-prescription button > span:last-child,
+.ol-paper .ol-stress-annotation,
+.ol-paper .ol-stress-fortune p {
+  color: #35282d !important;
+  -webkit-text-fill-color: #35282d !important;
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
+.ol-paper .ol-paper-header h1,
+.ol-paper .ol-paper-header small,
+.ol-paper .ol-paper-header > span,
+.ol-paper .ol-letter-body strong,
+.ol-paper .ol-letter-body b,
+.ol-paper .ol-response-quote,
+.ol-paper .ol-sad-emphasis,
+.ol-paper .ol-stress-emphasis,
+.ol-paper .ol-secret-kiss-note b,
+.ol-paper .ol-prescription button.is-checked > span:last-child,
+.ol-paper .ol-stress-button,
+.ol-paper .ol-stress-button span,
+.ol-paper .ol-signal-keepsake,
+.ol-paper .ol-signal-keepsake h2,
+.ol-paper .ol-signal-readout,
+.ol-paper .ol-signal-readout > span,
+.ol-paper .ol-signal-readout > b,
+.ol-paper .ol-signal-button,
+.ol-paper .ol-signal-receipt,
+.ol-paper .ol-signal-receipt dt,
+.ol-paper .ol-signal-receipt dd,
+.ol-paper .ol-signal-found-line,
+.ol-paper .ol-battery-keepsake h2,
+.ol-paper .ol-battery-status,
+.ol-paper .ol-battery-status strong,
+.ol-paper .ol-battery-status span,
+.ol-paper .ol-battery-boost,
+.ol-paper .ol-battery-fixed,
+.ol-paper .ol-motivation-quote,
+.ol-paper .ol-motivation-push,
+.ol-paper .ol-love-calculator h2,
+.ol-paper .ol-love-display,
+.ol-paper .ol-love-display strong,
+.ol-paper .ol-love-display small,
+.ol-paper .ol-love-calculate,
+.ol-paper .ol-love-broke,
+.ol-paper .ol-love-found,
+.ol-paper .ol-love-found strong,
+.ol-paper .ol-love-again,
+.ol-paper .ol-love-universe,
+.ol-paper .ol-day-report,
+.ol-paper .ol-day-report h2,
+.ol-paper .ol-day-report dt,
+.ol-paper .ol-day-report dd,
+.ol-paper .ol-day-delete-button,
+.ol-paper .ol-day-confirmation,
+.ol-paper .ol-day-confirmation p,
+.ol-paper .ol-day-confirmation button,
+.ol-paper .ol-day-step,
+.ol-paper .ol-day-stamp,
+.ol-paper .ol-day-gone,
+.ol-paper .ol-day-enough,
+.ol-paper .ol-day-tomorrow,
+.ol-paper .ol-day-me,
+.ol-paper .ol-janna-mirror h2,
+.ol-paper .ol-mirror-loading,
+.ol-paper .ol-mirror-results,
+.ol-paper .ol-mirror-results li,
+.ol-paper .ol-mirror-button,
+.ol-paper .ol-mirror-button span,
+.ol-paper .ol-mirror-button b,
+.ol-paper .ol-mirror-warning,
+.ol-paper .ol-mirror-warning b,
+.ol-paper .ol-mirror-accurate,
+.ol-paper .ol-mirror-be-josh,
+.ol-paper .ol-mirror-be-josh strong,
+.ol-paper .ol-mirror-favorite,
+.ol-paper .ol-folder-tab,
+.ol-paper .ol-folder-confidential,
+.ol-paper .ol-folder-front,
+.ol-paper .ol-folder-front span,
+.ol-paper .ol-folder-front small,
+.ol-paper .ol-josh-application,
+.ol-paper .ol-josh-application small,
+.ol-paper .ol-josh-application h3,
+.ol-paper .ol-josh-application dt,
+.ol-paper .ol-josh-application dd,
+.ol-paper .ol-hired-stamp,
+.ol-paper .ol-applicant-count,
+.ol-paper .ol-applications-closed,
+.ol-paper .ol-applications-button,
+.ol-paper .ol-applications-happy,
+.ol-paper .ol-jealous-heart-place,
+.ol-paper .ol-jealous-loves,
+.ol-paper .ol-jealous-a-lot,
+.ol-paper .ol-storybook-keepsake h2,
+.ol-paper .ol-year-one-page,
+.ol-paper .ol-year-two-page,
+.ol-paper .ol-year-one-page header small,
+.ol-paper .ol-year-one-page header h3,
+.ol-paper .ol-year-one-page header b,
+.ol-paper .ol-year-two-page header small,
+.ol-paper .ol-year-two-page header h3,
+.ol-paper .ol-year-two-page header b,
+.ol-paper .ol-year-one-page li,
+.ol-paper .ol-year-one-complete,
+.ol-paper .ol-year-one-stamp,
+.ol-paper .ol-turn-page,
+.ol-paper .ol-year-two-unlocking,
+.ol-paper .ol-year-two-lines,
+.ol-paper .ol-year-two-lines li,
+.ol-paper .ol-year-two-unlock,
+.ol-paper .ol-blank-future span,
+.ol-paper .ol-anniversary-find-out,
+.ol-paper .ol-anniversary-happy,
+.ol-paper .ol-anniversary-another,
+.ol-paper .ol-anniversary-love,
+.ol-paper .ol-birthday-wish h2,
+.ol-paper .ol-wish-device::before,
+.ol-paper .ol-wish-display,
+.ol-paper .ol-wish-display strong,
+.ol-paper .ol-wish-kisses,
+.ol-paper .ol-wish-kisses span,
+.ol-paper .ol-wish-kisses small,
+.ol-paper .ol-wish-kisses b,
+.ol-paper .ol-wish-button,
+.ol-paper .ol-birthday-fortune,
+.ol-paper .ol-birthday-fortune p,
+.ol-paper .ol-birthday-next,
+.ol-paper .ol-birthday-happy,
+.ol-paper .ol-birthday-loved,
+.ol-paper .ol-birthday-especially {
+  color: #2b2025 !important;
+  -webkit-text-fill-color: #2b2025 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+}
 
 .opened-letter-scene.is-closing { pointer-events: none; animation: ol-scene-out .62s ease both; }
 .opened-letter-scene.is-closing .ol-paper { animation: ol-paper-close .58s cubic-bezier(.4,0,.8,.4) both; }
@@ -111,7 +673,126 @@
 @keyframes ol-wax-a { 0%,30% { opacity: 1; transform: translate(-50%,-50%) rotate(0); } 100% { opacity: .76; transform: translate(-43px,18px) rotate(-28deg); } }
 @keyframes ol-wax-b { 0%,30% { opacity: 1; transform: translate(-50%,-50%) rotate(0); } 100% { opacity: .7; transform: translate(17px,26px) rotate(32deg); } }
 @keyframes ol-paper-unfold { 0% { opacity: 0; transform: translateY(38%) rotateX(66deg) scale(.72,.26); filter: brightness(.82); } 42% { opacity: 1; transform: translateY(11%) rotateX(20deg) scale(.88,.64); } 78% { transform: translateY(-1.5%) rotateX(-2deg) rotate(1.2deg) scale(1.015); } 100% { opacity: 1; transform: translateY(0) rotateX(0) rotate(.7deg) scale(1); filter: brightness(1); } }
+@keyframes ol-special-confetti-fall {
+  0% { opacity: 0; transform: translate3d(0,-9px,0) rotate(0) scale(.68); }
+  9% { opacity: 1; transform: translate3d(var(--ol-confetti-burst-x),-25px,0) rotate(var(--ol-confetti-turn-a)) scale(1); }
+  72% { opacity: .96; }
+  100% { opacity: 0; transform: translate3d(var(--ol-confetti-drift-x),var(--ol-confetti-fall),0) rotate(var(--ol-confetti-turn-b)) scale(.9); }
+}
 @keyframes ol-paper-shadow { 0%,35% { opacity: 0; transform: translateY(18%) scale(.78,.45) rotate(.7deg); } 100% { opacity: 1; transform: translateY(0) scale(1) rotate(.7deg); } }
+@keyframes ol-anger-attempt-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-anger-kiss { 0% { opacity: 0; transform: translate(-24px,10px) scale(.45) rotate(-15deg); } 55% { opacity: .9; } 100% { opacity: .72; transform: translate(0,0) scale(1) rotate(5deg); } }
+@keyframes ol-anger-josh-walk { 0% { opacity: 0; transform: translateX(-70px); } 18% { opacity: 1; transform: translate(-56px,-1px) rotate(-2deg); } 40% { transform: translate(-40px,0) rotate(2deg); } 62% { transform: translate(-24px,-1px) rotate(-2deg); } 82% { transform: translate(-10px,0) rotate(2deg); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes ol-anger-heart-in { from { opacity: 0; transform: translateY(6px) scale(.45) rotate(-8deg); } to { opacity: .9; transform: translateY(0) scale(1) rotate(2deg); } }
+@keyframes ol-anger-stamp { 0% { opacity: 0; transform: translateY(-24px) rotate(-4deg) scale(1.16); } 60% { opacity: 1; transform: translateY(2px) rotate(-1deg) scale(.96); } 78% { transform: translateY(0) rotate(-1deg) scale(1.03); } 100% { opacity: .96; transform: translateY(0) rotate(-1deg) scale(1); } }
+@keyframes ol-need-note-open { 0% { opacity: 0; transform: translateY(-7px) rotateX(72deg) scaleY(.3); } 68% { opacity: 1; transform: translateY(2px) rotateX(-3deg) scaleY(1.02); } 100% { opacity: 1; transform: translateY(0) rotateX(0) scaleY(1); } }
+@keyframes ol-need-note-close { from { opacity: 1; transform: translateY(0) rotateX(0) scaleY(1); } to { opacity: 0; transform: translateY(-5px) rotateX(60deg) scaleY(.35); } }
+@keyframes ol-need-janna-walk { 0% { opacity: 0; transform: translateX(-48px); } 18% { opacity: 1; transform: translate(-38px,-1px) rotate(-2deg); } 40% { transform: translate(-27px,0) rotate(2deg); } 62% { transform: translate(-16px,-1px) rotate(-2deg); } 82% { transform: translate(-7px,0) rotate(2deg); } 100% { opacity: 1; transform: translateX(0) rotate(3deg); } }
+@keyframes ol-need-heart-in { from { opacity: 0; transform: translate(-50%,5px) scale(.45); } to { opacity: .9; transform: translate(-50%,0) scale(1); } }
+@keyframes ol-pending-request-in { from { opacity: 0; transform: translateY(-7px) rotateX(45deg) rotate(.3deg); } to { opacity: 1; transform: translateY(0) rotateX(0) rotate(.3deg); } }
+@keyframes ol-pending-stamp { 0% { opacity: 0; transform: translateY(-16px) rotate(-10deg) scale(1.14); } 65% { opacity: 1; transform: translateY(2px) rotate(-7deg) scale(.96); } 100% { opacity: .94; transform: translateY(0) rotate(-7deg) scale(1); } }
+@keyframes ol-pending-progress { 0% { width: 0; } 78% { width: 68%; } 100% { width: 62%; } }
+@keyframes ol-hidden-heart-pulse { 0%,78%,100% { opacity: .44; transform: rotate(-9deg) scale(1); } 84% { opacity: .68; transform: rotate(-9deg) scale(1.06); } 90% { opacity: .5; transform: rotate(-9deg) scale(1); } }
+@keyframes ol-kiss-particle { 0% { opacity: 0; transform: translate(0,0) rotate(45deg) scale(.35); } 30% { opacity: .75; } 100% { opacity: 0; transform: translate(var(--ol-kiss-x), -25px) rotate(45deg) scale(.8); } }
+@keyframes ol-secret-note-open { 0% { opacity: 0; transform: translateY(-18px) rotateX(72deg) scaleY(.3); } 62% { opacity: 1; transform: translateY(2px) rotateX(-4deg) scaleY(1.02); } 100% { opacity: 1; transform: translateY(0) rotateX(0) scaleY(1) rotate(-.5deg); } }
+@keyframes ol-ink-check { to { transform: rotate(-48deg) scale(1); } }
+@keyframes ol-stress-highlight { 0%,78%,100% { left: -55%; opacity: 0; } 82% { opacity: .55; } 91% { left: 120%; opacity: 0; } }
+@keyframes ol-stress-press { 0%,100% { transform: translateX(-50%) translateY(0); box-shadow: 0 7px 0 #754052, 0 10px 13px #59344166, inset 0 3px 4px #ffe0db88, inset 0 -3px 5px #6d334b44; } 38%,62% { transform: translateX(-50%) translateY(6px) scale(.985); box-shadow: 0 1px 0 #754052, 0 3px 5px #59344155, inset 0 2px 5px #6d334b33; } 78% { transform: translateX(-50%) translateY(-1px) scale(1.01); } }
+@keyframes ol-stress-note-out { 0% { opacity: 0; transform: translateY(-42px) scaleY(.35) rotateX(52deg); } 68% { opacity: 1; transform: translateY(3px) scaleY(1.02) rotateX(-2deg); } 100% { opacity: 1; transform: translateY(0) scaleY(1) rotate(.45deg); } }
+@keyframes ol-stress-note-in { to { opacity: 0; transform: translateY(-30px) scaleY(.4) rotateX(45deg); } }
+@keyframes ol-distance-step-a { from { transform: rotate(9deg); } to { transform: rotate(-9deg); } }
+@keyframes ol-distance-step-b { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+@keyframes ol-distance-heart-in { to { opacity: .9; transform: translateY(0) scale(1) rotate(-8deg); } }
+@keyframes ol-distance-arrival { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-fight-scribble { to { stroke-dashoffset: 0; } }
+@keyframes ol-fight-step-a { from { transform: rotate(9deg); } to { transform: rotate(-9deg); } }
+@keyframes ol-fight-step-b { from { transform: rotate(-9deg); } to { transform: rotate(9deg); } }
+@keyframes ol-fight-heart-in { to { opacity: .9; transform: translateY(0) scale(1); } }
+@keyframes ol-fight-problem-in { from { opacity: 0; transform: translateX(8px) scale(.8) rotate(5deg); } to { opacity: .9; transform: translateX(0) scale(1) rotate(-2deg); } }
+@keyframes ol-fight-words-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-signal-button-press { 0%,100% { transform: translateY(0) rotate(.35deg); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; } 45%,65% { transform: translateY(4px) rotate(.1deg) scale(.99); box-shadow: 0 1px 0 #97707c, 0 3px 5px #54374133, inset 0 2px 4px #805d6b38; } }
+@keyframes ol-signal-search { 0% { left: 17%; opacity: 0; transform: scale(.65); } 15%,85% { opacity: 1; } 100% { left: 80%; opacity: 0; transform: scale(1); } }
+@keyframes ol-signal-dashes { to { stroke-dashoffset: -22; } }
+@keyframes ol-signal-spark { 0% { opacity: 0; transform: scale(.3) rotate(-20deg); } 45% { opacity: 1; transform: scale(1.18) rotate(5deg); } 100% { opacity: .55; transform: scale(1) rotate(0); } }
+@keyframes ol-signal-bar-in { from { opacity: .25; transform: scaleY(.25); } to { opacity: 1; transform: scaleY(1); } }
+@keyframes ol-signal-weak { 0%,72%,100% { opacity: 1; } 78% { opacity: .48; } 84% { opacity: .9; } 90% { opacity: .62; } }
+@keyframes ol-signal-josh-step { from { transform: skewX(4deg) scaleY(.98); } to { transform: skewX(-4deg) scaleY(1); } }
+@keyframes ol-signal-heart-in { to { opacity: .9; transform: translateY(0) scale(1); } }
+@keyframes ol-signal-receipt-in { from { opacity: 0; transform: translateY(6px) rotate(1deg); } to { opacity: 1; transform: translateY(0) rotate(.35deg); } }
+@keyframes ol-signal-line-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-signal-underline { to { transform: scaleX(1) rotate(-1deg); } }
+@keyframes ol-battery-button-press { 0%,100% { transform: translateY(0) rotate(-.35deg); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; } 45%,65% { transform: translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #97707c, 0 3px 5px #54374133, inset 0 2px 4px #805d6b38; } }
+@keyframes ol-battery-message-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-battery-spark { 0% { opacity: 0; transform: translateY(5px) scale(.35) rotate(-12deg); } 55% { opacity: 1; transform: translateY(-2px) scale(1.2) rotate(4deg); } 100% { opacity: .78; transform: translateY(0) scale(1) rotate(0); } }
+@keyframes ol-battery-janna-cheer { 0% { opacity: 0; transform: translateY(6px) scale(.8); } 65% { opacity: 1; transform: translateY(-2px) scale(1.04) rotate(-3deg); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes ol-battery-josh-ready { 0% { transform: translateY(1px) scale(1); } 55% { transform: translateY(-2px) scale(1.08); } 100% { transform: translateY(0) scale(1.04); } }
+@keyframes ol-battery-75-bounce { 0%,100% { transform: rotate(-.6deg) translateY(0); } 48% { transform: rotate(.15deg) translateY(-3px) scale(1.012); } }
+@keyframes ol-battery-full-pulse { 0%,100% { filter: none; transform: rotate(-.6deg) scale(1); } 48% { filter: drop-shadow(0 0 8px #d4a36088); transform: rotate(-.2deg) scale(1.025); } }
+@keyframes ol-battery-check { from { opacity: 0; transform: scale(.4) rotate(-18deg); } to { opacity: 1; transform: scale(1) rotate(-7deg); } }
+@keyframes ol-love-button-press { 0%,100% { transform: translateY(0) rotate(.35deg); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; } 45%,65% { transform: translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #97707c, 0 3px 5px #54374133, inset 0 2px 4px #805d6b38; } }
+@keyframes ol-love-result-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-love-idle-flicker { 0%,82%,100% { box-shadow: inset 0 2px 5px #53374428, 0 2px #ffeedd88; } 88% { box-shadow: inset 0 2px 5px #53374428, 0 2px #ffeedd88, 0 0 7px #d4a46455; } 92% { box-shadow: inset 0 2px 5px #53374428, 0 2px #ffeedd88; } }
+@keyframes ol-love-gear-spin { to { transform: rotate(360deg); } }
+@keyframes ol-love-warning { from { opacity: .28; transform: scale(.8); } to { opacity: 1; transform: scale(1.12); } }
+@keyframes ol-love-display-flicker { 0%,100% { opacity: 1; } 50% { opacity: .78; } }
+@keyframes ol-love-spark-pop { 0% { opacity: 0; transform: scale(.3) translateY(5px); } 55% { opacity: 1; transform: scale(1.18) translateY(-2px); } 100% { opacity: .76; transform: scale(1) translateY(0); } }
+@keyframes ol-love-machine-shake { 0%,100% { transform: translateX(0) rotate(0); } 20% { transform: translateX(-3px) rotate(-.7deg); } 40% { transform: translateX(3px) rotate(.7deg); } 60% { transform: translateX(-2px) rotate(-.4deg); } 80% { transform: translateX(2px) rotate(.4deg); } }
+@keyframes ol-love-smoke-out { 0% { opacity: 0; transform: translateY(8px) scale(.7) rotate(7deg); } 45% { opacity: .78; } 100% { opacity: .58; transform: translateY(-5px) scale(1) rotate(-5deg); } }
+@keyframes ol-love-arrow-in { from { opacity: 0; transform: translate(-5px,5px) rotate(-20deg); } to { opacity: .9; transform: translate(0,0) rotate(-12deg); } }
+@keyframes ol-day-report-shake { 0%,100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-2px) rotate(-.6deg); } 50% { transform: translateX(2px) rotate(.6deg); } 75% { transform: translateX(-1px) rotate(-.3deg); } }
+@keyframes ol-day-confirm-in { from { opacity: 0; transform: translateY(-8px) rotateX(45deg); } to { opacity: 1; transform: translateY(0) rotate(.25deg); } }
+@keyframes ol-day-choice-press { 0%,100% { transform: translateY(0); box-shadow: 0 3px 0 #916776; } 55% { transform: translateY(3px); box-shadow: 0 0 0 #916776; } }
+@keyframes ol-day-step-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-day-paper-toss { 0% { opacity: 1; transform: rotate(21deg) scale(.32); } 35% { transform: translate(30%,-15px) rotate(75deg) scale(.28); } 72% { opacity: 1; transform: translate(73%,72px) rotate(155deg) scale(.22); } 100% { opacity: 0; transform: translate(91%,116px) rotate(205deg) scale(.18); } }
+@keyframes ol-day-bin-bounce { 0%,45%,100% { transform: translateY(0); } 65% { transform: translateY(3px) scaleY(.96); } 82% { transform: translateY(-1px); } }
+@keyframes ol-day-lid-bounce { 0%,40%,100% { transform: rotate(0); } 58% { transform: rotate(-16deg) translateY(-2px); } 78% { transform: rotate(3deg); } }
+@keyframes ol-day-stamp-down { 0% { opacity: 0; transform: translateY(-24px) scale(1.14) rotate(-5deg); } 58% { opacity: 1; transform: translateY(2px) scale(.97) rotate(-2deg); } 72% { transform: translateY(0) scale(1.02) rotate(-2deg); } 100% { opacity: .94; transform: translateY(0) scale(1) rotate(-2deg); } }
+@keyframes ol-mirror-loading { from { opacity: .55; } to { opacity: 1; } }
+@keyframes ol-mirror-glass-shimmer { 0%,78%,100% { opacity: .5; transform: translateX(-5px) rotate(-14deg); } 88% { opacity: .9; transform: translateX(7px) rotate(-14deg); } }
+@keyframes ol-mirror-result-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-mirror-star-in { from { opacity: 0; transform: scale(.3) rotate(-15deg); } to { opacity: .8; transform: scale(1) rotate(0); } }
+@keyframes ol-mirror-heart-in { from { opacity: 0; transform: rotate(-12deg) scale(.5); } to { opacity: .9; transform: rotate(-8deg) scale(1); } }
+@keyframes ol-mirror-tab-shimmer { 0%,78%,100% { left: -25%; opacity: 0; } 83% { opacity: .75; } 92% { left: 112%; opacity: 0; } }
+@keyframes ol-mirror-button-press { 0%,100% { transform: translateY(0) rotate(-.35deg); box-shadow: 0 4px 0 #97707c, 0 8px 12px #54374133, inset 0 1px #fff0e5; } 45%,65% { transform: translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #97707c, 0 3px 5px #54374133; } }
+@keyframes ol-mirror-warning-out { from { opacity: 0; transform: translateY(-12px) rotateX(55deg) scaleY(.55); } 70% { opacity: 1; transform: translateY(2px) rotateX(-3deg) scaleY(1.02); } to { opacity: 1; transform: translateY(0) rotate(.5deg) scaleY(1); } }
+@keyframes ol-app-button-press { 0%,100% { transform: translateY(0) rotate(-.35deg); box-shadow: 0 4px 0 #95705b, 0 8px 12px #543b3138, inset 0 1px #fff1d9; } 45%,65% { transform: translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #95705b, 0 3px 5px #543b3138; } }
+@keyframes ol-folder-sheet-a { 0% { opacity: 0; transform: translateY(30px) rotate(-2deg); } 45% { opacity: 1; transform: translateY(-9px) rotate(-6deg); } 100% { opacity: 0; transform: translate(-24px,-28px) rotate(-13deg); } }
+@keyframes ol-folder-sheet-b { 0% { opacity: 0; transform: translateY(32px) rotate(2deg); } 48% { opacity: 1; transform: translateY(-7px) rotate(6deg); } 100% { opacity: 0; transform: translate(25px,-27px) rotate(14deg); } }
+@keyframes ol-app-count-in { from { opacity: 0; transform: translate(-50%,5px) rotate(-1deg); } to { opacity: 1; transform: translate(-50%,0) rotate(-1deg); } }
+@keyframes ol-app-detail-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-app-hired-stamp { 0% { opacity: 0; transform: translateY(-23px) rotate(-15deg) scale(1.18); } 58% { opacity: 1; transform: translateY(2px) rotate(-9deg) scale(.96); } 75% { transform: translateY(0) rotate(-9deg) scale(1.03); } 100% { opacity: .92; transform: translateY(0) rotate(-9deg) scale(1); } }
+@keyframes ol-app-note-in { from { opacity: 0; transform: translateY(4px) rotate(-5deg); } to { opacity: 1; transform: translateY(0) rotate(-5deg); } }
+@keyframes ol-app-closed-stamp { 0% { opacity: 0; transform: translate(-50%,-18px) rotate(5deg) scale(1.15); } 58% { opacity: 1; transform: translate(-50%,2px) rotate(2deg) scale(.97); } 100% { opacity: .94; transform: translate(-50%,0) rotate(2deg) scale(1); } }
+@keyframes ol-app-josh-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-app-janna-stamp { 0%,100% { transform: rotate(0); } 45%,68% { transform: translate(4px,-2px) rotate(6deg); } }
+@keyframes ol-app-walk-together { 0% { transform: translateY(0) rotate(0); } 35% { transform: translateY(-2px) rotate(-3deg); } 70% { transform: translateY(0) rotate(2deg); } 100% { transform: translateY(0) rotate(0); } }
+@keyframes ol-app-heart-in { from { opacity: 0; transform: translateX(-50%) translateY(5px) scale(.5); } to { opacity: .9; transform: translateX(-50%) translateY(0) scale(1); } }
+@keyframes ol-story-button-press { 0%,100% { transform: translateX(-50%) translateY(0) rotate(-.3deg); box-shadow: 0 4px 0 #987064, 0 8px 12px #543b3438, inset 0 1px #fff1dc; } 45%,65% { transform: translateX(-50%) translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #987064, 0 3px 5px #543b3438; } }
+@keyframes ol-story-unlock-press { 0%,100% { transform: translateX(-50%) translateY(0) rotate(.3deg); box-shadow: 0 4px 0 #987064, 0 8px 12px #543b3438, inset 0 1px #fff1dc; } 45%,65% { transform: translateX(-50%) translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #987064, 0 3px 5px #543b3438; } }
+@keyframes ol-story-heart-pop { from { opacity: 0; transform: scale(.45); } to { opacity: 1; transform: scale(1); } }
+@keyframes ol-story-stamp { 0% { opacity: 0; transform: translate(-50%,-34px) rotate(-11deg) scale(1.16); } 58% { opacity: 1; transform: translate(-50%,2px) rotate(-7deg) scale(.96); } 75% { transform: translate(-50%,0) rotate(-7deg) scale(1.03); } 100% { opacity: .92; transform: translate(-50%,0) rotate(-7deg) scale(1); } }
+@keyframes ol-story-spark-in { from { opacity: 0; transform: scale(.3) translateY(5px); } to { opacity: .82; transform: scale(1) translateY(0); } }
+@keyframes ol-story-turn-prompt { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-story-corner-lift { 0%,100% { transform: scale(.88); } 50% { transform: scale(1.08) rotate(-3deg); } }
+@keyframes ol-story-page-turn { 0% { transform: rotateY(0); filter: brightness(1); } 45% { filter: brightness(.9); } 100% { transform: rotateY(-180deg); filter: brightness(.82); } }
+@keyframes ol-story-lock-wiggle { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+@keyframes ol-story-lock-open { 0% { transform: translateY(0) scale(1); } 55% { transform: translateY(-3px) scale(1.08); } 78% { transform: translateY(1px) scale(.98); } 100% { transform: translateY(0) scale(1); } }
+@keyframes ol-story-line-write { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes ol-story-future-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ol-wish-option-in { from { opacity: 0; transform: translateY(3px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes ol-wish-check-in { from { opacity: 0; transform: scale(.4) rotate(-15deg); } to { opacity: 1; transform: scale(1) rotate(-5deg); } }
+@keyframes ol-wish-flame { 0%,100% { transform: translateX(-50%) scale(.92,1.05) rotate(-2deg); } 48% { transform: translateX(-50%) scale(1.08,.94) rotate(2deg); } }
+@keyframes ol-wish-flame-out { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 55% { transform: translateX(-60%) scale(.7,1.25) rotate(-15deg); } 100% { opacity: 0; transform: translateX(-85%) scale(.2,.6) rotate(-28deg); } }
+@keyframes ol-wish-smoke { 0% { opacity: 0; transform: translateX(-50%) translateY(5px) scale(.65) rotate(-15deg); } 35% { opacity: .48; } 100% { opacity: 0; transform: translateX(-25%) translateY(-16px) scale(1.15) rotate(12deg); } }
+@keyframes ol-wish-doodle-in { from { opacity: 0; transform: translateY(4px) scale(.4) rotate(-10deg); } to { opacity: .85; transform: translateY(0) scale(1) rotate(0); } }
+@keyframes ol-wish-sleepy-in { 0% { opacity: 0; transform: translateY(5px) scale(.5); } 60% { opacity: .85; transform: translateY(-2px) scale(1.08); } 100% { opacity: .8; transform: translateY(1px) scale(1); } }
+@keyframes ol-wish-kiss-in { from { opacity: 0; transform: translateX(-4px) rotate(-4deg); } to { opacity: 1; transform: translateX(0) rotate(-4deg); } }
+@keyframes ol-wish-lever-pull { 0%,100% { transform: rotate(-25deg); } 48%,68% { transform: rotate(22deg) translateY(2px); } }
+@keyframes ol-wish-janna-kiss { 0%,100% { transform: rotate(0); } 45%,68% { transform: translateX(3px) rotate(5deg); } }
+@keyframes ol-wish-connection-in { from { opacity: 0; stroke-dashoffset: 24; } to { opacity: 1; stroke-dashoffset: 0; } }
+@keyframes ol-wish-button-press { 0%,100% { transform: translateY(0) rotate(-.3deg); box-shadow: 0 4px 0 #957064, 0 8px 12px #543b3438, inset 0 1px #fff1dc; } 45%,65% { transform: translateY(4px) rotate(0) scale(.99); box-shadow: 0 1px 0 #957064, 0 3px 5px #543b3438; } }
+@keyframes ol-wish-note-emerge { from { opacity: 0; transform: translateY(-43px) scale(.72,.25) rotateX(58deg); } to { opacity: 1; transform: translateY(0) scale(.9,.38) rotateX(28deg); } }
+@keyframes ol-wish-note-unfold { 0% { opacity: 1; transform: translateY(-8px) scale(.9,.38) rotateX(28deg); } 72% { transform: translateY(2px) scale(1.02,1.03) rotateX(-2deg); } 100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); } }
 @keyframes ol-ink-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes ol-details-settle { from { opacity: 0; transform: translateY(-5px) rotate(-3deg); } to { opacity: .72; } }
 @keyframes ol-flower-settle { from { opacity: 0; transform: translateY(-12px) rotate(-8deg); } 70% { opacity: 1; transform: translateY(2px) rotate(2deg); } to { opacity: .9; transform: translateY(0) rotate(0); } }
@@ -156,5 +837,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .opened-letter-scene *, .opened-letter-scene *::before, .opened-letter-scene *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+  .ol-special-confetti { display: none; }
   .ol-night-depth { backdrop-filter: blur(3px) brightness(.62); }
 }

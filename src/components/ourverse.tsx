@@ -15,13 +15,13 @@ import { CompanionRoom } from "./companion";
 import { Couple } from "./characters";
 import { CornerCompanion } from "./corner-companion";
 import { HomeEdgeFooter } from "./home-edge-footer";
+import { OurVerseFooter } from "./ourverse-footer";
 import { EntranceScene } from "./entrance-scene";
 import { World } from "./world";
 import { Vault, Ending } from "./secrets";
 import { Modal } from "./ui";
 import { settings } from "@/config/settings";
 import { relationship } from "@/data/relationship";
-import "./infinity-footer.css";
 const GameRoom = dynamic(() => import("./games"), {
   loading: () => (
     <p className="section-loading">Turning on the arcade lights…</p>
@@ -405,53 +405,14 @@ function Shell() {
               <Constellation />
             </div>
           )}
-          {section === "home" ? <HomeEdgeFooter navigate={travel} onDev={() => setDev(true)} /> : <>
-          <FloatingPlayer navigate={() => travel("music")} />
-          <footer className="universe-footer infinity-footer">
-            <div className="infinity-atmosphere" aria-hidden="true">
-              <div className="infinity-haze" />
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <i key={i} className={`infinity-star infinity-star-${i}`} />
-              ))}
-              {Array.from({ length: 28 }, (_, i) => (
-                <i key={`distant-${i}`} className="infinity-star infinity-distant-star" style={{
-                  left: `${4 + ((i * 37.71 + i * i * 3.13) % 92)}%`,
-                  top: `${12 + ((i * 23.19 + i * i * 1.71) % 80)}%`,
-                  width: i % 6 === 0 ? 2 : 1,
-                  height: i % 6 === 0 ? 2 : 1,
-                  animationDuration: `${7.3 + (i % 9) * 1.7}s`,
-                  animationDelay: `${-i * 1.43}s`,
-                }} />
-              ))}
-              <span className="infinity-dust dust-a" /><span className="infinity-dust dust-b" />
-              <span className="infinity-dust dust-a" /><span className="infinity-dust dust-b" />
-
-              <span className="infinity-shooting-star" />
-              <span className="infinity-shooting-star infinity-shooting-star-two" />
-              <span className="infinity-shooting-star infinity-shooting-star-three" />
-            </div>
-            <div className="infinity-letter">
-              <p className="infinity-message">our own little infinity.</p>
-              <p className="infinity-signature">
-                made with love, from Janna
-                <button className="infinity-heart" onClick={() => travel("press")} aria-label="A little heart">
-                  <span className="infinity-heart-glyph" aria-hidden="true">♡</span>
-                  <span className="infinity-heart-particles" aria-hidden="true"><i /><i /><i /></span>
-                </button>
-              </p>
-            </div>
-            {process.env.NODE_ENV === "development" && (
-              <button
-                type="button"
-                className="dev-mode-pill"
-                onClick={() => setDev(true)}
-                title="Open Janna’s development controls (Alt + Shift + D)"
-              >
-                Janna Mode ✦
-              </button>
-            )}
-          </footer>
-          </>}
+          {section === "home" ? (
+            <HomeEdgeFooter navigate={travel} onDev={() => setDev(true)} />
+          ) : (
+            <>
+              <FloatingPlayer navigate={() => travel("music")} />
+              <OurVerseFooter onHeart={() => travel("press")} onDev={() => setDev(true)} />
+            </>
+          )}
           {section !== "companion" && (
             <CornerCompanion destination={section} onVisit={() => travel("companion")} />
           )}

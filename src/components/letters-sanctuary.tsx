@@ -26,6 +26,18 @@ type LettersSanctuaryProps = {
 const palettes = ["rose", "midnight", "ivory", "sage", "peach", "violet"];
 const seals = ["heart", "moon", "star", "flower", "leaf", "jj"];
 
+function ConditionLabel({ title }: { title: string }) {
+  const condition = title.slice(10);
+  const lower = condition.toLowerCase();
+  if (lower.includes("remember how much")) return <>you need to remember<br />how much I love you</>;
+  if (lower.includes("having a bad day")) return <>you&apos;re having<br />a bad day</>;
+  if (lower.includes("feeling insecure")) return <>you&apos;re feeling<br />insecure</>;
+  if (lower.includes("need motivation")) return <>you need<br />motivation</>;
+  if (lower.includes("miss me badly")) return <>you miss me<br />badly</>;
+  if (lower.includes("get in a fight")) return <>we get in<br />a fight</>;
+  return <>{condition}</>;
+}
+
 function SealMark({ kind }: { kind: string }) {
   if (kind === "moon") return <path d="M18 9a8 8 0 1 0 6 13 7 7 0 1 1-6-13Z" />;
   if (kind === "star") return <path d="m18 8 2.5 7 7 2.5-7 2.5-2.5 7-2.5-7-7-2.5 7-2.5Z" />;
@@ -125,7 +137,8 @@ function IllustratedEnvelope({
   const isOpening = opening === item.letter.id;
   const title = item.letter.title;
   const normalLabel = title.toLowerCase().startsWith("open when ");
-  const longLabel = title.length > 42;
+  const conditionLength = normalLabel ? title.slice(10).length : title.length;
+  const labelSize = conditionLength > 30 ? "long" : conditionLength > 14 ? "medium" : "short";
   const style = {
     "--letter-index": index,
     "--float-time": `${6.15 + index * 0.37}s`,
@@ -160,7 +173,7 @@ function IllustratedEnvelope({
   return (
     <button
       ref={letterRef}
-      className={`ls-letter ls-letter-${palette} ls-letter-${identity}${longLabel ? " has-long-label" : ""}${revealed ? " is-revealed" : ""}${isOpening ? " is-opening" : ""}${opening && !isOpening ? " is-receding" : ""}`}
+      className={`ls-letter ls-letter-${palette} ls-letter-${identity} ls-label-${labelSize}${revealed ? " is-revealed" : ""}${isOpening ? " is-opening" : ""}${opening && !isOpening ? " is-receding" : ""}`}
       style={style}
       disabled={item.locked || opening !== null}
       onClick={(event) => {
@@ -257,13 +270,13 @@ function IllustratedEnvelope({
           </svg>
           <span className="ls-written-label">
             {normalLabel ? (
-              <><small>Open when</small>{title.slice(10)}</>
+              <><small>Open when</small><strong><ConditionLabel title={title} /></strong></>
             ) : isAnniversary ? (
-              <>Our First<br />Anniversary</>
+              <strong>Our First<br />Anniversary</strong>
             ) : isBirthday ? (
-              <>A Birthday Wish<br />for You</>
+              <strong>A Birthday Wish<br />for You</strong>
             ) : (
-              <>{title}</>
+              <strong>{title}</strong>
             )}
           </span>
           <span className={`ls-wax ls-wax-${seal}`} aria-hidden="true">
@@ -272,7 +285,6 @@ function IllustratedEnvelope({
           {item.locked && <span className="ls-lock" aria-hidden="true"><i /><i /><b /></span>}
           <span className="ls-hover-spark ls-hover-spark-a" aria-hidden="true" />
           <span className="ls-hover-spark ls-hover-spark-b" aria-hidden="true" />
-          <span className="ls-open-hint">{item.locked ? item.lockLabel : "open me ♡"}</span>
         </span>
         <span className="ls-letter-note">{item.locked ? item.lockLabel : "A little love, just for you."}</span>
       </span>
@@ -371,6 +383,74 @@ function LowerSanctuaryDetails() {
   );
 }
 
+function CloudCluster({ className }: { className: string }) {
+  return (
+    <svg className={`ls-celestial-cloud ${className}`} viewBox="0 0 300 132" aria-hidden="true">
+      <path d="M-8 105Q19 70 58 82 75 34 124 62q27-54 79-14 43-9 61 33 29-3 49 27v30H-8Z" fill="#24243d" />
+      <path d="M4 102Q30 76 65 89 85 49 125 73q28-44 70-13 39-5 59 29 26-2 45 20v17H4Z" fill="#4d4668" opacity=".78" />
+      <path d="M27 92q25-19 53-7 18-31 49-20 31-31 62-4 30-4 48 22" fill="none" stroke="#9b89ad" strokeWidth="7" strokeLinecap="round" opacity=".27" />
+      <path d="M21 112q84-15 151 3t119-5" fill="none" stroke="#17182c" strokeWidth="13" opacity=".48" />
+    </svg>
+  );
+}
+
+function CelestialScenery() {
+  return (
+    <div className="ls-celestial-scenery" aria-hidden="true">
+      <svg className="ls-nebula-art ls-nebula-one" viewBox="0 0 520 230">
+        <defs><filter id="ls-nebula-blur-a"><feGaussianBlur stdDeviation="24" /></filter></defs>
+        <path d="M17 151Q92 42 201 92t155-21q101-50 151 69-72 75-188 37T153 188Q70 218 17 151Z" fill="#755379" opacity=".2" filter="url(#ls-nebula-blur-a)" />
+      </svg>
+      <svg className="ls-nebula-art ls-nebula-two" viewBox="0 0 560 250">
+        <defs><filter id="ls-nebula-blur-b"><feGaussianBlur stdDeviation="28" /></filter></defs>
+        <path d="M14 148Q83 61 191 98t174-45q122 3 180 107-92 72-202 31t-174 22Q66 221 14 148Z" fill="#6b5a96" opacity=".18" filter="url(#ls-nebula-blur-b)" />
+      </svg>
+
+      <CloudCluster className="ls-cloud-a" />
+      <CloudCluster className="ls-cloud-b" />
+      <CloudCluster className="ls-cloud-c" />
+      <CloudCluster className="ls-cloud-d" />
+      <CloudCluster className="ls-cloud-e" />
+
+      <svg className="ls-distant-crescent" viewBox="0 0 80 80">
+        <defs><linearGradient id="ls-crescent-light" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#f2e1c9" /><stop offset="1" stopColor="#a99abb" /></linearGradient></defs>
+        <path d="M54 10q-29 8-29 34 0 20 20 28Q17 70 11 46 7 18 34 7q11-4 20 3Z" fill="url(#ls-crescent-light)" />
+        <path d="M22 42q7 20 27 27" fill="none" stroke="#7b6b91" strokeWidth="3" opacity=".45" />
+      </svg>
+      <svg className="ls-distant-planet" viewBox="0 0 120 90">
+        <defs><radialGradient id="ls-planet-paint" cx="35%" cy="28%"><stop stopColor="#d5a0b4" /><stop offset=".55" stopColor="#8d667f" /><stop offset="1" stopColor="#423750" /></radialGradient></defs>
+        <ellipse cx="60" cy="48" rx="53" ry="12" fill="none" stroke="#d5b07f" strokeWidth="3" opacity=".52" transform="rotate(-12 60 48)" />
+        <circle cx="60" cy="45" r="27" fill="url(#ls-planet-paint)" stroke="#bda2c5" strokeWidth="1.5" />
+        <path d="M35 48q25 10 49-8" fill="none" stroke="#f0c4c6" strokeWidth="3" opacity=".2" />
+        <path d="M9 55q20 4 34 1m35-9q19-3 33-9" fill="none" stroke="#efd19d" strokeWidth="3" opacity=".65" transform="rotate(-12 60 48)" />
+      </svg>
+      <svg className="ls-distant-moon" viewBox="0 0 70 70">
+        <defs><radialGradient id="ls-moon-paint" cx="32%" cy="27%"><stop stopColor="#d5cce5" /><stop offset=".6" stopColor="#8c83a9" /><stop offset="1" stopColor="#4a4567" /></radialGradient></defs>
+        <circle cx="35" cy="35" r="25" fill="url(#ls-moon-paint)" />
+        <circle cx="25" cy="27" r="5" fill="#625d80" opacity=".45" /><circle cx="43" cy="43" r="7" fill="#6f688d" opacity=".38" /><circle cx="45" cy="23" r="3" fill="#eee2ef" opacity=".2" />
+      </svg>
+
+      <svg className="ls-constellation-fragment ls-constellation-a" viewBox="0 0 220 110">
+        <path d="m13 78 52-41 49 29 41-43 52 20" />
+        <g><circle cx="13" cy="78" r="3" /><circle cx="65" cy="37" r="2.5" /><circle cx="114" cy="66" r="3.5" /><circle cx="155" cy="23" r="2.5" /><circle cx="207" cy="43" r="3" /></g>
+      </svg>
+      <svg className="ls-constellation-fragment ls-constellation-b" viewBox="0 0 190 105">
+        <path d="m10 31 48 22 39-39 35 60 48-12" />
+        <g><circle cx="10" cy="31" r="2.5" /><circle cx="58" cy="53" r="3" /><circle cx="97" cy="14" r="2.5" /><circle cx="132" cy="74" r="3.5" /><circle cx="180" cy="62" r="2.5" /></g>
+      </svg>
+
+      <div className="ls-star-cluster ls-star-cluster-a"><i /><i /><i /><i /><i /></div>
+      <div className="ls-star-cluster ls-star-cluster-b"><i /><i /><i /><i /><i /><i /></div>
+      <div className="ls-star-cluster ls-star-cluster-c"><i /><i /><i /><i /></div>
+
+      <svg className="ls-meteor ls-meteor-a" viewBox="0 0 150 35"><path d="M145 5 26 28" /><circle cx="26" cy="28" r="4" /><path className="ls-meteor-star" d="m26 20 2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" /></svg>
+      <svg className="ls-meteor ls-meteor-b" viewBox="0 0 150 35"><path d="M145 5 26 28" /><circle cx="26" cy="28" r="4" /><path className="ls-meteor-star" d="m26 20 2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" /></svg>
+
+      <div className="ls-magic-dust"><i /><i /><i /><i /><i /><i /></div>
+    </div>
+  );
+}
+
 export function LettersSanctuary({ items, opening, onSelect, onOpened }: LettersSanctuaryProps) {
   const sceneRef = useRef<HTMLElement>(null);
   const itemsRef = useRef(items);
@@ -406,6 +486,7 @@ export function LettersSanctuary({ items, opening, onSelect, onOpened }: Letters
       <div className="ls-sky" aria-hidden="true"><i /><i /><i /></div>
       <div className="ls-stars ls-stars-far" aria-hidden="true">{Array.from({ length: 34 }, (_, i) => <i key={i} style={{ "--sx": `${(i * 37 + 9) % 97}%`, "--sy": `${(i * 61 + 13) % 91}%`, "--sd": `${i * -.37}s`, "--ss": `${1 + (i % 3) * .45}px`, "--st": `${5.7 + (i % 7) * .71}s` } as CSSProperties} />)}</div>
       <div className="ls-stars ls-stars-near" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ "--sx": `${(i * 43 + 17) % 94}%`, "--sy": `${(i * 29 + 8) % 86}%`, "--sd": `${i * -.53}s`, "--ss": `${2 + (i % 3)}px`, "--st": `${7.1 + (i % 5) * .83}s` } as CSSProperties} />)}</div>
+      <CelestialScenery />
       <svg className="ls-threads" viewBox="0 0 1600 1050" preserveAspectRatio="none" aria-hidden="true">
         <path d="M310 360Q590 160 875 345t390-35" /><path d="M430 760q260-290 590-118t360-170" />
         <circle cx="512" cy="269" r="4" /><circle cx="937" cy="389" r="3" /><circle cx="781" cy="637" r="4" />

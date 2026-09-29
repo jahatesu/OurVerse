@@ -127,14 +127,14 @@ export function EdgeMemories({ count, target }: { count: number; target: number 
   </svg>;
 }
 
-export function EdgeHorizon() {
+export function EdgeHorizon({ quiet = false }: { quiet?: boolean } = {}) {
   const id = useId().replace(/:/g, "");
   const janna = characters.janna, josh = characters.josh;
-  return <svg viewBox="0 0 1600 620" fill="none" stroke={outline} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" role="img" aria-label="Janna and Josh sitting together beside a lantern, looking out across OurVerse">
+  return <svg viewBox="0 0 1600 620" fill="none" stroke={outline} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" role="img" aria-label={quiet ? "Janna and Josh sitting together at the edge of OurVerse" : "Janna and Josh sitting together beside a lantern, looking out across OurVerse"}>
     <defs><linearGradient id={`${id}-ground`} x2="0" y2="1"><stop stopColor="#5d587b" /><stop offset=".32" stopColor="#34394f" /><stop offset="1" stopColor="#171d32" /></linearGradient><radialGradient id={`${id}-lantern`}><stop stopColor="#e1b48b" stopOpacity=".32" /><stop offset="1" stopColor="#e1b48b" stopOpacity="0" /></radialGradient></defs>
     <path d="M-100 438Q800-112 1700 438" stroke="#a99ac7" strokeWidth="24" opacity=".06" /><path d="M-100 440Q800-110 1700 440L1700 650L-100 650Z" fill={`url(#${id}-ground)`} /><path d="M-100 435Q800-115 1700 435" stroke="#a898c0" strokeWidth="3" opacity=".65" />
     <path d="M-100 447Q800-80 1700 447L1700 494Q780-39-100 494Z" fill="#72718c" opacity=".13" stroke="none" />
-    <path d="M553 218Q715 149 965 204Q848 252 690 255Z" fill="#817991" opacity=".28" stroke="none" /><ellipse cx="905" cy="219" rx="185" ry="98" fill={`url(#${id}-lantern)`} stroke="none" className="edge-lantern-halo" />
+    <path d="M553 218Q715 149 965 204Q848 252 690 255Z" fill="#817991" opacity=".28" stroke="none" />{!quiet && <ellipse cx="905" cy="219" rx="185" ry="98" fill={`url(#${id}-lantern)`} stroke="none" className="edge-lantern-halo" />}
     <ellipse cx="798" cy="205" rx="100" ry="18" fill="#222b40" opacity=".6" stroke="none" />
     <g transform="translate(697 65)">
       <path d="M44 108Q17 129 21 143L53 149M73 113Q90 143 100 149L79 153" stroke={janna.outfit} strokeWidth="18" /><ellipse cx="38" cy="151" rx="17" ry="7" fill="#b8a5b3" /><ellipse cx="90" cy="154" rx="16" ry="6" fill="#c7b4bb" />
@@ -146,11 +146,11 @@ export function EdgeHorizon() {
       <path d="M30 78Q63 68 86 80L97 130Q69 145 27 128Z" fill={josh.outfit} /><path d="M35 87L15 116M88 88L111 119L100 128" stroke={josh.outfit} strokeWidth="14" /><path d="M13 116L15 120M101 125L95 128" stroke={josh.skin} strokeWidth="8" />
       <path d="M33 32Q38 11 69 12Q101 15 98 44L92 71Q64 83 36 64Z" fill={josh.skin} /><path d="M31 42Q22 13 52 9Q71 0 92 20Q105 30 97 54L83 53L80 65Q58 76 39 61Z" fill={josh.hairColor} /><path d="M36 27Q54 9 75 23M44 50Q67 63 84 46" stroke={josh.hairHighlight} strokeWidth="4" /><path d="M96 44L107 42L109 52L99 54M102 43L87 41" stroke="#30313c" strokeWidth="2.5" />
     </g>
-    <Lantern x={947} y={204} scale={.95} />
+    {!quiet && <Lantern x={947} y={204} scale={.95} />}
     <path d="M680 223L687 205L692 220M876 222L881 202L890 225M929 223L934 213L940 225M995 236L1005 216L1009 236M590 236L596 220L604 232" stroke="#819793" strokeWidth="2" />
     <Flower x={615} y={228} scale={.8} /><Flower x={995} y={224} scale={.65} /><Flower x={1080} y={257} scale={.9} /><Flower x={501} y={275} scale={.65} />
     <path d="M436 299Q462 287 486 295M1053 290Q1083 281 1104 295M693 261L708 258M1198 350L1222 355M328 367L346 356" stroke="#8d8a9d" strokeWidth="2" opacity=".5" />
-    <g transform="translate(1338 220) scale(.55)"><path d="M-65 18L-29 59L14 72L57 19Z" fill="#443851" /><path d="M-65 14Q-14-3 57 16L50 29Q-14 48-65 23Z" fill="#9c8da4" /><path d="M-10 19L-10-88" stroke="#8f7389" strokeWidth="9" /><path d="M-53-89L42-93L47-65L-50-61Z" fill="#ba99ac" /><path d="M-42-55L52-61L54-34L-46-27Z" fill="#9f819e" /><text x="-4" y="-72" textAnchor="middle" fill="#eee0d4" stroke="none" fontSize="10" letterSpacing="2">SEE YOU</text><text x="5" y="-42" textAnchor="middle" fill="#eee0d4" stroke="none" fontSize="9" letterSpacing="1">TOMORROW</text></g>
+    {!quiet && <g transform="translate(1338 220) scale(.55)"><path d="M-65 18L-29 59L14 72L57 19Z" fill="#443851" /><path d="M-65 14Q-14-3 57 16L50 29Q-14 48-65 23Z" fill="#9c8da4" /><path d="M-10 19L-10-88" stroke="#8f7389" strokeWidth="9" /><path d="M-53-89L42-93L47-65L-50-61Z" fill="#ba99ac" /><path d="M-42-55L52-61L54-34L-46-27Z" fill="#9f819e" /><text x="-4" y="-72" textAnchor="middle" fill="#eee0d4" stroke="none" fontSize="10" letterSpacing="2">SEE YOU</text><text x="5" y="-42" textAnchor="middle" fill="#eee0d4" stroke="none" fontSize="9" letterSpacing="1">TOMORROW</text></g>}
   </svg>;
 }
 

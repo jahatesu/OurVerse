@@ -728,6 +728,7 @@ export function MusicRoom() {
 
         <div className="music-center-column">
           <section className="music-record-player" aria-label="Our record player">
+            <i className="music-player-stardust" aria-hidden="true" />
             <div className="music-player-topline"><span>J + J</span><i aria-hidden="true">✦　·　☾</i></div>
             <div className="music-deck">
               <div className={`music-vinyl ${player.playing ? "playing" : ""}`}>

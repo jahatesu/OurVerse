@@ -28,13 +28,23 @@ export interface Question {
   answer: number;
   explanation: string;
 }
+export type SongNoteSegmentStyle =
+  | "lyric"
+  | "emphasis"
+  | "reference"
+  | "strong-emphasis";
+export interface SongNoteSegment {
+  text: string;
+  style?: SongNoteSegmentStyle;
+  italic?: boolean;
+}
 export interface Song {
   id: string;
   number: number;
   title: string;
   artist: string;
   cover: string;
-  note: string;
+  note: string | SongNoteSegment[];
   audioUrl?: string;
   externalUrl?: string;
   spotifyUri?: string;

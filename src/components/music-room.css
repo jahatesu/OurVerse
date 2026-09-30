@@ -67,6 +67,7 @@
 }
 
 .music-environment {
+  --music-lower-scene-space: 275px;
   position: relative;
   display: grid;
   grid-template-columns: minmax(220px, 0.78fr) minmax(410px, 1.42fr) minmax(285px, 1fr);
@@ -93,7 +94,7 @@
   position: absolute;
   z-index: 0;
   inset: auto 0 0;
-  height: 24%;
+  height: var(--music-lower-scene-space);
   border-top: 1px solid #8e718329;
   background:
     linear-gradient(105deg, transparent 0 48%, #c6a56b0d 49% 49.3%, transparent 50%),
@@ -769,7 +770,7 @@
 
 .music-now-playing { text-align: center; }
 .music-now-playing > span { color: #8a6874; font: 700 7px/1 sans-serif; letter-spacing: 0.23em; }
-.music-now-playing h2 { display: block; margin: 11px 0 6px; overflow: hidden; color: #3e303b; font: italic clamp(27px, 2.5vw, 38px)/1.05 var(--display, Georgia, serif); letter-spacing: -0.02em; text-overflow: ellipsis; white-space: nowrap; }
+.music-now-playing h2 { display: -webkit-box; margin: 11px 0 6px; overflow: hidden; color: #3e303b; font: italic clamp(25px, 2.25vw, 36px)/1.05 var(--display, Georgia, serif); letter-spacing: -0.02em; text-wrap: wrap; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .music-now-playing p { overflow: hidden; margin: 0 0 24px; color: #876d78; font: 10px/1.4 sans-serif; letter-spacing: 0.035em; text-overflow: ellipsis; white-space: nowrap; }
 
 .music-record-player input[type="range"] { width: 100%; height: 4px; accent-color: #a97986; cursor: default; pointer-events: none; }
@@ -789,7 +790,10 @@
 .screw-one { left: 14px; top: 15px; }.screw-two { right: 14px; top: 15px; }.screw-three { left: 14px; bottom: 15px; }.screw-four { right: 14px; bottom: 15px; }
 
 /* Janna's paper, playlist, and the city window */
-.music-right-corner { min-height: 930px; }
+.music-right-corner {
+  min-height: 930px;
+  margin-bottom: var(--music-lower-scene-space);
+}
 
 .music-window { position: absolute; z-index: 0; top: -45px; right: -73px; width: 250px; height: 445px; }
 .music-window-sky { position: absolute; inset: 15px 25px 53px 31px; overflow: hidden; border: 7px solid #40344d; border-bottom-width: 15px; background: radial-gradient(ellipse at 78% 15%, #9297c526, transparent 28%), radial-gradient(ellipse at 35% 62%, #744d6b2b, transparent 43%), linear-gradient(#09152f, #17213e 57%, #29223a); box-shadow: 0 0 0 3px #151424, inset 0 0 35px #9187b32f, 0 0 40px #8c8ab62b; animation: music-window-breathe 9s ease-in-out infinite alternate; }
@@ -821,7 +825,7 @@
   position: relative;
   z-index: 4;
   width: calc(100% - 25px);
-  height: 300px;
+  height: auto;
   min-height: 300px;
   margin: 88px 0 0 -17px;
   padding: 42px 35px 34px;
@@ -842,11 +846,11 @@
 .music-note-doodles { position: absolute; right: 30px; bottom: 25px; color: #b08c73; font: normal 11px var(--display, Georgia, serif); }
 .music-note-label { position: relative; display: block; color: #8b6875; font: 700 8px/1 sans-serif; letter-spacing: 0.24em; }
 .music-janna-note h2 { position: relative; flex: 0 0 auto; margin: 20px 0 12px; color: #4b3543; font: italic 26px/1.22 var(--display, Georgia, serif); }
-.music-note-body { position: relative; flex: 1 1 auto; min-height: 0; padding-right: 7px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #a8858c66 transparent; scrollbar-width: thin; animation: music-note-content-arrive 320ms ease both; }
-.music-note-body::-webkit-scrollbar { width: 4px; }
-.music-note-body::-webkit-scrollbar-track { background: transparent; }
-.music-note-body::-webkit-scrollbar-thumb { border-radius: 10px; background: #9f7b8466; }
+.music-note-body { position: relative; flex: 0 0 auto; min-height: auto; padding-right: 7px; overflow: visible; animation: music-note-content-arrive 320ms ease both; }
 .music-note-body p { position: relative; margin: 0; color: #6b5360; font: 15px/1.75 var(--display, Georgia, serif); }
+.music-note-body strong { font-weight: 700; }
+.music-note-body em { font-style: italic; }
+.music-note-body .music-note-strong-emphasis { color: #4f3544; font-weight: 800; text-decoration: underline; text-decoration-color: #8f667480; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .music-note-signoff { position: relative; flex: 0 0 auto; display: block; margin-top: 12px; color: #a46f82; font: 15px var(--hand, cursive); transform: rotate(-2deg); }
 
 @keyframes music-note-content-arrive { from { opacity: 0.18; translate: 0 2px; } to { opacity: 1; translate: 0 0; } }
@@ -881,9 +885,28 @@
 .music-spotify-surface > iframe { display: block; width: 100%; min-height: 152px; border: 0; border-radius: 10px; }
 .music-spotify-fallback { margin: 8px 3px 1px; color: #b9a7b2; font: 8px/1.4 sans-serif; }
 
+@media (min-width: 1161px) {
+  .destination-return-nav:has(+ .universe-main.world-music) { position: absolute; z-index: 9; top: 96px; left: 0; }
+  .universe-main.world-music { padding-top: 8px; }
+  .music-night-heading { margin-bottom: 16px; padding-block: 0; }
+  .music-night-heading > p { margin-bottom: 8px; }
+  .music-night-heading h1 { font-size: clamp(50px, 4vw, 60px); line-height: 1; }
+  .music-night-heading > span:not(.music-heading-moon) { margin-top: 8px; font-size: 12px; line-height: 1.4; }
+  .music-heading-moon { top: 17px; }
+  .music-heading-stars { top: 13px; }
+  .music-environment { padding-top: 32px; }
+  .music-record-player { margin-top: 32px; }
+  .music-janna-note { margin-top: 16px; padding-block: 34px 28px; }
+  .music-janna-note h2 { margin-block: 14px 8px; }
+  .music-note-signoff { margin-top: 8px; }
+  .music-playlist { margin-top: 20px; }
+  .music-playlist > h2 { margin-bottom: 12px; }
+  .music-playlist-dedication { margin-bottom: 10px; }
+}
+
 @media (max-width: 1160px) {
   .music-environment { grid-template-columns: minmax(210px, 0.75fr) minmax(390px, 1.25fr); min-height: 1650px; }
-  .music-right-corner { grid-column: 1 / -1; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 45px; min-height: 520px; }
+  .music-right-corner { grid-column: 1 / -1; display: grid; grid-template-columns: 0.9fr 1.1fr; align-items: start; gap: 45px; min-height: 520px; margin-bottom: 0; }
   .music-janna-note { width: 100%; margin: 65px 0 0; }
   .music-playlist { margin-top: 75px; }
   .music-window { top: 12px; right: calc(50% - 98px); opacity: 0.72; }

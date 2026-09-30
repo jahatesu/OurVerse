@@ -687,7 +687,7 @@
 
 /* Physical record player */
 .music-record-player {
-  align-self: start;
+  align-self: center;
   margin-top: 74px;
   min-height: 780px;
   padding: 33px clamp(26px, 3vw, 43px) 38px;
@@ -760,10 +760,12 @@
 .music-vinyl-pin { position: absolute; z-index: 4; left: calc(50% - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border: 3px solid #c2a770; border-radius: 50%; background: #3c2638; box-shadow: 0 2px 4px #0008; }
 .music-vinyl-shine { position: absolute; z-index: 3; left: 20%; top: 5%; width: 26%; height: 87%; border-radius: 50%; background: linear-gradient(90deg, transparent, #fff1, transparent); transform: rotate(38deg); }
 
-.music-tonearm { position: absolute; z-index: 5; right: 0; top: 17px; width: 103px; height: 330px; filter: drop-shadow(5px 8px 6px #3b273e55); }
+.music-tonearm { --music-tonearm-scale: 1; --music-tonearm-angle: 0deg; --music-tonearm-offset-x: 0px; --music-tonearm-offset-y: 0px; position: absolute; z-index: 5; right: 0; top: 17px; width: 103px; height: 330px; filter: drop-shadow(5px 8px 6px #3b273e55); transform: translate(var(--music-tonearm-offset-x), var(--music-tonearm-offset-y)) scale(var(--music-tonearm-scale)) rotate(var(--music-tonearm-angle)); transform-origin: 55px 41px; transition: transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .music-tonearm-pivot { position: absolute; right: 8px; top: 0; width: 65px; height: 65px; border: 8px solid #8d765f; border-radius: 50%; background: radial-gradient(circle, #392f37 0 23%, #b79a70 25% 44%, #4a3c43 46% 100%); box-shadow: inset 0 2px #ead5ae, 0 5px 10px #39213255; }
 .music-tonearm-bar { position: absolute; right: 38px; top: 48px; width: 15px; height: 238px; border: 2px solid #816d60; border-radius: 12px; background: linear-gradient(90deg, #7e6858, #d2b77f 48%, #826e5e); transform: rotate(13deg); transform-origin: top; box-shadow: inset 2px 0 #ead9b6, 3px 5px 7px #38283866; }
-.music-tonearm-head { position: absolute; left: 10px; bottom: 18px; width: 37px; height: 62px; border-radius: 8px 8px 15px 15px; background: linear-gradient(90deg, #372d35, #5a4650 55%, #2a252d); transform: rotate(13deg); box-shadow: inset 0 0 0 3px #b4937245; }
+.music-tonearm-head { position: absolute; left: 50%; bottom: -5px; width: 37px; height: 62px; margin-left: -18.5px; border-radius: 8px 8px 15px 15px; background: linear-gradient(90deg, #372d35, #5a4650 55%, #2a252d); box-shadow: inset 0 0 0 3px #b4937245; }
+
+.music-vinyl.playing + .music-tonearm { --music-tonearm-angle: 56deg; }
 
 .music-gold-star { position: absolute; left: 4px; bottom: 6px; color: #b48e52; font-size: 22px; text-shadow: 0 3px 4px #5d3c4480; transform: rotate(-12deg); }
 .music-constellation { position: absolute; right: 2px; bottom: -4px; color: #9c7180; font: 10px/1.35 var(--display, Georgia, serif); opacity: 0.78; transform: rotate(-6deg); }
@@ -935,8 +937,9 @@
   .music-deck { height: 310px; margin: 8px auto 4px; }
   .music-vinyl { width: min(285px, 84%); top: 4px; }
   .music-tonearm {
-    transform: scale(0.8);
-    transform-origin: top right;
+    --music-tonearm-scale: 0.8;
+    --music-tonearm-offset-x: 9.6px;
+    --music-tonearm-offset-y: -8.2px;
     right: 2px;
     top: 10px;
   }
@@ -1010,7 +1013,8 @@
   .music-cozy-corner { margin-top: 14px; }
   .music-deck { height: min(88vw, 370px); }
   .music-vinyl { width: min(330px, 82%); }
-  .music-tonearm { right: -10px; transform: scale(0.88); transform-origin: top right; }
+  .music-tonearm { --music-tonearm-scale: 0.88; --music-tonearm-offset-x: 5.76px; --music-tonearm-offset-y: -4.92px; right: -10px; }
+  .music-vinyl.playing + .music-tonearm { --music-tonearm-angle: 32deg; }
   .music-physical-controls { gap: 9px; }
   .music-record-player .player-controls { gap: 9px; }
   .music-record-player .player-controls button { width: 39px; height: 39px; min-width: 39px; }
@@ -1032,7 +1036,8 @@
   .music-environment { padding-inline: 15px; }
   .music-record-player { padding-inline: 17px; min-height: 655px; }
   .music-deck { height: 315px; }
-  .music-tonearm { transform: scale(0.76); }
+  .music-tonearm { --music-tonearm-scale: 0.76; --music-tonearm-offset-x: 11.52px; --music-tonearm-offset-y: -9.84px; }
+  .music-vinyl.playing + .music-tonearm { --music-tonearm-angle: 36deg; }
   .music-control-ornament { display: none; }
   .music-track-copy strong { font-size: 12px; }
   .music-track-list button { padding-inline: 7px; }

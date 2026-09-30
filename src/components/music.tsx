@@ -737,7 +737,7 @@ export function MusicRoom() {
                 <i className="music-vinyl-pin" aria-hidden="true" />
               </div>
               <div className="music-tonearm" aria-hidden="true">
-                <i className="music-tonearm-pivot" /><i className="music-tonearm-bar" /><i className="music-tonearm-head" />
+                <i className="music-tonearm-pivot" /><i className="music-tonearm-bar"><i className="music-tonearm-head" /></i>
               </div>
               <span className="music-gold-star" aria-hidden="true">★</span>
               <span className="music-constellation" aria-hidden="true">·—✦—·<br />　╲　·</span>

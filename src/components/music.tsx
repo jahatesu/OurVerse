@@ -724,6 +724,59 @@ export function MusicRoom() {
             <span>Late night talks</span><span>Long distance</span><span>Our story</span><span>And everything in between</span>
           </div>
           <div className="music-candle" aria-hidden="true"><i /><span /></div>
+        </aside>
+
+        <div className="music-center-column">
+          <section className="music-record-player" aria-label="Our record player">
+            <div className="music-player-topline"><span>J + J</span><i aria-hidden="true">✦　·　☾</i></div>
+            <div className="music-deck">
+              <div className={`music-vinyl ${player.playing ? "playing" : ""}`}>
+                <span className="music-vinyl-shine" aria-hidden="true" />
+                <SongArtwork song={song} size={200} eager />
+                <span className="music-label-magic" aria-hidden="true"><i /></span>
+                <i className="music-vinyl-pin" aria-hidden="true" />
+              </div>
+              <div className="music-tonearm" aria-hidden="true">
+                <i className="music-tonearm-pivot" /><i className="music-tonearm-bar" /><i className="music-tonearm-head" />
+              </div>
+              <span className="music-gold-star" aria-hidden="true">★</span>
+              <span className="music-constellation" aria-hidden="true">·—✦—·<br />　╲　·</span>
+            </div>
+
+            <div className="music-now-playing">
+              <span>NOW PLAYING IN OUR LITTLE CORNER</span><h2 title={song.title}>{song.title}</h2><p title={song.artist}>{song.artist}</p>
+            </div>
+            <label className="sr-only" htmlFor="music-progress">Track position</label>
+            <input
+              id="music-progress"
+              type="range"
+              min={0}
+              max={player.duration || 1}
+              step={0.1}
+              value={player.time}
+              disabled={!player.duration}
+              readOnly
+              aria-readonly="true"
+              tabIndex={-1}
+              onChange={() => undefined}
+            />
+            <div className="music-times"><span>{timeLabel(player.time)}</span><span>{timeLabel(player.duration)}</span></div>
+            <div className="music-physical-controls">
+              <span className="music-control-ornament" aria-hidden="true"><Shuffle size={16} /></span>
+              <Controls />
+              <span className="music-control-ornament" aria-hidden="true"><Repeat2 size={17} /></span>
+            </div>
+            <p className="audio-notice" role="status">
+              {player.error || (player.spotifyReady ? "pick a song and let it play ♡" : "Connecting our record player to Spotify...")}
+            </p>
+            {song.externalUrl && (
+              <a href={song.externalUrl} target="_blank" rel="noopener noreferrer" className="music-listen-link">
+                Listen to this song <ExternalLink size={14} />
+              </a>
+            )}
+            <span className="music-player-screw screw-one" aria-hidden="true" /><span className="music-player-screw screw-two" aria-hidden="true" />
+            <span className="music-player-screw screw-three" aria-hidden="true" /><span className="music-player-screw screw-four" aria-hidden="true" />
+          </section>
 
           <div className="music-cozy-corner">
             <div className="music-cozy-stars" aria-hidden="true">✦　♡　·</div>
@@ -734,58 +787,7 @@ export function MusicRoom() {
             </div>
             <div className="music-notebook"><span>Our soundtrack ♡</span><i aria-hidden="true" /></div>
           </div>
-        </aside>
-
-        <section className="music-record-player" aria-label="Our record player">
-          <div className="music-player-topline"><span>J + J</span><i aria-hidden="true">✦　·　☾</i></div>
-          <div className="music-deck">
-            <div className={`music-vinyl ${player.playing ? "playing" : ""}`}>
-              <span className="music-vinyl-shine" aria-hidden="true" />
-              <SongArtwork song={song} size={200} eager />
-              <span className="music-label-magic" aria-hidden="true"><i /></span>
-              <i className="music-vinyl-pin" aria-hidden="true" />
-            </div>
-            <div className="music-tonearm" aria-hidden="true">
-              <i className="music-tonearm-pivot" /><i className="music-tonearm-bar" /><i className="music-tonearm-head" />
-            </div>
-            <span className="music-gold-star" aria-hidden="true">★</span>
-            <span className="music-constellation" aria-hidden="true">·—✦—·<br />　╲　·</span>
-          </div>
-
-          <div className="music-now-playing">
-            <span>NOW PLAYING IN OUR LITTLE CORNER</span><h2 title={song.title}>{song.title}</h2><p title={song.artist}>{song.artist}</p>
-          </div>
-          <label className="sr-only" htmlFor="music-progress">Track position</label>
-          <input
-            id="music-progress"
-            type="range"
-            min={0}
-            max={player.duration || 1}
-            step={0.1}
-            value={player.time}
-            disabled={!player.duration}
-            readOnly
-            aria-readonly="true"
-            tabIndex={-1}
-            onChange={() => undefined}
-          />
-          <div className="music-times"><span>{timeLabel(player.time)}</span><span>{timeLabel(player.duration)}</span></div>
-          <div className="music-physical-controls">
-            <span className="music-control-ornament" aria-hidden="true"><Shuffle size={16} /></span>
-            <Controls />
-            <span className="music-control-ornament" aria-hidden="true"><Repeat2 size={17} /></span>
-          </div>
-          <p className="audio-notice" role="status">
-            {player.error || (player.spotifyReady ? "pick a song and let it play ♡" : "Connecting our record player to Spotify...")}
-          </p>
-          {song.externalUrl && (
-            <a href={song.externalUrl} target="_blank" rel="noopener noreferrer" className="music-listen-link">
-              Listen to this song <ExternalLink size={14} />
-            </a>
-          )}
-          <span className="music-player-screw screw-one" aria-hidden="true" /><span className="music-player-screw screw-two" aria-hidden="true" />
-          <span className="music-player-screw screw-three" aria-hidden="true" /><span className="music-player-screw screw-four" aria-hidden="true" />
-        </section>
+        </div>
 
         <aside className="music-right-corner">
           <div className="music-window" aria-label="City lights through our nighttime window">

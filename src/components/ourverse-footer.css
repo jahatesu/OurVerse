@@ -21,9 +21,41 @@
   background: radial-gradient(ellipse at 50% 65%, #6a587626, #485a7110 43%, transparent 72%);
   pointer-events: none;
 }
-.ourverse-footer-stars { position: absolute; z-index: -1; inset: 0; pointer-events: none; }
-.ourverse-footer-stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #d5c4d6; opacity: .22; animation: ourverse-footer-twinkle 9s ease-in-out infinite; }
+.ourverse-footer-stars { position: absolute; z-index: -1; inset: 0; pointer-events: none; }.ourverse-footer-stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #d5c4d6; opacity: .22; animation: ourverse-footer-twinkle 9s ease-in-out infinite; }
 .ourverse-footer-stars i:nth-child(1) { left: 11%; top: 28%; animation-delay: -2s; }.ourverse-footer-stars i:nth-child(2) { left: 23%; top: 12%; animation-duration: 13s; }.ourverse-footer-stars i:nth-child(3) { left: 37%; top: 22%; animation-delay: -6s; }.ourverse-footer-stars i:nth-child(4) { left: 64%; top: 15%; animation-duration: 15s; }.ourverse-footer-stars i:nth-child(5) { left: 82%; top: 25%; animation-delay: -9s; }.ourverse-footer-stars i:nth-child(6) { left: 91%; top: 48%; animation-duration: 12s; }.ourverse-footer-stars i:nth-child(7) { left: 7%; top: 58%; animation-delay: -4s; }.ourverse-footer-stars i:nth-child(8) { left: 30%; top: 42%; animation-duration: 17s; }.ourverse-footer-stars i:nth-child(9) { left: 72%; top: 46%; animation-delay: -7s; }.ourverse-footer-stars i:nth-child(10) { left: 54%; top: 6%; animation-duration: 11s; }.ourverse-footer-stars i:nth-child(11) { left: 95%; top: 13%; animation-delay: -5s; }
+
+/* Celestial stargazing sky */
+.ourverse-footer-nebula { position: absolute; z-index: -3; inset: 0; overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, #0000 0, #000 18%); mask-image: linear-gradient(to bottom, #0000 0, #000 18%); }
+.ourverse-footer-nebula i { position: absolute; border-radius: 50%; will-change: transform; }
+.ourverse-footer-nebula i:nth-child(1) { left: -12%; top: -14%; width: 66%; height: 76%; background: radial-gradient(ellipse closest-side, #3f3c723f, #35355c20 40%, #2b2b4e0d 66%, #0000 100%); animation: ourverse-footer-nebula-a 46s ease-in-out infinite alternate; }
+.ourverse-footer-nebula i:nth-child(2) { right: -14%; top: -18%; width: 62%; height: 80%; background: radial-gradient(ellipse closest-side, #5d406640, #4b34521f 40%, #3a2a400c 66%, #0000 100%); animation: ourverse-footer-nebula-b 53s ease-in-out -8s infinite alternate; }
+.ourverse-footer-nebula i:nth-child(3) { left: 26%; top: -24%; width: 48%; height: 64%; background: radial-gradient(ellipse closest-side, #7d5a6840, #6a4a5a1c 42%, #563d4c0a 68%, #0000 100%); animation: ourverse-footer-nebula-c 61s ease-in-out -19s infinite alternate; }
+
+.ourverse-footer-constellations { position: absolute; z-index: -2; inset: 0; pointer-events: none; }
+.ourverse-footer-constellations svg { display: block; width: 100%; height: 100%; }
+.ourverse-footer-constellation path { stroke: #c9b4dc; stroke-width: 1; opacity: .2; }
+.ourverse-footer-constellation circle { fill: #eadcf4; opacity: .5; }
+.ourverse-footer-constellation .ourverse-footer-sparkle { fill: #f2e2c8; stroke: none; opacity: .62; }
+.ourverse-footer-constellation.faint path { opacity: .13; }
+.ourverse-footer-constellation.faint circle { opacity: .34; }
+.ourverse-footer-dust circle { fill: #d8c8e4; opacity: .26; }
+
+.ourverse-footer-stars-dense { position: absolute; z-index: -2; inset: 0; pointer-events: none; }
+.ourverse-footer-stars-dense i { position: absolute; border-radius: 50%; background: #e4d6e8; box-shadow: 0 0 4px #e4d6e899; animation-name: ourverse-footer-twinkle-dense; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+@keyframes ourverse-footer-twinkle-dense { 0%, 100% { transform: scale(.78); filter: brightness(.72); } 50% { transform: scale(1.12); filter: brightness(1.5); } }
+
+.ourverse-footer-meteors { position: absolute; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; }
+.ourverse-footer-meteors i { position: absolute; width: 148px; height: 2px; border-radius: 2px; opacity: 0; background: linear-gradient(90deg, transparent, #b9a6cd3d 42%, #e6d7ef8c 74%, #fdf3d9e6 96%, #fffaf0); filter: drop-shadow(0 0 5px #e9d9f48f); transform: rotate(19deg); animation: ourverse-footer-meteor 13s linear infinite; }
+.ourverse-footer-meteors i::after { content: ""; position: absolute; right: -2px; top: -1.5px; width: 5px; height: 5px; border-radius: 50%; background: #fff8e8; box-shadow: 0 0 9px 2px #f6e6c4b3; }
+.ourverse-footer-meteors i:nth-child(1) { left: 6%; top: 4%; animation-duration: 13s; animation-delay: -2s; }
+.ourverse-footer-meteors i:nth-child(2) { left: 52%; top: -3%; width: 116px; animation-duration: 17.5s; animation-delay: -9.4s; }
+.ourverse-footer-meteors i:nth-child(3) { left: 26%; top: 12%; width: 172px; animation-duration: 21s; animation-delay: -15.2s; }
+@keyframes ourverse-footer-meteor { 0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(19deg); } 6% { opacity: .9; } 26% { opacity: .62; } 42%, 100% { opacity: 0; transform: translate3d(430px, 152px, 0) rotate(19deg); } }
+@keyframes ourverse-footer-nebula-a { to { transform: translate3d(5%, 3%, 0) scale(1.08); } }
+@keyframes ourverse-footer-nebula-b { to { transform: translate3d(-4%, 4%, 0) scale(1.05); } }
+@keyframes ourverse-footer-nebula-c { to { transform: translate3d(3%, -3%, 0) scale(1.1); } }
+
+.ourverse-footer-aurora { position: absolute; z-index: 1; left: 50%; top: 0; width: 126%; height: 92%; transform: translateX(-50%); background: radial-gradient(ellipse closest-side, rgba(147, 112, 219, 0.15), rgba(147, 112, 219, 0.09) 30%, rgba(122, 102, 190, 0.04) 56%, rgba(122, 102, 190, 0) 100%); pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, #0000 0, #000 20%); mask-image: linear-gradient(to bottom, #0000 0, #000 20%); }
 .ourverse-footer-horizon { position: absolute; z-index: 2; top: 2%; left: 50%; width: max(100%, 1120px); transform: translateX(-50%) translateY(12px); opacity: .01; transition: opacity 1.1s ease, transform 1.3s cubic-bezier(.2,.72,.22,1); pointer-events: none; }
 .ourverse-footer-horizon svg { display: block; width: 100%; height: auto; overflow: visible; }
 .ourverse-footer.is-visible .ourverse-footer-horizon { opacity: 1; transform: translateX(-50%) translateY(0); }

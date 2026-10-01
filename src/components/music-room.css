@@ -796,7 +796,7 @@
 .music-now-playing h2 { display: -webkit-box; margin: 11px 0 6px; overflow: hidden; color: #3e303b; font: italic clamp(25px, 2.25vw, 36px)/1.05 var(--display, Georgia, serif); letter-spacing: -0.02em; text-wrap: wrap; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .music-now-playing p { overflow: hidden; margin: 0 0 24px; color: #876d78; font: 10px/1.4 sans-serif; letter-spacing: 0.035em; text-overflow: ellipsis; white-space: nowrap; }
 
-.music-record-player input[type="range"] { width: 100%; height: 4px; accent-color: #a97986; cursor: default; pointer-events: none; }
+.music-record-player input[type="range"] { width: 100%; height: 4px; accent-color: #a97986; cursor: pointer; }
 .music-record-player input[type="range"]::-webkit-slider-runnable-track { height: 3px; border-radius: 9px; background: linear-gradient(90deg, #8e6877, #bca49c); box-shadow: inset 0 1px 2px #4e334066; }
 .music-record-player input[type="range"]::-webkit-slider-thumb { margin-top: -5px; }
 .music-record-player .music-times { display: flex; justify-content: space-between; margin: 8px 1px 0; color: #826b74; font: 8px/1 sans-serif; }
@@ -810,7 +810,10 @@
 .music-record-player:has(.music-vinyl.playing) .player-controls .play-button { box-shadow: 0 10px 18px #6744566b, inset 0 2px #d9b8c1, 0 0 0 2px #f0d3b73d, 0 0 16px 5px #b8899866, 0 0 34px 12px #6b5a9e47; }
 @keyframes music-play-halo { from { opacity: 0.58; scale: 0.94; } to { opacity: 1; scale: 1.06; } }
 .music-record-player .player-controls button:hover { color: #3d2c37; transform: translateY(-1px); }
-.music-control-ornament { display: grid; place-items: center; width: 31px; height: 31px; color: #8c717a; opacity: 0.75; }
+.music-control-ornament { display: grid; place-items: center; width: 31px; height: 31px; padding: 0; border: 0; color: #8c717a; background: transparent; opacity: 0.75; cursor: pointer; }
+.music-control-ornament[data-active="true"] { color: #c596ae; opacity: 1; }
+.music-control-ornament[data-repeat="one"] { position: relative; }
+.music-repeat-one { position: absolute; right: 3px; bottom: 2px; color: #c596ae; font: 700 8px/1 sans-serif; font-style: normal; }
 .music-record-player .audio-notice { min-height: 18px; margin: 15px auto 0; color: #836d76; font: 8px/1.5 sans-serif; text-align: center; }
 .music-listen-link { display: inline-flex; align-items: center; gap: 6px; margin: 8px auto 0; color: #744f62; font: 9px/1 sans-serif; text-decoration: none; }
 .music-player-screw { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 36% 32%, #fbf0d2, #e0c288 46%, #b08d57 78%, #8a6c46 100%); box-shadow: 0 0 0 1px #b08d4e59, 0 0 8px 1px #e8cf9a5c, 0 1px 2px #4a303c66; }

@@ -34,6 +34,13 @@ type PlayerState = {
   choose: (i: number) => void;
   chooseAndPlay: (i: number) => void;
   toggle: () => void;
+  seek: (seconds: number) => void;
+  shuffle: boolean;
+  repeat: RepeatMode;
+  toggleShuffle: () => void;
+  cycleRepeat: () => void;
+  next: () => void;
+  previous: () => void;
   connectSpotify: (controller: SpotifyEmbedController | null) => void;
   prepareSpotifyTrack: (spotifyUri: string) => void;
   markSpotifyReady: () => void;
@@ -53,6 +60,8 @@ type SpotifyPlaybackState = {
 
 type SpotifyEvent<T> = { data: T };
 
+type RepeatMode = "off" | "all" | "one";
+
 type SpotifyEmbedController = {
   addListener: (
     event: "ready" | "playback_started" | "playback_update",
@@ -62,7 +71,8 @@ type SpotifyEmbedController = {
     event: "ready" | "playback_started" | "playback_update",
     listener?: (event: SpotifyEvent<unknown>) => void,
   ) => void;
-  loadEntity: (spotifyUri: string, preferVideo?: boolean, startAt?: number) => void;
+  loadEntity: (spotifyUri: string, preferVideo?: boolean, startAtSeconds?: number) => void;
+  seek: (seconds: number) => void;
   play: () => void;
   togglePlay: () => void;
   destroy: () => void;
@@ -113,12 +123,25 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const loadedSpotifyUri = useRef(songs[0].spotifyUri ?? "");
   const confirmedSpotifyUri = useRef("");
   const pendingAutoplayUri = useRef<string | null>(null);
+  const trackEndedRef = useRef(false);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState("");
   const [spotifyReady, setSpotifyReady] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
+  const [repeat, setRepeat] = useState<RepeatMode>("off");
+  const latestRef = useRef({ index, shuffle, repeat, playing });
+  latestRef.current = { index, shuffle, repeat, playing };
+
+  const toggleShuffle = useCallback(() => {
+    setShuffle((value) => !value);
+  }, []);
+
+  const cycleRepeat = useCallback(() => {
+    setRepeat((mode) => (mode === "off" ? "all" : mode === "all" ? "one" : "off"));
+  }, []);
 
   const selectTrack = useCallback((i: number, autoplay: boolean) => {
     const nextIndex = (i + songs.length) % songs.length;
@@ -130,6 +153,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     setTime(0);
     setDuration(0);
     setError("");
+    trackEndedRef.current = false;
 
     if (
       autoplay &&
@@ -169,6 +193,67 @@ export function MusicProvider({ children }: { children: ReactNode }) {
       setError("Open in Spotify to listen.");
     }
   }, [spotifyReady]);
+
+  const seek = useCallback((seconds: number) => {
+    const controller = spotifyController.current;
+    if (!controller) return;
+
+    const total = duration;
+    const target = total > 0 ? Math.min(Math.max(seconds, 0), total) : Math.max(seconds, 0);
+    if (!Number.isFinite(target)) return;
+
+    setTime(target);
+
+    try {
+      controller.seek(target);
+    } catch (seekError) {
+      console.error("Spotify seek request failed", seekError);
+      setError("Open in Spotify to listen.");
+    }
+  }, [duration]);
+
+  const restartCurrentTrack = useCallback(() => {
+    const controller = spotifyController.current;
+    const uri = loadedSpotifyUri.current;
+    if (!controller || !uri) return;
+
+    setTime(0);
+
+    try {
+      controller.loadEntity(uri, false, 0);
+      controller.play();
+    } catch (restartError) {
+      console.error("Spotify restart request failed", restartError);
+      setError("Open in Spotify to listen.");
+    }
+  }, []);
+
+  const pickShuffleIndex = useCallback((fromIndex: number) => {
+    const total = songs.length;
+    if (total <= 1) return fromIndex;
+
+    let candidate = fromIndex;
+    while (candidate === fromIndex) {
+      candidate = Math.floor(Math.random() * total);
+    }
+    return candidate;
+  }, []);
+
+  const next = useCallback(() => {
+    if (latestRef.current.repeat === "one") {
+      restartCurrentTrack();
+      return;
+    }
+
+    const current = latestRef.current.index;
+    const nextIndex = latestRef.current.shuffle ? pickShuffleIndex(current) : (current + 1) % songs.length;
+    selectTrack(nextIndex, true);
+  }, [pickShuffleIndex, restartCurrentTrack, selectTrack]);
+
+  const previous = useCallback(() => {
+    const current = latestRef.current.index;
+    selectTrack((current - 1 + songs.length) % songs.length, true);
+  }, [selectTrack]);
 
   const connectSpotify = useCallback((controller: SpotifyEmbedController | null) => {
     spotifyController.current = controller;
@@ -242,6 +327,31 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     setDuration(Math.max(0, state.duration / 1000));
     setError("");
 
+    const settled = Math.max(0, state.duration);
+    const elapsed = Math.max(0, state.position);
+    const trackEnded =
+      settled > 0 && elapsed >= settled - 350 && !state.isPaused && !state.isBuffering;
+
+    if (trackEnded && !trackEndedRef.current) {
+      trackEndedRef.current = true;
+
+      if (latestRef.current.repeat === "one") {
+        restartCurrentTrack();
+        return;
+      }
+
+      const current = latestRef.current.index;
+      const nextIndex = latestRef.current.shuffle
+        ? pickShuffleIndex(current)
+        : (current + 1) % songs.length;
+      selectTrack(nextIndex, true);
+      return;
+    }
+
+    if (!trackEnded) {
+      trackEndedRef.current = false;
+    }
+
     if (shouldStartSelectedTrack) {
       pendingAutoplayUri.current = null;
       try {
@@ -251,7 +361,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         setError("Open in Spotify to listen.");
       }
     }
-  }, []);
+  }, [pickShuffleIndex, restartCurrentTrack, selectTrack]);
 
   const reportSpotifyUnavailable = useCallback(() => {
     setSpotifyReady(false);
@@ -290,6 +400,13 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         choose,
         chooseAndPlay,
         toggle,
+        seek,
+        shuffle,
+        repeat,
+        toggleShuffle,
+        cycleRepeat,
+        next,
+        previous,
         connectSpotify,
         prepareSpotifyTrack,
         markSpotifyReady,
@@ -315,7 +432,7 @@ export function Controls({ small = false }: { small?: boolean }) {
       <button
         className="icon-button"
         aria-label="Previous track"
-        onClick={() => player.choose(player.index - 1)}
+        onClick={player.previous}
       >
         <SkipBack size={small ? 15 : 21} />
       </button>
@@ -333,7 +450,7 @@ export function Controls({ small = false }: { small?: boolean }) {
       <button
         className="icon-button"
         aria-label="Next track"
-        onClick={() => player.choose(player.index + 1)}
+        onClick={player.next}
       >
         <SkipForward size={small ? 15 : 21} />
       </button>
@@ -747,7 +864,7 @@ export function MusicRoom() {
             <div className="music-now-playing">
               <span>NOW PLAYING IN OUR LITTLE CORNER</span><h2 title={song.title}>{song.title}</h2><p title={song.artist}>{song.artist}</p>
             </div>
-            <label className="sr-only" htmlFor="music-progress">Track position</label>
+            <label className="sr-only" htmlFor="music-progress">Seek within track</label>
             <input
               id="music-progress"
               type="range"
@@ -756,16 +873,33 @@ export function MusicRoom() {
               step={0.1}
               value={player.time}
               disabled={!player.duration}
-              readOnly
-              aria-readonly="true"
-              tabIndex={-1}
-              onChange={() => undefined}
+              onChange={(event) => player.seek(Number(event.target.value))}
             />
             <div className="music-times"><span>{timeLabel(player.time)}</span><span>{timeLabel(player.duration)}</span></div>
             <div className="music-physical-controls">
-              <span className="music-control-ornament" aria-hidden="true"><Shuffle size={16} /></span>
+              <button
+                type="button"
+                className="music-control-ornament"
+                aria-label="Shuffle"
+                aria-pressed={player.shuffle}
+                data-active={player.shuffle}
+                onClick={player.toggleShuffle}
+              >
+                <Shuffle size={16} />
+              </button>
               <Controls />
-              <span className="music-control-ornament" aria-hidden="true"><Repeat2 size={17} /></span>
+              <button
+                type="button"
+                className="music-control-ornament"
+                aria-label={player.repeat === "one" ? "Repeat one" : player.repeat === "all" ? "Repeat all" : "Repeat off"}
+                aria-pressed={player.repeat !== "off"}
+                data-active={player.repeat !== "off"}
+                data-repeat={player.repeat}
+                onClick={player.cycleRepeat}
+              >
+                <Repeat2 size={17} />
+                {player.repeat === "one" ? <i className="music-repeat-one">1</i> : null}
+              </button>
             </div>
             <p className="audio-notice" role="status">
               {player.error || (player.spotifyReady ? "pick a song and let it play ♡" : "Connecting our record player to Spotify...")}

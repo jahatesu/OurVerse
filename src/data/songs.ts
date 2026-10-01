@@ -18,9 +18,8 @@ export const songs: Song[] = [
     spotifyUri: "spotify:track:11EVeW30HHEMZZsWgWzdfN",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0220bfa6114be3fcada3b5b3e3",
     note: [
-      { text: "Just like the lyrics say, " },
-      { text: "“in the name of love, I’m ready to bury all of my bones.”", style: "lyric" },
-      { text: " That’s how deeply I love you—the kind of love where I’d give every part of myself just to love you for as long as I exist." },
+      { text: "“In the name of love, I’m ready to bury all of my bones.”", style: "lyric" },
+      { text: " This is a devotion so intense and unconditional that I’d surrender every part of who I am just to stand beside you for the rest of time." },
     ],
   },
   {
@@ -68,87 +67,77 @@ export const songs: Song[] = [
     spotifyUri: "spotify:track:23DHUWJ7iEieNPMPKvjzBV",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02b4b59e1dd1a9c0fa4dc27c61",
     note: [
-      { text: "“My heart is in Ohio”", style: "lyric" },
-      { text: "—but mine is in " },
-      { text: "Colorado", style: "strong-emphasis" },
-      { text: ", because that’s where you are." },
+      { text: "In the song, he sings “my heart is in Ohio” because that’s where the person he loves lives. But when I listen to it, I only think of you. My heart isn’t in Ohio, " },
+      { text: "it’s in Colorado", style: "emphasis" },
+      { text: ", right where you are." },
     ],
   },
   {
     id: "i-dont-care-if-youre-contagious", number: 7, title: "I Don't Care If You're Contagious", artist: "Pierce The Veil", cover: coverFor(7),
     spotifyUri: "spotify:track:5z4GWgru4a3X0SFnQMD2oH",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025eae69bbe37d5f382155e387",
-    note: [
-      { text: "You know how special this song has always been to me. I remember listening to it and thinking, " },
-      { text: "I wanna be loved like this someday", style: "emphasis", italic: true },
-      { text: "—deeply, fearlessly, and a little insanely. " },
-      { text: "“I don’t care if you’re sick, I don’t care if you’re contagious, I would kiss you even if you are dead.”", style: "lyric" },
-      { text: " And now when I hear it, I think of " },
-      { text: "you and the kind of love I’ve always wanted.", style: "emphasis" },
-    ],
+    note: `This song is about holding onto someone through their darkest times and loving them without condition or fear. I used to listen to it wishing for a love like that. Now when I hear it, I just think of you.`,
   },
   {
     id: "the-bomb-dot-com-v2-0", number: 8, title: "The Bomb Dot Com V2.0", artist: "Sleeping With Sirens", cover: coverFor(8),
     spotifyUri: "spotify:track:6WBkSZbGBaIWnEgnMoXEJU",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02032fd22bde573d0746c87352",
-    note: [
-      { text: "“It’s all for the sake of love, it’s all for you.”", style: "lyric" },
-      { text: " Through every scar, every hard day, and everything we go through, " },
-      { text: "my heart will still choose you.", style: "emphasis" },
-      { text: " And if loving you means giving you every piece of me, then baby, " },
-      { text: "you can have it all.", style: "emphasis" },
-    ],
+    note: `This track captures a love that doesn’t walk away when things get tough. Good days or bad days, everything I build and everything I hold onto is for you.`,
   },
   {
     id: "wonderless", number: 9, title: "Wonderless", artist: "Pierce The Veil", cover: coverFor(9),
     spotifyUri: "spotify:track:4QCczE24wLpDmPJ3qwwEvC",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d2d0137c32938ae8cb44e0ca",
     note: [
-      { text: "Wonderless", style: "reference" },
-      { text: " feels like loving someone even when you’re lost in your own head, when everything feels messy and uncertain. " },
-      { text: "Even when I lose myself, my heart still knows its way back to you.", style: "emphasis" },
+      { text: "“And if I ever hurt you, I’d pay for it every day…”", style: "reference" },
+      { text: " This track feels like a quiet promise. It speaks to a love so genuine that their happiness matters above everything else." },
     ],
   },
   {
     id: "for-her", number: 10, title: "for her", artist: "whatsaheart", cover: coverFor(10),
     spotifyUri: "spotify:track:7iwDR2NBmjqbUGWnFNVEYp",
     artworkUrl: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02685054f0b4d15509cb8aa246",
-    note: [
-      { text: "You’re somehow " },
-      { text: "always in the back of my mind", style: "emphasis" },
-      { text: ", even in the most ordinary moments. I could be doing absolutely nothing and still find myself missing you, wishing you were here, and " },
-      { text: "loving you a little more than I did yesterday.", style: "emphasis" },
-    ],
+    note: `This song is all about being a quiet, steady safe space for the person you love. Whenever this track plays, it reminds me that no matter how heavy or chaotic life gets, I always want to be your place of comfort and rest.`,
   },
   {
     id: "scene-one-james-dean-and-audrey-hepburn", number: 11, title: "Scene One - James Dean & Audrey Hepburn", artist: "Sleeping With Sirens", cover: coverFor(11),
     spotifyUri: "spotify:track:1WH0HcFJhu5r6Jxqdsh54N",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02de5a8550905395c2d8f7a410",
-    note: `i think what gets me about this song is wanting someone to stay and wondering if maybe you've finally found something worth holding onto. i don't need some perfect movie love story with you. i just want our story, however messy or ordinary it gets, as long as i still get to have you in it.`,
+    note: [
+      { text: "“They say that love is forever, your forever is all that I need.”", style: "reference" },
+      { text: " I hope our love never changes. Years from now—when our hair is completely white and we can barely reach the floor—I still want us to be just as lovey-dovey as we are today. Please stay forever with me." },
+    ],
   },
   {
     id: "thunder", number: 12, title: "Thunder", artist: "BOYS LIKE GIRLS", cover: coverFor(12),
     spotifyUri: "spotify:track:00fivIbneerD9okPhdQ8wn",
     artworkUrl: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e028d83bb452f5600306d4a012a",
-    note: `i want to remember this version of us forever. the late-night calls, the stupid jokes, missing each other, laughing until one of us can't breathe, and all the tiny things that probably don't seem important right now. someday these are going to be memories, and i hope i never forget how it felt to be this young and this in love with you.`,
+    note: [
+      { text: "“Your voice is like thunder in the sky…”", style: "reference" },
+      { text: " This song captures that feeling of a love so effortless and strong that it shakes up your whole world. Being with you makes everything feel brighter. You’ll always be my thunder." },
+    ],
   },
   {
     id: "my-heroine-acoustic", number: 13, title: "My Heroine - Acoustic", artist: "Silverstein", cover: coverFor(13),
     spotifyUri: "spotify:track:3n52npc7FPjG4dBZcgLjmD",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02949970ad46926e649b78b492",
-    note: `this song is dark as fuck, so no, i'm not calling our relationship an addiction. i just love how intensely it captures what it's like when one person can get so deeply into your head that you can't ignore what you feel anymore. you definitely live in mine rent free.`,
+    note: `You are like heroine to me—my ultimate fix, my deepest craving, and the one person I can never get enough of.`,
   },
   {
     id: "all-i-wanted", number: 14, title: "All I Wanted", artist: "Paramore", cover: coverFor(14),
     spotifyUri: "spotify:track:1Bv3h7Vc4AaYA2BcSM3rVd",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02e01d7d558032457b0e4883f6",
-    note: `sometimes love really is embarrassingly simple. out of everything i could ask for, there are moments when all i actually want is you. your attention, your voice, your time, your stupid face. that's it.`,
+    note: [
+      { text: "If I could belt out " },
+      { text: "“ALL I WANTED WAS YOU”", style: "emphasis" },
+      { text: " at full volume every time I miss you, I would. You’re my favorite person." },
+    ],
   },
   {
     id: "never-let-this-go", number: 15, title: "Never Let This Go", artist: "Paramore", cover: coverFor(15),
     spotifyUri: "spotify:track:2itu79WbZhUCHX4jg0fyAd",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025cab62839794c2cc3d6a135b",
-    note: `this one isn't exactly a happy love song, but i understand the feeling of caring so much and still struggling to find the right words sometimes. i never want silence, distance, or one bad moment to make us forget how much we actually mean to each other.`,
+    note: `What we have is too special, too rare, and too real to ever take for granted. I’m in this completely, and I’m never letting this go.`,
   },
   {
     id: "jet-lag-feat-natasha-bedingfield", number: 16, title: "Jet Lag (feat. Natasha Bedingfield)", artist: "Simple Plan", cover: coverFor(16),
@@ -196,19 +185,26 @@ export const songs: Song[] = [
     id: "demolition-lovers", number: 23, title: "Demolition Lovers", artist: "My Chemical Romance", cover: coverFor(23),
     spotifyUri: "spotify:track:16Fp67kTFhH0XK5Cl6Oz7r",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e022e55bc288d7e0888027e22b7",
-    note: `there's something so beautiful and tragic about loving someone with that "you and me until the end" kind of devotion. obviously, i don't want our story to end like theirs. i want the opposite. i want us to survive everything, grow old, and still be choosing each other after all of it. you and me against the world, except we actually get our happy ending.`,
+    note: [
+      { text: "“I would drive all night just to stay in close proximity to you.”", style: "reference" },
+    ],
   },
   {
     id: "emergency-contact", number: 24, title: "Emergency Contact", artist: "Pierce The Veil", cover: coverFor(24),
     spotifyUri: "spotify:track:4amltxLIfFmtYEvZbdgDqO",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e022846907b5152fb7dc38e450a",
-    note: `you're my emergency contact. not just literally someday, but in every way that matters. when something happens, whether it's good, bad, scary, exciting, or completely stupid, you're one of the first people i want to reach for. i want you to be my person when life happens.`,
+    note: [
+      { text: "“I want you to be my emergency contact…”", style: "reference" },
+      { text: " Asking someone to be your emergency contact sounds simple, but this song shows how huge it really is. It’s about letting your guard down completely and choosing one person as your safe place." },
+    ],
   },
   {
     id: "million-dollar-houses-the-painter", number: 25, title: "Million Dollar Houses (The Painter)", artist: "Pierce The Veil", cover: coverFor(25),
     spotifyUri: "spotify:track:0iWCpaSaiIZVPSqjZ9YB5L",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025eae69bbe37d5f382155e387",
-    note: `i always think about that question in this song: what if i'm just a painter? would you ever leave me for somebody who deserves you more? because i don't care how much or how little i have, i'd still want to build everything i can for you. i'll make that million dollars if i have to, because nobody could steal you from me. no, i don't think so.`,
+    note: [
+      { text: "“What if I was just a painter? Would you ever leave me for somebody who deserves you most? I’m gonna make a million dollars, ’cause nobody’s gonna steal you, no.”", style: "reference" },
+    ],
   },
   {
     id: "kissing-in-cars-bonus-track", number: 26, title: "Kissing in Cars (Bonus Track)", artist: "Pierce The Veil", cover: coverFor(26),
@@ -244,7 +240,7 @@ export const songs: Song[] = [
     id: "just-the-way-you-are", number: 31, title: "Just The Way You Are", artist: "Pierce The Veil", cover: coverFor(31),
     spotifyUri: "spotify:track:5d6nTdahyEnH1TILFC0Tp3",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e024978eed9f147170024b9a65b",
-    note: `yes, i specifically needed the pierce the veil version because apparently normal romance wasn't enough for this playlist. but the message is still simple: i like you exactly as you are, handsome. glasses, black hair, annoying behavior and everything.`,
+    note: `Yes, I specifically needed the Pierce The Veil version because apparently normal romance wasn’t enough for this playlist. But the message is still simple: I like you exactly as you are, handsome. Glasses, chinito, funny, and everything.`,
   },
   {
     id: "i-miss-you", number: 32, title: "I Miss You", artist: "blink-182", cover: coverFor(32),
@@ -256,7 +252,7 @@ export const songs: Song[] = [
     id: "caraphernelia", number: 33, title: "Caraphernelia", artist: "Pierce The Veil", cover: coverFor(33),
     spotifyUri: "spotify:track:2G8PweZBBwTpyP8vpNQJK2",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025eae69bbe37d5f382155e387",
-    note: `this song is messy and intense and definitely not my blueprint for a healthy relationship. but i understand that feeling of someone leaving pieces of themselves everywhere in your life. you've somehow gotten into my routines, my thoughts, my phone, my music, everything.`,
+    note: `wiicfyibynimtibtftwcy`,
   },
   {
     id: "a-match-into-water", number: 34, title: "A Match Into Water", artist: "Pierce The Veil", cover: coverFor(34),
@@ -274,13 +270,15 @@ export const songs: Song[] = [
     id: "if-im-james-dean-youre-audrey-hepburn", number: 36, title: "If I'm James Dean, You're Audrey Hepburn", artist: "Sleeping With Sirens", cover: coverFor(36),
     spotifyUri: "spotify:track:1wFRkVclQWfMQQcaVLjmBE",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d2cb1b09807037c68bab8b13",
-    note: `i love the whole stupidly romantic idea of two people looking at each other and thinking maybe this could actually be something. that's me with you. i don't need us to be some famous love story. i just want ours.`,
+    note: `Kellin Quinn is out here singing like we’re starring in a classic Hollywood romance.`,
   },
   {
     id: "only-one", number: 37, title: "Only One", artist: "Yellowcard", cover: coverFor(37),
     spotifyUri: "spotify:track:0gZp88SA5OcujHLDGkxtI3",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d1fd8f264564d9eef7617a45",
-    note: `the actual song comes from a breakup, so i'm stealing this title for my own purposes. out of everyone i could have ended up caring about this much, somehow it's you. my favorite boy. my one very annoying exception to my peace and quiet.`,
+    note: [
+      { text: "“Here I go, scream my lungs out and try to get to you… You are my only one.”", style: "reference" },
+    ],
   },
   {
     id: "six-candles", number: 38, title: "Six Candles", artist: "FM Static", cover: coverFor(38),
@@ -298,7 +296,9 @@ export const songs: Song[] = [
     id: "all-mine", number: 40, title: "ALL MINE", artist: "whatsaheart", cover: coverFor(40),
     spotifyUri: "spotify:track:0Yg2JX24pCRIcqZRC5aJU8",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e027b011aa36819e35decf29441",
-    note: `i'm trying not to sound possessive here but also... mine. i just really like knowing that out of everyone in the world, you're my boyfriend and i'm your girl. that's such a small sentence for something that makes me ridiculously happy.`,
+    note: [
+      { text: "“I just wanna make sure that you know you’re all mine.”", style: "reference" },
+    ],
   },
   {
     id: "can-you-take-me-home-tonight", number: 41, title: "can you take me home tonight?", artist: "Snave", cover: coverFor(41),
@@ -310,13 +310,16 @@ export const songs: Song[] = [
     id: "flames-acoustic", number: 42, title: "Flames (feat. Avril Lavigne) [Acoustic]", artist: "MOD SUN, Avril Lavigne", cover: coverFor(42),
     spotifyUri: "spotify:track:6bHO3zGU6RarIsp62su2DI",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0273b8dc78845de7f39432bd19",
-    note: `this one is for that stupid kind of attraction where no matter how many times you look at the person, you're still like, "yeah, unfortunately i'm extremely into you." that's me. still very much into you. tragic.`,
+    note: [
+      { text: "“I still burn for you like the sun burns the sky…”", style: "reference" },
+      { text: " Every time I hear it, I think of how you came into my life and set my whole world on fire in the best way possible." },
+    ],
   },
   {
     id: "ignite", number: 43, title: "Ignite", artist: "Nocturne's Kiss", cover: coverFor(43),
     spotifyUri: "spotify:track:1s6uXV0N6dcWGjm2ykwLX7",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02d49bdf66efd5c2a733adf971",
-    note: `some songs are here because of one specific meaning and some are here because they just feel like us when i listen to them. this is one of those. it has that intense, restless feeling that makes me think about wanting somebody so badly that everything suddenly feels louder.`,
+    note: `You ignited something in my heart that’s going to burn forever.`,
   },
   {
     id: "be-quiet-and-drive-far-away", number: 44, title: "Be Quiet and Drive (Far Away)", artist: "Deftones", cover: coverFor(44),
@@ -334,7 +337,10 @@ export const songs: Song[] = [
     id: "bad-romance", number: 46, title: "Bad Romance", artist: "Halestorm", cover: coverFor(46),
     spotifyUri: "spotify:track:0n3sHHfdOq6Awix3JPe3xl",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e022230ea0226f28c710728c840",
-    note: `this is not me manifesting a toxic relationship, before you start. i just love how loud, messy, dramatic, and completely shameless this song is about wanting someone. sometimes a cute little love song isn't enough. sometimes i need guitars.`,
+    note: [
+      { text: "“I want your ugly, I want your disease…”", style: "reference" },
+      { text: " Good days, bad days, and everything in between." },
+    ],
   },
   {
     id: "vermilion-pt-2", number: 47, title: "Vermilion, Pt. 2", artist: "Slipknot", cover: coverFor(47),
@@ -346,12 +352,12 @@ export const songs: Song[] = [
     id: "hanging-by-a-moment", number: 48, title: "Hanging By A Moment", artist: "Lifehouse", cover: coverFor(48),
     spotifyUri: "spotify:track:6jWLyg8AuMQ9LtIB2UlfOF",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0231539dc49b964e11ccc239a7",
-    note: `i like the idea of not knowing exactly where everything is going but still wanting to be there for it. we don't know every detail of our future yet. and that's okay. i just really like the fact that i get to find out what happens next with you.`,
+    note: `This song is my heart in a nutshell. You came into my life and completely swept me off my feet, and now I never want to be anywhere else.`,
   },
   {
     id: "my-heroine", number: 49, title: "My Heroine", artist: "Silverstein", cover: coverFor(49),
     spotifyUri: "spotify:track:6NDoBIaqTHdcudaR8RDJNw",
     artworkUrl: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02aade7ea1ce5e7f75f6d40a3c",
-    note: `ending this playlist with another insanely dramatic song feels correct for us. i'm not taking the addiction metaphor literally, obviously. i just like music that makes love sound huge and overwhelming and a little dangerous. apparently normal love songs were never going to be enough for this playlist.`,
+    note: `Ending this playlist with another “heroine”. This song speaks to a love so deep that it completely transforms your world. It’s about letting down every single guard, trusting someone with all that you are, and realizing you never want to face this life without them by your side.`,
   },
 ];
